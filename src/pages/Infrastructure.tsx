@@ -1,7 +1,6 @@
 import * as React from 'react';
 import { useEffect, useState } from 'react';
-import api from '../api/axios';
-import axios from 'axios';
+import { getInfrastructureData, performPowerAction } from '../api/infraService';
 import { RefreshCcw, Activity } from 'lucide-react';
 
 const Infrastructure: React.FC = () => {
@@ -9,19 +8,15 @@ const Infrastructure: React.FC = () => {
   const [region, setRegion] = useState<string>('FETCHING...');
   const [loading, setLoading] = useState<boolean>(true);
 
-  const INFRA_BASE_URL = 'http://localhost:8082';
-
-  const fetchData = async () => {
+const fetchData = async () => {
     try {
-      const [instRes, infoRes] = await Promise.all([
-        axios.get(`${INFRA_BASE_URL}/`),
-        axios.get(`${INFRA_BASE_URL}/info`)
-      ]);
-      const allInstances = instRes.data.flatMap((r: any) => r.Instances || []);
-      setInstances(allInstances);
-      setRegion(infoRes.data.region?.toUpperCase() || 'NOT FOUND');
+      setLoading(true);
+      const data = await getInfrastructureData();
+      
+      setInstances(data.instances);
+      setRegion(data.region);
     } catch (err) {
-      console.error("Connection error to port 8082:", err);
+      console.error("Connection error to Infra API:", err);
     } finally {
       setLoading(false);
     }
@@ -30,10 +25,8 @@ const Infrastructure: React.FC = () => {
   const handlePowerAction = async (action: 'start' | 'stop', id: string) => {
     console.log(`Запит на ${action} для вузла: ${id}`);
     try {
-      const response = await axios.get(`${INFRA_BASE_URL}/${action}`, {
-        params: { id: id }
-      });
-      console.log(`Сервер відповів:`, response.data);
+      const result = await performPowerAction(action, id);
+      console.log(`Сервер відповів:`, result);
 
       setTimeout(fetchData, 1000); 
     } catch (err: any) {

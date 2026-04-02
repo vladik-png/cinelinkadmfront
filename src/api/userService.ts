@@ -19,3 +19,13 @@ export const getEmployee = async (id: string) => {
     throw error;
   }
 };
+
+export const getEmployeesList = async () => {
+  try {
+    const response = await api.get('/employee');
+    return response.data;
+  } catch (error) {
+    console.error("Помилка отримання списку працівників:", error);
+    throw error;
+  }
+};

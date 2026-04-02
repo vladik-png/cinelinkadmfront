@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { useEffect, useState, useMemo } from 'react';
-import api from '../api/axios';
+import { getEmployeesList } from '../api/userService';
 import { 
   ShieldCheck, Search, X, Download, MapPin, 
   ChevronDown, SlidersHorizontal, UserCircle 
@@ -24,16 +24,17 @@ const Employees: React.FC = () => {
     console.log("--- Спроба завантаження працівників ---");
     try {
       setLoading(true);
-      const res = await api.get('http://localhost:8080/employee');
       
-      console.log("RAW DATA:", JSON.stringify(res.data, null, 2));
+      const responseData = await getEmployeesList();
+      
+      console.log("RAW DATA:", JSON.stringify(responseData, null, 2));
 
-      if (res.data && res.data.results && Array.isArray(res.data.results)) {
-        setEmployees(res.data.results);
-      } else if (Array.isArray(res.data)) {
-        setEmployees(res.data);
-      } else if (res.data && Array.isArray(res.data.data)) {
-        setEmployees(res.data.data);
+      if (responseData && responseData.results && Array.isArray(responseData.results)) {
+        setEmployees(responseData.results);
+      } else if (Array.isArray(responseData)) {
+        setEmployees(responseData);
+      } else if (responseData && Array.isArray(responseData.data)) {
+        setEmployees(responseData.data);
       } else {
         console.error("API повернуло дані, але масив не знайдено.");
       }
