@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { useEffect, useState } from 'react';
-import api from '../api/axios';
+import { getSystemMetrics } from '../api/metricsService';
 import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Legend } from 'recharts';
 import { Server, Activity, Globe, HardDrive, Cpu, LayoutGrid, Maximize2, Zap, Clock } from 'lucide-react';
 
@@ -11,8 +11,7 @@ const Analytics: React.FC = () => {
 
   const fetchAllMetrics = async () => {
     try {
-      const res = await api.get('http://localhost:8081/system-metrics');
-      const allNodesData = res.data;
+      const allNodesData = await getSystemMetrics();
 
       setNodesHistory(prevHistory => {
         const newHistory = { ...prevHistory };

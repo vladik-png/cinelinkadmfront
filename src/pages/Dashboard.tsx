@@ -1,6 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import api from '../api/axios';
+import { getUsers, getEmployee } from '../api/userService';
+import { getSystemMetrics } from '../api/metricsService';
+import { getLocalWeather } from '../api/weatherService';
 import { 
   ThermometerSun, MapPin, Users as UsersIcon, 
   Activity, Server, Database, Clock, ArrowRight,
@@ -22,24 +24,18 @@ const Dashboard: React.FC = () => {
     ping: 0
   });
 
-  const fetchWeather = async (location: string) => {
+const fetchWeather = async (location: string) => {
     if (!location) return;
     try {
-      const cleanCity = location.replace(/city/gi, '').trim();
-      let query = cleanCity;
-      if (!query.toLowerCase().includes('ukraine')) {
-        query += ',Ukraine';
-      }
-      const encodedQuery = encodeURIComponent(query);
-      const res = await fetch(`https://wttr.in/${encodedQuery}?format=j1`);
-      const data = await res.json();
+      const data = await getLocalWeather(location);
       if (data.current_condition) {
         setWeather({
           temp: data.current_condition[0].temp_C,
           resolvedPlace: data.nearest_area?.[0]?.areaName?.[0]?.value
         });
       }
-    } catch (e) { console.error("Weather error:", e); }
+    } catch (e) { 
+    }
   };
 
   const fetchData = async () => {
@@ -47,15 +43,14 @@ const Dashboard: React.FC = () => {
     if (!empId) return;
 
     try {
-      const usersRes = await api.get('/users');
-      if (usersRes.data?.results) {
-        const allUsers = usersRes.data.results;
+      const usersData = await getUsers();
+      if (usersData?.results) {
+        const allUsers = usersData.results;
         setStats(prev => ({ ...prev, users: allUsers.length }));
         setLastUsers(allUsers.slice(-3).reverse());
       }
 
-      const metricsRes = await api.get('http://localhost:8081/system-metrics');
-      const allNodesData = metricsRes.data;
+      const allNodesData = await getSystemMetrics();
       const nodeIds = Object.keys(allNodesData);
       
       if (nodeIds.length > 0) {
@@ -79,13 +74,15 @@ const Dashboard: React.FC = () => {
         });
       }
 
-      const empRes = await api.get(`/employee/${empId}`);
-      if (empRes.data?.results) {
-        setEmployee(empRes.data.results);
-        fetchWeather(empRes.data.results.location);
+      const empData = await getEmployee(empId);
+      if (empData?.results) {
+        setEmployee(empData.results);
+        fetchWeather(empData.results.location);
       }
 
-    } catch (err: any) { console.error("Fetch error", err); }
+    } catch (err: any) { 
+      console.error("Помилка завантаження дашборду:", err); 
+    }
   };
 
   useEffect(() => {
