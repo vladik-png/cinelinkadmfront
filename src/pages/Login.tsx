@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import api from '../api/axios';
+import { loginEmployee } from '../api/authService';
 
 const Login: React.FC = () => {
   const [employeeCode, setEmployeeCode] = useState('');
@@ -19,19 +19,13 @@ const Login: React.FC = () => {
   try {
     console.log("2. Відправляємо запит на сервер з даними:", { login: employeeCode, password: password });
     
-    // Спробуй використати просто шлях, якщо api вже налаштований
-    // Або залиш як було, якщо api.ts порожній.
-    const response = await api.post('http://localhost:8080/login', {
-      login: employeeCode, 
-      password: password
-    });
+    const response = await loginEmployee(employeeCode, password);
 
     console.log("3. Відповідь від сервера отримана:", response);
 
     if (response.status === 200) {
       const employeeData = response.data.results;
 
-      // ТЕПЕР МИ ТОЧНО ЗНАЄМО ПРАВИЛЬНУ НАЗВУ ПОЛЯ!
       const realId = employeeData.user_id;
 
       if (realId) {

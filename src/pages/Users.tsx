@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { useEffect, useState, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
-import api from '../api/axios';
+import { getUsers, toggleUserAccountStatus, getUserDetailedProfile } from '../api/userService';
 import { 
   Mail, Calendar, ShieldCheck, Search, UserCircle, X, 
   Download, Trash2, Clock, ChevronDown, SlidersHorizontal, ShieldAlert, CheckCircle,
@@ -36,9 +36,10 @@ const Users: React.FC = () => {
 
   const fetchUsers = async () => {
     try {
-      const res = await api.get('/users');
-      if (res.data && res.data.results) {
-        setUsers(res.data.results);
+      setLoading(true);
+      const data = await getUsers(); 
+      if (data && data.results) {
+        setUsers(data.results);
       }
     } catch (err) {
       console.error("Помилка завантаження користувачів:", err);
@@ -47,7 +48,7 @@ const Users: React.FC = () => {
     }
   };
 
-  const exportToCSV = () => {
+    const exportToCSV = () => {
     const delimiter = ";";
     const headers = ["ID", "Username", "Name", "Active", "Joined"].join(delimiter);
     const dataRows = processedUsers.map(u => [
@@ -64,28 +65,18 @@ const Users: React.FC = () => {
 
   const handleToggleStatus = async (user: UserData) => {
     if (!user || !user.user_id) return;
-
     const currentActive = !!(user.is_active || user.status === 'active');
-    const method = currentActive ? "DELETE" : "POST";
 
     try {
-      const res = await fetch(`http://localhost:8080/users/${user.user_id}`, {
-        method: method,
-        headers: { 
-          "Content-Type": "application/json",
-          "Authorization": `Bearer ${token}` 
-        }
-      });
-
-      if (res.ok) {
-        const nextState = !currentActive;
-        setUsers(prev => prev.map(u => 
-          u.user_id === user.user_id ? { ...u, is_active: nextState, status: nextState ? 'active' : 'inactive' } : u
-        ));
-        setSelectedUser(prev => prev ? { ...prev, is_active: nextState, status: nextState ? 'active' : 'inactive' } : null);
-      }
+      await toggleUserAccountStatus(user.user_id, currentActive, token);
+      
+      const nextState = !currentActive;
+      setUsers(prev => prev.map(u => 
+        u.user_id === user.user_id ? { ...u, is_active: nextState, status: nextState ? 'active' : 'inactive' } : u
+      ));
+      setSelectedUser(prev => prev ? { ...prev, is_active: nextState, status: nextState ? 'active' : 'inactive' } : null);
     } catch (err) {
-      console.error("Помилка запиту:", err);
+      console.error("Помилка оновлення UI після зміни статусу", err);
     }
   };
 
@@ -93,12 +84,7 @@ const Users: React.FC = () => {
     if (!worker.user_id) return;
     try {
       setSelectedUser(worker);
-
-      const res = await fetch(`http://localhost:8080/users/${worker.user_id}`, {
-        method: 'GET',
-        headers: { 'Authorization': `Bearer ${token}` }
-      });
-      const data = await res.json();
+      const data = await getUserDetailedProfile(worker.user_id, token);
 
       if (data && data.results) {
         const detailed = Array.isArray(data.results) ? data.results[0] : data.results;
@@ -115,10 +101,9 @@ const Users: React.FC = () => {
         });
       }
     } catch (err) {
-      console.error("Error loading profile:", err);
+      console.error("Не вдалося відобразити профіль", err);
     }
   };
-
   useEffect(() => { fetchUsers(); }, []);
 
   const processedUsers = useMemo(() => {

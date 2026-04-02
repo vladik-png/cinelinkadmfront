@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import api from '../api/axios';
+import { getEmployeeProfile, deactivateEmployee } from '../api/profileService';
 import { Mail, Phone, Calendar, MapPin, Briefcase, Hash, ShieldCheck, LogIn, Trash2 } from 'lucide-react';
 
 interface EmployeeData {
@@ -19,12 +19,12 @@ const Profile: React.FC = () => {
   const [emp, setEmp] = useState<EmployeeData | null>(null);
   const [loading, setLoading] = useState(true);
 
-  const fetchProfile = async () => {
+const fetchProfile = async () => {
     const id = localStorage.getItem('employee_id');
     if (!id) return;
     try {
-      const res = await api.get(`http://localhost:8080/employee/${id}`);
-      if (res.data.results) setEmp(res.data.results);
+      const data = await getEmployeeProfile(id);
+      if (data.results) setEmp(data.results);
     } catch (err) {
       console.error("Error loading profile", err);
     } finally {
@@ -36,7 +36,7 @@ const Profile: React.FC = () => {
     if (!emp) return;
     if (window.confirm("Make this employee inactive?")) {
       try {
-        await api.delete(`http://localhost:8080/employee/${emp.employee_id}`);
+        await deactivateEmployee(emp.employee_id);
         alert("Status updated to inactive");
       } catch (err) {
         console.error("Deactivation error", err);
@@ -139,7 +139,7 @@ const InfoTile: React.FC<{
   return (
     <div className="bg-slate-50/50 hover:bg-white p-7 rounded-[2.2rem] border border-slate-100 transition-all duration-300 hover:shadow-xl hover:border-blue-200 group flex items-center gap-6">
       <div className="p-4 bg-white text-blue-600 rounded-2xl shadow-sm border border-slate-100 group-hover:bg-blue-600 group-hover:text-white transition-all duration-300 shrink-0">
-        {React.cloneElement(icon as React.ReactElement, { size: 24 })}
+        {React.cloneElement(icon as any, { size: 24 })}
       </div>
       <div className="overflow-hidden">
         <p className="text-[10px] uppercase font-black text-slate-400 tracking-[0.15em] mb-1 leading-none">{label}</p>
