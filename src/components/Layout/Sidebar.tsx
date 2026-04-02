@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { useEffect, useState } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
-import api from '../../api/axios';
+import { getEmployee } from '../../api/userService'; 
 import { LayoutDashboard, Users, ShieldAlert, Server, BarChart3, LogOut, Contact2 } from 'lucide-react';
 
 interface Employee {
@@ -23,9 +23,9 @@ const Sidebar: React.FC = () => {
       if (!empId) return;
 
       try {
-        const response = await api.get(`http://localhost:8080/employee/${empId}`);
-        if (response.data && response.data.results) {
-          setEmployee(response.data.results);
+        const data = await getEmployee(empId);
+        if (data && data.results) {
+          setEmployee(data.results);
         }
       } catch (err) {
         console.error("Не вдалося завантажити дані працівника:", err);
