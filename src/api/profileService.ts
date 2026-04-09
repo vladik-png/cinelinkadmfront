@@ -1,7 +1,7 @@
 import axios from 'axios';
 
 
-const AWS_BASE_URL = import.meta.env.VITE_AWS_API_URL || 'http://13.62.214.254:8080';
+const AWS_BASE_URL = import.meta.env.VITE_AWS_API_URL || 'http://localhost:8080';
 
 export const getEmployeeProfile = async (id: string) => {
   try {
