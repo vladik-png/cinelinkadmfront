@@ -8,6 +8,7 @@ import Profile from './pages/Profile';
 import Users from './pages/Users';
 import Dashboard from './pages/Dashboard';
 import Employees from './pages/Employees';
+import Moderation from './pages/Moderation';
 
 const ProtectedLayout = () => {
   const isAuth = localStorage.getItem('admin_token') !== null;
@@ -39,6 +40,7 @@ const App: React.FC = () => {
           <Route path="/infrastructure" element={<Infrastructure />} />
           <Route path="/analytics" element={<Analytics />} />
           <Route path="/profile" element={<Profile />} />
+          <Route path="/moderation" element={<Moderation />} />
           <Route path="/users" element={<Users />} />
           <Route path="/employees" element={<Employees />} />
           
