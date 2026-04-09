@@ -3,8 +3,8 @@ import { useEffect, useState, useMemo } from 'react';
 import { getUsers, toggleUserAccountStatus, getUserDetailedProfile } from '../api/userService';
 import { 
   Mail, Calendar, ShieldCheck, Search, UserCircle, X, 
-  Download, Trash2, Clock, ChevronDown, SlidersHorizontal, ShieldAlert, CheckCircle,
-  BookOpen, Users as UsersIcon, UserPlus, Eye, MoreVertical
+  Download, Clock, ShieldAlert, CheckCircle, BookOpen, 
+  Users as UsersIcon, UserPlus, Eye, ArrowUpDown, ArrowUp, ArrowDown
 } from 'lucide-react';
 
 interface UserData {
@@ -23,13 +23,21 @@ interface UserData {
   bg_img_url?: string;
 }
 
+type SortKey = 'id' | 'name' | 'email' | 'date' | 'status';
+type SortDirection = 'asc' | 'desc';
+
 const Users: React.FC = () => {
   const [users, setUsers] = useState<UserData[]>([]);
   const [selectedUser, setSelectedUser] = useState<UserData | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
   const [searchTerm, setSearchTerm] = useState<string>('');
-  const [sortType, setSortType] = useState<'newest' | 'oldest' | 'az' | 'za'>('newest');
   const [showBlockedOnly, setShowBlockedOnly] = useState<boolean>(false);
+  
+  // Новий стейт для сортування по колонках (за замовчуванням: нові дати зверху)
+  const [sortConfig, setSortConfig] = useState<{ key: SortKey; direction: SortDirection }>({
+    key: 'date',
+    direction: 'desc'
+  });
 
   const token = localStorage.getItem('admin_token');
 
@@ -63,7 +71,7 @@ const Users: React.FC = () => {
   };
 
   const handleToggleStatus = async (user: UserData, e?: React.MouseEvent) => {
-    if (e) e.stopPropagation(); // Щоб клік не відкривав модалку, якщо натискаємо в таблиці
+    if (e) e.stopPropagation();
     if (!user || !user.user_id) return;
     const currentActive = !!(user.is_active || user.status === 'active');
 
@@ -107,6 +115,14 @@ const Users: React.FC = () => {
 
   useEffect(() => { fetchUsers(); }, []);
 
+  // Обробник кліку по заголовку колонки
+  const handleSort = (key: SortKey) => {
+    setSortConfig(prev => ({
+      key,
+      direction: prev.key === key && prev.direction === 'asc' ? 'desc' : 'asc'
+    }));
+  };
+
   const processedUsers = useMemo(() => {
     let result = users.filter(u => {
       const search = searchTerm.toLowerCase();
@@ -116,19 +132,47 @@ const Users: React.FC = () => {
     });
 
     result.sort((a, b) => {
-      const dateA = new Date(a.created_at).getTime();
-      const dateB = new Date(b.created_at).getTime();
-      if (sortType === 'az') return a.first_name.localeCompare(b.first_name);
-      if (sortType === 'za') return b.first_name.localeCompare(a.first_name);
-      return sortType === 'newest' ? dateB - dateA : dateA - dateB;
+      let aValue: any, bValue: any;
+
+      switch (sortConfig.key) {
+        case 'id':
+          aValue = a.user_id; bValue = b.user_id; break;
+        case 'name':
+          aValue = `${a.first_name} ${a.last_name}`.toLowerCase(); 
+          bValue = `${b.first_name} ${b.last_name}`.toLowerCase(); break;
+        case 'email':
+          aValue = (a.email || '').toLowerCase(); 
+          bValue = (b.email || '').toLowerCase(); break;
+        case 'date':
+          aValue = new Date(a.created_at).getTime(); 
+          bValue = new Date(b.created_at).getTime(); break;
+        case 'status':
+          aValue = (a.is_active || a.status === 'active') ? 1 : 0; 
+          bValue = (b.is_active || b.status === 'active') ? 1 : 0; break;
+        default:
+          return 0;
+      }
+
+      if (aValue < bValue) return sortConfig.direction === 'asc' ? -1 : 1;
+      if (aValue > bValue) return sortConfig.direction === 'asc' ? 1 : -1;
+      return 0;
     });
 
     return result;
-  }, [users, searchTerm, showBlockedOnly, sortType]);
+  }, [users, searchTerm, showBlockedOnly, sortConfig]);
+
+  // Допоміжний компонент для відмальовки іконки сортування
+  const SortIcon = ({ columnKey }: { columnKey: SortKey }) => {
+    if (sortConfig.key !== columnKey) {
+      return <ArrowUpDown size={12} className="text-slate-300 opacity-0 group-hover:opacity-100 transition-opacity" />;
+    }
+    return sortConfig.direction === 'asc' 
+      ? <ArrowUp size={12} className="text-blue-500" /> 
+      : <ArrowDown size={12} className="text-blue-500" />;
+  };
 
   return (
     <div className="w-full flex flex-col bg-[#f8fafc] min-h-screen font-medium relative">
-      {/* Header */}
       <div className="bg-[#0f172a] py-4 px-10 flex justify-between items-center sticky top-0 z-40 text-white shadow-md border-b border-slate-800">
         <div className="flex items-center gap-2">
            <ShieldCheck size={16} className="text-[#3b82f6]" />
@@ -147,7 +191,6 @@ const Users: React.FC = () => {
       </div>
 
       <div className="p-10 w-full text-slate-900 flex-1 flex flex-col">
-        {/* Controls Toolbar */}
         <div className="mb-8 flex justify-between items-end">
           <div>
             <h1 className="text-4xl text-slate-900 uppercase font-black leading-none tracking-tight">Accounts</h1>
@@ -169,34 +212,48 @@ const Users: React.FC = () => {
               <span className={`text-[10px] font-black uppercase tracking-widest ${showBlockedOnly ? 'text-rose-500' : 'text-slate-500'}`}>Blocked Only</span>
             </label>
 
-            <select 
-              value={sortType} 
-              onChange={(e) => setSortType(e.target.value as any)} 
-              className="bg-white text-slate-700 border border-slate-200 text-[10px] font-black uppercase px-5 py-3.5 rounded-2xl outline-none cursor-pointer shadow-sm hover:border-blue-300 transition-all"
-            >
-              <option value="newest">Sort: Newest First</option>
-              <option value="oldest">Sort: Oldest First</option>
-              <option value="az">Sort: Name (A-Z)</option>
-              <option value="za">Sort: Name (Z-A)</option>
-            </select>
-
             <button onClick={exportToCSV} className="flex items-center gap-2 bg-[#0f172a] text-[#3b82f6] text-[10px] font-black uppercase px-6 py-3.5 rounded-2xl hover:bg-slate-800 shadow-lg transition-all active:scale-95 border border-slate-800">
               <Download size={14} /> Export
             </button>
           </div>
         </div>
 
-        {/* Data Table */}
         <div className="bg-white border border-slate-200 rounded-[2rem] shadow-sm flex-1 overflow-hidden flex flex-col">
           <div className="overflow-x-auto">
             <table className="w-full text-left border-collapse">
               <thead>
-                <tr className="bg-slate-50 border-b border-slate-200 text-[10px] uppercase tracking-widest text-slate-400">
-                  <th className="py-5 px-6 font-black w-16 text-center">ID</th>
-                  <th className="py-5 px-6 font-black">User Profile</th>
-                  <th className="py-5 px-6 font-black">Contact Info</th>
-                  <th className="py-5 px-6 font-black">Registration</th>
-                  <th className="py-5 px-6 font-black text-center">Status</th>
+                <tr className="bg-slate-50 border-b border-slate-200 text-[10px] uppercase tracking-widest text-slate-400 select-none">
+                  {/* Клікабельні заголовки */}
+                  <th 
+                    className="py-5 px-6 font-black w-24 text-center cursor-pointer hover:bg-slate-100 transition-colors group"
+                    onClick={() => handleSort('id')}
+                  >
+                    <div className="flex items-center justify-center gap-2">ID <SortIcon columnKey="id" /></div>
+                  </th>
+                  <th 
+                    className="py-5 px-6 font-black cursor-pointer hover:bg-slate-100 transition-colors group"
+                    onClick={() => handleSort('name')}
+                  >
+                    <div className="flex items-center gap-2">User Profile <SortIcon columnKey="name" /></div>
+                  </th>
+                  <th 
+                    className="py-5 px-6 font-black cursor-pointer hover:bg-slate-100 transition-colors group"
+                    onClick={() => handleSort('email')}
+                  >
+                    <div className="flex items-center gap-2">Contact Info <SortIcon columnKey="email" /></div>
+                  </th>
+                  <th 
+                    className="py-5 px-6 font-black cursor-pointer hover:bg-slate-100 transition-colors group"
+                    onClick={() => handleSort('date')}
+                  >
+                    <div className="flex items-center gap-2">Registration <SortIcon columnKey="date" /></div>
+                  </th>
+                  <th 
+                    className="py-5 px-6 font-black text-center cursor-pointer hover:bg-slate-100 transition-colors group"
+                    onClick={() => handleSort('status')}
+                  >
+                    <div className="flex items-center justify-center gap-2">Status <SortIcon columnKey="status" /></div>
+                  </th>
                   <th className="py-5 px-6 font-black text-right">Actions</th>
                 </tr>
               </thead>
@@ -291,7 +348,6 @@ const Users: React.FC = () => {
         </div>
       </div>
 
-      {/* Profile Modal (Unchanged structurally, matches the high-end look) */}
       {selectedUser && (
         <div className="fixed inset-0 z-[100] flex items-center justify-center p-6 bg-slate-900/60 backdrop-blur-sm" onClick={() => setSelectedUser(null)}>
           <div className="bg-white w-full max-w-2xl rounded-[3rem] shadow-2xl overflow-hidden relative" onClick={(e) => e.stopPropagation()}>
