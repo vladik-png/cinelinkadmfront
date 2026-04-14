@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-const INFRA_BASE_URL = import.meta.env.VITE_INFRA_API_URL || 'http://localhost:8082';
+const INFRA_BASE_URL = import.meta.env.VITE_INFRA_API_URL;
 
 export const getInfrastructureData = async () => {
   try {
