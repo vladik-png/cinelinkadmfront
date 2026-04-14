@@ -40,7 +40,7 @@ const Sidebar: React.FC = () => {
     localStorage.removeItem('admin_token');
     localStorage.removeItem('employee_id');
     
-    navigate('/login'); 
+    window.location.href = '/';
   }
 
   const menuItems = [
