@@ -5,7 +5,6 @@ import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContai
 import { Server, Activity, Globe, HardDrive, Cpu, LayoutGrid, Maximize2, Zap, Clock, Thermometer, ArrowLeft } from 'lucide-react';
 import { useSearchParams } from 'react-router-dom';
 
-// Вказуємо правильні адреси та порти твоїх серверів
 const KAMATERA_API = 'http://185.227.108.14:8081';
 const WINDOWS_API = 'http://e7dd0f5572ff.sn.mynetname.net:8080';
 
@@ -24,7 +23,6 @@ const Analytics: React.FC = () => {
 
       let combinedData: Record<string, any> = {};
 
-      // 1. Отримуємо дані з Каматери (8082)
       try {
         const kamRes = await axios.get(`${KAMATERA_API}/system-metrics`, { headers });
         if (kamRes.data && typeof kamRes.data === 'object') {
@@ -34,7 +32,6 @@ const Analytics: React.FC = () => {
         console.error("Помилка метрик Каматери:", e);
       }
 
-      // 2. Отримуємо дані з Windows (8081)
       try {
         const winRes = await axios.get(`${WINDOWS_API}/system-metrics`, { headers });
         if (winRes.data && typeof winRes.data === 'object') {
@@ -44,7 +41,6 @@ const Analytics: React.FC = () => {
         console.error("Помилка метрик Windows:", e);
       }
 
-      // 3. Оновлюємо історію графіків
       setNodesHistory(prevHistory => {
         const newHistory = { ...prevHistory };
         Object.keys(combinedData).forEach(nodeId => {
@@ -63,7 +59,7 @@ const Analytics: React.FC = () => {
               packet_loss: parseFloat(newNodeData.packet_loss) || 0,
             }
           ];
-          newHistory[nodeId] = updatedNodeHistory.slice(-20); // Зберігаємо останні 20 точок
+          newHistory[nodeId] = updatedNodeHistory.slice(-20);
         });
         return newHistory;
       });
@@ -76,11 +72,10 @@ const Analytics: React.FC = () => {
 
   useEffect(() => {
     fetchAllMetrics();
-    const interval = setInterval(fetchAllMetrics, 2000); // Оновлення кожні 2 секунди
+    const interval = setInterval(fetchAllMetrics, 2000);
     return () => clearInterval(interval);
   }, []);
 
-  // Якщо перейшли з конкретним сервером - одразу включаємо детальний вигляд
   useEffect(() => {
     if (selectedNode) {
       setViewMode('split');
@@ -89,7 +84,6 @@ const Analytics: React.FC = () => {
 
   const themeColor = '#0f172a';
 
-  // Фільтруємо вузли, якщо вибрано конкретний
   const displayedNodes = Object.keys(nodesHistory).filter(nodeId => 
     selectedNode ? nodeId === selectedNode : true
   );

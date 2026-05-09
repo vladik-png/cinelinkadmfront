@@ -62,7 +62,6 @@ const Users: React.FC = () => {
       
       const nextState = !user.is_active;
       
-      // Оновлюємо загальний список
       setUsers(prev => prev.map(u => 
         u.user_id === user.user_id ? { ...u, is_active: nextState } : u
       ));

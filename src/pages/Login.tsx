@@ -24,20 +24,19 @@ const Login: React.FC = () => {
     console.log("3. Відповідь від сервера отримана:", response);
 
     if (response.status === 200) {
-      const employeeData = response.data.results;
-
-      const realId = employeeData.user_id;
+      const data = response.data.results;
+      const realId = (typeof data === 'object' && data !== null) ? data.user_id : data;
 
       if (realId) {
-        console.log("4. Успіх! Отримано ID:", realId);
-        localStorage.setItem('admin_token', 'true'); 
-        localStorage.setItem('employee_id', realId.toString()); 
-        navigate('/dashboard');
-      } else {
-        console.warn("4. ID відсутній. Ось що прийшло:", employeeData);
-        setError("Помилка обробки даних: ID відсутній");
+          console.log("4. Успіх! Отримано ID:", realId);
+          localStorage.setItem('admin_token', 'true'); 
+          localStorage.setItem('employee_id', realId.toString()); 
+          navigate('/dashboard');
+        } else {
+          console.warn("4. ID відсутній. Ось що прийшло:", data);
+          setError("Помилка обробки даних: ID відсутній");
+        }
       }
-    }
   } catch (err: any) {
     console.error("3. СПІЙМАНО ПОМИЛКУ:", err);
     
