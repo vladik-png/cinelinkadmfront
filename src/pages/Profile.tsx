@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { getEmployeeProfile, deactivateEmployee } from '../api/profileService';
-import { Mail, Phone, Calendar, MapPin, Briefcase, ShieldCheck, LogIn, Trash2, Hexagon } from 'lucide-react';
+import { Mail, Phone, Calendar, MapPin, Briefcase, ShieldCheck, LogIn, Trash2, Hexagon, Hash } from 'lucide-react';
 
 interface EmployeeData {
   first_name: string;
@@ -13,7 +13,8 @@ interface EmployeeData {
   department_id: number;
   employee_id: number;
   last_login_at: string;
-  //created_at: string;
+  bg_img_url: string;
+  role_name?: string;
 }
 
 const formatDate = (dateString?: string) => {
@@ -39,21 +40,20 @@ const Profile: React.FC = () => {
   const [emp, setEmp] = useState<EmployeeData | null>(null);
   const [loading, setLoading] = useState(true);
 
-const fetchProfile = async () => {
-  const id = localStorage.getItem('employee_id');
-  if (!id) return;
-  try {
-    const data = await getEmployeeProfile(id);
-    if (data.results) {
-      console.log("Profile:", data.results);
-      setEmp(data.results);
+  const fetchProfile = async () => {
+    const id = localStorage.getItem('employee_id');
+    if (!id) return;
+    try {
+      const data = await getEmployeeProfile(id);
+      if (data.results) {
+        setEmp(data.results);
+      }
+    } catch (err) {
+      console.error("Error loading profile", err);
+    } finally {
+      setLoading(false);
     }
-  } catch (err) {
-    console.error("Error loading profile", err);
-  } finally {
-    setLoading(false);
-  }
-};
+  };
 
   const handleDeactivate = async () => {
     if (!emp) return;
@@ -100,43 +100,55 @@ const fetchProfile = async () => {
       </div>
 
       <div className="bg-[#1e1e2d] rounded-2xl border border-white/[0.05] overflow-hidden shadow-lg max-w-6xl">
-        
-        <div className="h-48 bg-[#151521] relative border-b border-white/[0.05] overflow-hidden">
-          <div className="absolute inset-0 opacity-20 bg-[radial-gradient(circle_at_top_right,_var(--tw-gradient-stops))] from-[#3699ff]/40 via-transparent to-transparent"></div>
-          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 opacity-5 pointer-events-none">
-             <Hexagon size={200} className="text-[#3699ff] fill-[#3699ff]" />
-          </div>
+        <div className="h-48 md:h-56 bg-[#151521] relative border-b border-white/[0.05] overflow-hidden"
+          style={{ 
+            backgroundImage: emp.bg_img_url ? `url(${emp.bg_img_url})` : 'none', 
+            backgroundSize: 'cover', 
+            backgroundPosition: 'center' 
+          }}>
+          {!emp.bg_img_url && (
+            <div className="absolute inset-0 bg-[#151521] flex items-center justify-center">
+              <Hexagon size={48} className="text-[#3699ff] fill-[#3699ff]/20" />
+            </div>
+          )}
         </div>
 
-        <div className="px-8 pb-12">
-          <div className="relative -mt-16 mb-10 flex flex-col md:flex-row gap-6 md:items-end">
-            <div className="relative inline-block">
+        <div className="px-6 md:px-8 pb-12">
+          
+          <div className="flex justify-between items-start mb-4">
+            <div className="relative -mt-16 sm:-mt-20 z-10">
               <img 
                 src={emp.avatar_url || `https://ui-avatars.com/api/?name=${emp.first_name}+${emp.last_name}&background=151521&color=3699ff`} 
                 alt="Avatar" 
-                className="w-32 h-32 rounded-2xl border-4 border-[#1e1e2d] bg-[#151521] object-cover shadow-xl relative z-10"
+                className="w-32 h-32 sm:w-36 sm:h-36 rounded-full border-[6px] border-[#1e1e2d] bg-[#151521] object-cover shadow-xl"
               />
-              <div className="absolute -bottom-2 -right-2 bg-[#1bc5bd] w-8 h-8 rounded-lg border-4 border-[#1e1e2d] flex items-center justify-center z-20">
+              <div className="absolute bottom-2 right-2 bg-[#1bc5bd] w-8 h-8 rounded-full border-4 border-[#1e1e2d] flex items-center justify-center z-20">
                 <ShieldCheck size={14} className="text-[#1e1e2d]" />
               </div>
             </div>
+          </div>
 
-            <div className="pb-1">
-              <div className="flex items-center gap-3 mb-2">
-                <span className="px-2.5 py-1 bg-[#3699ff]/10 text-[#3699ff] text-[10px] font-bold uppercase tracking-widest rounded border border-[#3699ff]/20">
-                  ID: {emp.employee_id}
-                </span>
-                <span className="flex items-center gap-1.5 text-xs text-[#a2a5b9] font-medium">
-                  <MapPin size={12} className="text-[#f64e60]" />
-                  {emp.location || 'Unknown Location'}
-                </span>
-              </div>
-              <h2 className="text-3xl font-bold text-white tracking-wide uppercase">
-                {emp.first_name} {emp.last_name}
-              </h2>
-              <p className="text-[#3699ff] text-xs font-semibold uppercase tracking-widest mt-1">
-                System Administrator
-              </p>
+          <div className="mb-10 border-b border-white/[0.05] pb-8">
+            <h2 className="text-2xl sm:text-3xl font-bold text-white uppercase tracking-wide leading-none">
+              {emp.first_name} {emp.last_name}
+            </h2>
+            <p className="text-[#3699ff] text-sm font-semibold uppercase tracking-widest mt-1.5 mb-4">
+              {emp.role_name || 'Administrator'}
+            </p>
+            
+            <div className="flex flex-wrap items-center gap-x-5 gap-y-2 text-sm font-medium text-[#a2a5b9]">
+              <span className="flex items-center gap-1.5">
+                <Hash size={16} className="text-[#a2a5b9]" />
+                ID: {emp.employee_id}
+              </span>
+              <span className="flex items-center gap-1.5">
+                <MapPin size={16} className="text-[#a2a5b9]" />
+                {emp.location || 'Unknown Location'}
+              </span>
+              <span className="flex items-center gap-1.5">
+                <Calendar size={16} className="text-[#a2a5b9]" />
+                Joined {formatDate(emp.hire_date) !== 'N/A' ? formatDate(emp.hire_date) : 'Recently'}
+              </span>
             </div>
           </div>
 
@@ -146,7 +158,6 @@ const fetchProfile = async () => {
             <InfoTile icon={<Calendar />} label="Hire Date" value={formatDate(emp.hire_date)} />
             <InfoTile icon={<Briefcase />} label="Department Unit" value={`Department #${emp.department_id || '0'}`} />
             <InfoTile icon={<LogIn />} label="Last Activity" value={formatDate(emp.last_login_at)} />
-            <InfoTile icon={<LogIn />} label="Created At" value={formatDate(emp.created_at)} />
           </div>
 
           <div className="pt-8 border-t border-white/[0.05]">
