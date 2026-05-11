@@ -85,7 +85,7 @@ const Analytics: React.FC = () => {
 
   return (
     <div className="w-full flex flex-col bg-[#151521] min-h-screen font-sans text-[#a2a5b9]">
-      <div className="bg-[#1e1e2d] py-4 px-8 flex justify-between items-center sticky top-0 z-50 shadow-sm border-b border-white/[0.05]">
+      {/* <div className="bg-[#1e1e2d] py-4 px-8 flex justify-between items-center sticky top-0 z-50 shadow-sm border-b border-white/[0.05]">
         <div className="flex items-center gap-3">
           <div className="p-2 bg-[#3699ff]/10 rounded-lg border border-[#3699ff]/20">
             <Activity size={18} className="text-[#3699ff]" />
@@ -98,7 +98,7 @@ const Analytics: React.FC = () => {
             Active Agents: <span className="text-white ml-1 font-black">{activeCount} Nodes</span>
           </div>
         </div>
-      </div>
+      </div> */}
 
       <div className="p-8 w-full max-w-7xl mx-auto flex-1">
         <div className="mb-8 border-b border-white/[0.05] pb-6 flex justify-between items-end">
