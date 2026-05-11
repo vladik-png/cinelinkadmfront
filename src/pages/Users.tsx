@@ -13,7 +13,7 @@ interface UserData {
   first_name: string;
   last_name: string;
   email: string;
-  joined_at: string;
+  created_at: string;
   avatar_url: string;
   is_active: boolean; 
   bio?: string;
@@ -135,7 +135,7 @@ const Users: React.FC = () => {
         case 'id': aValue = a.user_id; bValue = b.user_id; break;
         case 'name': aValue = `${a.first_name} ${a.last_name}`.toLowerCase(); bValue = `${b.first_name} ${b.last_name}`.toLowerCase(); break;
         case 'email': aValue = (a.email || '').toLowerCase(); bValue = (b.email || '').toLowerCase(); break;
-        case 'date': aValue = new Date(a.joined_at || 0).getTime(); bValue = new Date(b.joined_at || 0).getTime(); break;
+        case 'date': aValue = new Date(a.created_at || 0).getTime(); bValue = new Date(b.created_at || 0).getTime(); break;
         case 'status': aValue = a.is_active ? 1 : 0; bValue = b.is_active ? 1 : 0; break;
         default: return 0;
       }
@@ -154,7 +154,7 @@ const Users: React.FC = () => {
     const dataRows = processedUsers.map(u => [
       u.user_id, u.username, `${u.first_name} ${u.last_name}`, 
       u.is_active ? 'Active' : 'Banned',
-      formatDate(u.joined_at).date
+      formatDate(u.created_at).date
     ].join(delimiter));
     
     const csvContent = "\uFEFF" + [headers, ...dataRows].join("\n");
@@ -245,7 +245,7 @@ const Users: React.FC = () => {
             
             <tbody>
               {processedUsers.map((user) => {
-                const { date, time } = formatDate(user.joined_at);
+                const { date, time } = formatDate(user.created_at);
                 
                 return (
                 <tr 
@@ -405,7 +405,7 @@ const Users: React.FC = () => {
                 <div className="bg-[#151521] p-5 rounded-xl border border-white/[0.02]">
                   <p className="text-[10px] text-[#a2a5b9] uppercase font-bold tracking-widest mb-2">Registration Date</p>
                   <p className="text-white font-bold truncate text-sm">
-                    {formatDate(selectedUser.joined_at).date}
+                    {formatDate(selectedUser.created_at).date}
                   </p>
                 </div>
               </div>

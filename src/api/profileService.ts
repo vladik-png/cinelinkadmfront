@@ -8,7 +8,7 @@ export const getEmployeeProfile = async (id: string) => {
     const response = await axios.get(`${AWS_BASE_URL}/employee/${id}`);
     return response.data;
   } catch (error) {
-    console.error("Помилка завантаження профілю:", error);
+    console.error("Error loading profile:", error);
     throw error;
   }
 };
@@ -18,7 +18,7 @@ export const deactivateEmployee = async (id: number) => {
     const response = await axios.delete(`${AWS_BASE_URL}/employee/${id}`);
     return response.data;
   } catch (error) {
-    console.error("Помилка деактивації:", error);
+    console.error("Error deactivating employee:", error);
     throw error;
   }
 };
