@@ -5,8 +5,8 @@ import { getSystemMetrics } from '../api/metricsService';
 import { getLocalWeather } from '../api/weatherService';
 import { 
   ThermometerSun, MapPin, Users as UsersIcon, 
-  Activity, Server, Database, Clock, ArrowRight,
-  HardDrive, UserPlus, UserCircle, ShieldCheck 
+  Activity, Server, HardDrive, Clock,
+  UserPlus, MoreHorizontal, ShieldCheck
 } from 'lucide-react';
 
 const Dashboard: React.FC = () => {
@@ -16,16 +16,13 @@ const Dashboard: React.FC = () => {
   const [stats, setStats] = useState({ users: 0, activeNodes: 0 });
   const [lastUsers, setLastUsers] = useState<any[]>([]);
   const [time, setTime] = useState(new Date().toLocaleTimeString());
-  
 
   const [systemMetrics, setSystemMetrics] = useState({
-    cpu: 0, 
-    ram: 0,
-    disk: 0,
-    ping: 0
+    cpu: 0, ram: 0, disk: 0, ping: 0
   });
 
-const fetchWeather = async (location: string) => {
+  // ПОВЕРНУТО СТАРУ, РОБОЧУ ЛОГІКУ ПОГОДИ
+  const fetchWeather = async (location: string) => {
     if (!location) return;
     try {
       const data = await getLocalWeather(location);
@@ -46,19 +43,15 @@ const fetchWeather = async (location: string) => {
     try {
       const usersData = await getUsers();
       if (usersData?.results) {
-        const allUsers = usersData.results;
-        setStats(prev => ({ ...prev, users: allUsers.length }));
-        setLastUsers(allUsers.slice(-3).reverse());
+        setStats(prev => ({ ...prev, users: usersData.results.length }));
+        setLastUsers(usersData.results.slice(-4).reverse());
       }
 
       const allNodesData = await getSystemMetrics();
       const nodeIds = Object.keys(allNodesData);
       
       if (nodeIds.length > 0) {
-        let totalCpu = 0;
-        let totalRam = 0;
-        let totalDisk = 0;
-
+        let totalCpu = 0, totalRam = 0, totalDisk = 0;
         nodeIds.forEach(id => {
           totalCpu += allNodesData[id].cpu || 0;
           totalRam += allNodesData[id].ram || 0;
@@ -80,7 +73,6 @@ const fetchWeather = async (location: string) => {
         setEmployee(empData.results);
         fetchWeather(empData.results.location);
       }
-
     } catch (err: any) { 
       console.error("Помилка завантаження дашборду:", err); 
     }
@@ -94,96 +86,127 @@ const fetchWeather = async (location: string) => {
   }, []);
 
   return (
-    <div className="w-full min-h-screen flex flex-col bg-[#f8fafc] font-medium">
+    <div className="w-full min-h-screen bg-[#151521] text-[#a2a5b9] font-sans p-6 lg:p-8">
       
-      {}
-      <div className="bg-[#0f172a] py-4 px-10 flex justify-between items-center sticky top-0 z-50 shadow-md text-white border-b border-slate-800">
-        <div className="flex items-center gap-2">
-           <ShieldCheck size={16} className="text-[#3b82f6]" />
-           <h2 className="text-sm tracking-widest uppercase font-bold text-white leading-none pt-0.5">System Command Center</h2>
+      {/* --- TOP BANNER ROW --- */}
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 mb-6">
+        
+        {/* Welcome Banner */}
+        <div className="lg:col-span-8 bg-[#1e1e2d] rounded-xl flex items-center relative overflow-hidden border border-white/[0.05]">
+          <div className="absolute top-0 right-0 w-64 h-full bg-gradient-to-l from-[#3699ff]/10 to-transparent pointer-events-none"></div>
+          
+          <div className="p-8 z-10 w-full flex flex-col md:flex-row md:items-center justify-between">
+            <div>
+              <div className="flex items-center gap-2 mb-2">
+                <ShieldCheck size={18} className="text-[#3699ff]" />
+                <span className="text-sm font-semibold text-[#3699ff] tracking-wide">SYSTEM COMMAND</span>
+              </div>
+              <h2 className="text-2xl font-bold text-white mb-2">Welcome Back, Admin!</h2>
+              <p className="text-[#a2a5b9] text-sm">You have <span className="text-[#1bc5bd] font-medium">{stats.activeNodes} active nodes</span> currently running at optimal capacity.</p>
+            </div>
+          </div>
         </div>
 
-        <div className="flex items-center gap-4">
-          <div className="bg-blue-600/20 text-blue-400 text-[10px] px-4 py-2 rounded-xl border border-blue-600/30 uppercase tracking-widest font-black">
-            Status: <span className="text-white ml-1">Hello admin</span>
+        {/* Time & Weather Card */}
+        <div className="lg:col-span-4 bg-[#1e1e2d] rounded-xl p-8 border border-white/[0.05] flex flex-col justify-center">
+          <div className="flex justify-between items-start mb-6">
+            <div>
+              <p className="text-sm font-semibold text-[#a2a5b9] mb-1">Local Time</p>
+              <div className="flex items-center gap-2 text-2xl font-bold text-white">
+                <Clock size={20} className="text-[#ffa800]" />
+                {time}
+              </div>
+            </div>
+          </div>
+          
+          <div className="pt-5 border-t border-white/[0.05] flex justify-between items-center">
+             <div>
+                <p className="text-[10px] font-bold text-[#f64e60] uppercase tracking-widest mb-1 flex items-center gap-1">
+                  <MapPin size={12} className="text-[#f64e60]" /> 
+                  {employee?.location || "Locating..."}
+                </p>
+                <p className="text-xl font-bold text-white">
+                  {weather ? `${weather.temp}°C` : "--°C"}
+                </p>
+             </div>
+             <div className="w-12 h-12 rounded-lg bg-white/[0.03] flex items-center justify-center text-[#1bc5bd]">
+                <ThermometerSun size={24} />
+             </div>
           </div>
         </div>
       </div>
 
-      <div className="p-10 flex flex-col gap-10">
-        {}
-        <div className="w-full flex justify-between items-start">
-          <div>
-            <h1 className="text-[52px] font-black text-slate-900 uppercase tracking-tighter leading-none">Command Center</h1>
-            <p className="text-slate-400 font-bold uppercase text-[10px] tracking-[0.5em] mt-4 flex items-center gap-2">
-              <span className="w-2 h-2 bg-emerald-500 rounded-full animate-pulse"></span>
-              Real-time Analytics: {stats.activeNodes} Nodes Active
-            </p>
-          </div>
+      {/* --- STATS CARDS ROW --- */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-6">
+        <StatCard 
+          title="Total Users" value={stats.users} icon={<UsersIcon size={24} />} 
+          colorClass="text-[#3699ff]" bgClass="bg-[#3699ff]/10" onClick={() => navigate('/users')}
+        />
+        <StatCard 
+          title="Avg CPU Load" value={`${systemMetrics.cpu}%`} icon={<Activity size={24} />} 
+          colorClass="text-[#1bc5bd]" bgClass="bg-[#1bc5bd]/10" onClick={() => navigate('/analytics')}
+        />
+        <StatCard 
+          title="Avg RAM Usage" value={`${systemMetrics.ram}%`} icon={<Server size={24} />} 
+          colorClass="text-[#ffa800]" bgClass="bg-[#ffa800]/10" onClick={() => navigate('/analytics')}
+        />
+        <StatCard 
+          title="Total Disk" value={`${systemMetrics.disk}%`} icon={<HardDrive size={24} />} 
+          colorClass="text-[#f64e60]" bgClass="bg-[#f64e60]/10" onClick={() => navigate('/infrastructure')}
+        />
+      </div>
 
-          <div className="flex items-center gap-4">
-            <div className="bg-white px-6 py-3 rounded-[1.8rem] border border-slate-100 shadow-sm flex items-center gap-4">
-              <div className="text-right">
-                <p className="text-[8px] font-black text-slate-400 uppercase tracking-widest leading-none mb-1">
-                  <MapPin size={8} className="inline mr-1" /> {employee?.location || "Locating..."}
-                </p>
-                <p className="text-lg font-black text-slate-900 leading-none">
-                  {weather ? `${weather.temp}°C` : "--°C"}
-                </p>
-              </div>
-              <div className="bg-blue-50 p-2.5 rounded-xl text-blue-600">
-                <ThermometerSun size={18} />
-              </div>
-            </div>
-
-            <div className="bg-slate-900 text-blue-400 px-6 py-3 rounded-[1.8rem] font-mono text-sm shadow-xl flex items-center gap-3 border border-slate-800">
-              <Clock size={16} /> {time}
-            </div>
-          </div>
-        </div>
-
-        {}
-        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6 w-full">
-          <NavCard icon={<UsersIcon />} title="Total Users" value={stats.users} unit="DB" color="blue" onClick={() => navigate('/users')} />
-          <NavCard icon={<Activity />} title="Avg CPU Load" value={systemMetrics.cpu} unit="%" color="indigo" onClick={() => navigate('/analytics')} />
-          <NavCard icon={<Server />} title="Avg RAM Usage" value={systemMetrics.ram} unit="%" color="emerald" onClick={() => navigate('/analytics')} />
-          <NavCard icon={<HardDrive />} title="Total Disk" value={systemMetrics.disk} unit="%" color="rose" onClick={() => navigate('/infrastructure')} />
-        </div>
-
-        {}
-        <div className="w-full bg-white rounded-[2.2rem] p-10 border border-slate-100 shadow-sm">
-          <div className="flex justify-between items-center mb-10">
-            <div className="flex items-center gap-4">
-              <div className="bg-blue-50 p-3 rounded-2xl text-blue-600">
-                <UserPlus size={20} />
-              </div>
-              <h3 className="text-slate-900 font-black uppercase tracking-widest text-xs">Recent Registrations</h3>
-            </div>
-
+      {/* --- RECENT USERS ROW --- */}
+      <div className="grid grid-cols-1 gap-6">
+        <div className="bg-[#1e1e2d] rounded-xl border border-white/[0.05] overflow-hidden">
+          <div className="px-6 py-5 border-b border-white/[0.05] flex justify-between items-center">
+            <h3 className="text-lg font-semibold text-white flex items-center gap-2">
+               <UserPlus size={18} className="text-[#3699ff]" />
+               Recent Registrations
+            </h3>
             <button 
               onClick={() => navigate('/users')}
-              className="flex items-center gap-3 bg-slate-900 text-blue-400 px-8 py-3 rounded-2xl hover:opacity-90 transition-all active:scale-95 shadow-lg border border-slate-800"
+              className="text-xs font-semibold px-4 py-2 bg-white/[0.05] hover:bg-white/[0.1] text-white rounded-md transition-colors"
             >
-              <span className="text-[10px] font-black uppercase tracking-widest">View All Users</span>
-              <ArrowRight size={14} />
+              View All
             </button>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            {lastUsers.map((user: any) => (
-              <div key={user.user_id} className="flex items-center gap-4 bg-slate-50/50 p-6 rounded-[2rem] border border-slate-100 transition-all">
-                <div className="w-12 h-12 rounded-2xl overflow-hidden bg-white border border-slate-200 flex-shrink-0">
-                  {user.avatar_url ? (
-                    <img src={user.avatar_url} className="w-full h-full object-cover" alt="avatar" />
-                  ) : (
-                    <div className="w-full h-full flex items-center justify-center text-slate-300">
-                      <UserCircle size={24} />
-                    </div>
-                  )}
+          <div className="p-0">
+            {lastUsers.map((user: any, index: number) => (
+              <div 
+                key={user.user_id} 
+                onClick={() => navigate('/users')} // ВЕСЬ РЯДОК ТЕПЕР КЛІКАБЕЛЬНИЙ
+                className={`px-6 py-4 flex items-center justify-between hover:bg-white/[0.03] cursor-pointer transition-colors group ${index !== lastUsers.length - 1 ? 'border-b border-white/[0.05]' : ''}`}
+              >
+                <div className="flex items-center gap-4">
+                  <div className="w-10 h-10 rounded-lg overflow-hidden bg-white/[0.08] border border-white/[0.05] flex items-center justify-center flex-shrink-0">
+                    {user.avatar_url ? (
+                      <img src={user.avatar_url} className="w-full h-full object-cover" alt="avatar" />
+                    ) : (
+                      <span className="text-white font-bold text-sm">
+                        {user.first_name?.charAt(0) || "U"}
+                      </span>
+                    )}
+                  </div>
+                  <div>
+                    <p className="text-sm font-semibold text-white group-hover:text-[#3699ff] transition-colors">
+                      {user.first_name} {user.last_name || ""}
+                    </p>
+                    <p className="text-xs text-[#a2a5b9] mt-0.5">
+                      @{user.username}
+                    </p>
+                  </div>
                 </div>
-                <div className="min-w-0">
-                  <p className="text-xs font-black text-slate-800 uppercase truncate">{user.first_name} {user.last_name || ""}</p>
-                  <p className="text-[10px] font-bold text-blue-500 uppercase tracking-widest">@{user.username}</p>
+                
+                <div className="flex items-center gap-4">
+                  <span className="hidden sm:inline-flex px-2.5 py-1 bg-[#1bc5bd]/10 text-[#1bc5bd] text-[10px] font-bold uppercase rounded">
+                    Active
+                  </span>
+                  {/* ІКОНКА ТЕПЕР СВІТЛІША І КРАЩЕ ВИДНА */}
+                  <div className="w-8 h-8 rounded-md bg-white/[0.1] group-hover:bg-[#3699ff] flex items-center justify-center text-white transition-colors">
+                    <MoreHorizontal size={16} />
+                  </div>
                 </div>
               </div>
             ))}
@@ -194,24 +217,19 @@ const fetchWeather = async (location: string) => {
   );
 };
 
-const NavCard = ({ icon, title, value, unit, color, onClick }: any) => {
-  const colors: any = {
-    blue: "text-blue-600 bg-blue-50",
-    indigo: "text-indigo-600 bg-indigo-50",
-    emerald: "text-emerald-600 bg-emerald-50",
-    rose: "text-rose-600 bg-rose-50"
-  };
+const StatCard = ({ title, value, icon, colorClass, bgClass, onClick }: any) => {
   return (
-    <div onClick={onClick} className="bg-white p-8 rounded-[2.2rem] border border-slate-100 shadow-sm hover:shadow-xl transition-all cursor-pointer group relative">
-      <div className={`w-12 h-12 rounded-2xl flex items-center justify-center mb-6 ${colors[color]}`}>
-        {React.cloneElement(icon, { size: 22 })}
+    <div 
+      onClick={onClick}
+      className="bg-[#1e1e2d] rounded-xl p-6 border border-white/[0.05] flex items-center justify-between cursor-pointer hover:border-white/[0.15] hover:-translate-y-1 hover:shadow-lg hover:shadow-black/20 transition-all duration-300 group"
+    >
+      <div>
+        <p className="text-sm font-medium text-[#a2a5b9] mb-1 group-hover:text-white transition-colors">{title}</p>
+        <h3 className="text-2xl font-bold text-white">{value}</h3>
       </div>
-      <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">{title}</p>
-      <div className="flex items-baseline gap-2">
-        <p className="text-4xl font-black text-slate-900 tracking-tighter">{value}</p>
-        <p className="text-[10px] font-bold text-slate-300 uppercase">{unit}</p>
+      <div className={`w-14 h-14 rounded-xl flex items-center justify-center ${bgClass} ${colorClass} group-hover:scale-110 transition-transform duration-300`}>
+        {icon}
       </div>
-      <ArrowRight className="absolute top-8 right-8 text-slate-100 group-hover:text-blue-600 transition-colors" size={20} />
     </div>
   );
 };
