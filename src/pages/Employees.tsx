@@ -116,7 +116,6 @@ const Employees: React.FC = () => {
     return result;
   }, [employees, searchTerm, sortConfig]);
 
-  // Допоміжний компонент для відмальовки іконки сортування
   const SortIcon = ({ columnKey }: { columnKey: SortKey }) => {
     if (sortConfig.key !== columnKey) {
       return <ArrowUpDown size={12} className="text-slate-300 opacity-0 group-hover:opacity-100 transition-opacity" />;
@@ -128,7 +127,6 @@ const Employees: React.FC = () => {
 
   return (
     <div className="w-full flex flex-col bg-[#f8fafc] min-h-screen font-medium relative">
-      {/* Top Header */}
       <div className="bg-[#0f172a] py-4 px-10 flex justify-between items-center sticky top-0 z-40 text-white shadow-md border-b border-slate-800">
         <div className="flex items-center gap-2">
            <ShieldCheck size={16} className="text-[#3b82f6]" />
@@ -147,7 +145,6 @@ const Employees: React.FC = () => {
       </div>
 
       <div className="p-10 w-full text-slate-900 flex-1 flex flex-col">
-        {/* Main Header Controls */}
         <div className="mb-8 flex justify-between items-end">
           <div>
             <h1 className="text-4xl text-slate-900 uppercase font-black leading-none tracking-tight">Personnel</h1>
@@ -168,7 +165,6 @@ const Employees: React.FC = () => {
           </div>
         </div>
 
-        {/* Table Container */}
         <div className="bg-white border border-slate-200 rounded-[2rem] shadow-sm flex-1 overflow-hidden flex flex-col">
           <div className="overflow-x-auto">
             <table className="w-full text-left border-collapse">
@@ -261,7 +257,6 @@ const Employees: React.FC = () => {
         </div>
       </div>
 
-      {/* Profile Modal */}
       {selectedEmployee && (
         <div className="fixed inset-0 z-[100] flex items-center justify-center p-6 bg-slate-900/60 backdrop-blur-sm" onClick={() => setSelectedEmployee(null)}>
           <div className="bg-white w-full max-w-2xl rounded-[3rem] shadow-2xl overflow-hidden relative" onClick={(e) => e.stopPropagation()}>

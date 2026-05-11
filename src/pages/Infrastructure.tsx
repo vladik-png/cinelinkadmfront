@@ -5,7 +5,7 @@ import axios from 'axios';
 import { RefreshCcw, Activity, Server, Cpu, HardDrive, MapPin, Globe, Thermometer, Wifi, AlertTriangle } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 
-// Вказуємо адреси твоїх двох Мастерів
+// Вказуємо адреси двох Мастерів
 const WINDOWS_API = 'http://e7dd0f5572ff.sn.mynetname.net:8080';
 const KAMATERA_API = 'http://185.227.108.14:8081';
 
@@ -36,7 +36,6 @@ const Infrastructure: React.FC = () => {
     try {
       setLoading(true);
       
-      // 1. Отримуємо дані AWS
       let awsServers: UnifiedServer[] = [];
       let awsRegion = 'UNKNOWN';
       try {
@@ -58,7 +57,6 @@ const Infrastructure: React.FC = () => {
         console.error("Помилка AWS API:", err);
       }
 
-      // 2. Отримуємо дані Windows (порт 8080)
       let winServers: UnifiedServer[] = [];
       try {
         const winRes = await axios.get(`${WINDOWS_API}/system-metrics`);
@@ -81,7 +79,6 @@ const Infrastructure: React.FC = () => {
         console.error("Помилка Windows Agent API:", err);
       }
 
-      // 3. Отримуємо дані Kamatera Linux (порт 8081)
       let kamServers: UnifiedServer[] = [];
       try {
         const kamRes = await axios.get(`${KAMATERA_API}/system-metrics`);
@@ -104,7 +101,6 @@ const Infrastructure: React.FC = () => {
         console.error("Помилка Kamatera Agent API:", err);
       }
 
-      // 4. Об'єднуємо всі сервери в один список
       setServers([...awsServers, ...winServers, ...kamServers]);
       setRegion(awsRegion);
 
@@ -215,7 +211,6 @@ const Infrastructure: React.FC = () => {
                   <code className="text-[10px] text-slate-500 bg-slate-50 border border-slate-100 px-2 py-1 rounded tracking-tight">{server.id}</code>
                 </div>
 
-                {/* Плитки метрик відображаються для Windows І для Linux */}
                 {hasMetrics && (
                   <div className="grid grid-cols-2 gap-3 mb-6">
                      <div className="bg-slate-50 p-3 rounded-xl border border-slate-100">
@@ -270,7 +265,6 @@ const Infrastructure: React.FC = () => {
                   </div>
                 )}
 
-                {/* Якщо це AWS (не має метрик), показуємо спрощену плашку */}
                 {!hasMetrics && (
                   <div className="mb-6 bg-slate-50 p-3 rounded-xl border border-slate-100 flex items-center gap-2 text-slate-500">
                     <Globe size={14} className="text-orange-400"/>
@@ -278,7 +272,6 @@ const Infrastructure: React.FC = () => {
                   </div>
                 )}
 
-                {/* Кнопки Start/Stop для AWS (без метрик) */}
                 {!hasMetrics && (
                   <div className="flex gap-3 mt-auto">
                     <button 
