@@ -5,7 +5,6 @@ import axios from 'axios';
 import { RefreshCcw, Activity, Server, Cpu, HardDrive, MapPin, Globe, Thermometer, Wifi, AlertTriangle } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 
-// Вказуємо адреси двох Мастерів
 const WINDOWS_API = 'http://e7dd0f5572ff.sn.mynetname.net:8080';
 const KAMATERA_API = 'http://185.227.108.14:8081';
 
@@ -28,7 +27,6 @@ interface UnifiedServer {
 
 const Infrastructure: React.FC = () => {
   const [servers, setServers] = useState<UnifiedServer[]>([]);
-  const [region, setRegion] = useState<string>('FETCHING...');
   const [loading, setLoading] = useState<boolean>(true);
   const navigate = useNavigate();
 
@@ -37,10 +35,8 @@ const Infrastructure: React.FC = () => {
       setLoading(true);
       
       let awsServers: UnifiedServer[] = [];
-      let awsRegion = 'UNKNOWN';
       try {
         const awsData = await getInfrastructureData();
-        awsRegion = awsData.region;
         
         awsServers = awsData.instances.map((inst: any) => {
           const nameTag = inst.Tags?.find((t: any) => t.Key === 'Name');
@@ -54,7 +50,7 @@ const Infrastructure: React.FC = () => {
           };
         });
       } catch (err) {
-        console.error("Помилка AWS API:", err);
+        console.error("AWS API Error:", err);
       }
 
       let winServers: UnifiedServer[] = [];
@@ -76,7 +72,7 @@ const Infrastructure: React.FC = () => {
           uptime: s.time
         }));
       } catch (err) {
-        console.error("Помилка Windows Agent API:", err);
+        console.error("Windows Agent API Error:", err);
       }
 
       let kamServers: UnifiedServer[] = [];
@@ -98,11 +94,10 @@ const Infrastructure: React.FC = () => {
           uptime: s.time
         }));
       } catch (err) {
-        console.error("Помилка Kamatera Agent API:", err);
+        console.error("Kamatera Agent API Error:", err);
       }
 
       setServers([...awsServers, ...winServers, ...kamServers]);
-      setRegion(awsRegion);
 
     } catch (err) {
       console.error("Global Infrastructure Error:", err);
@@ -112,14 +107,11 @@ const Infrastructure: React.FC = () => {
   };
 
   const handlePowerAction = async (action: 'start' | 'stop', id: string) => {
-    console.log(`Запит на ${action} для вузла: ${id}`);
     try {
-      const result = await performPowerAction(action, id);
-      console.log(`Сервер відповів:`, result);
+      await performPowerAction(action, id);
       setTimeout(fetchData, 1000); 
     } catch (err: any) {
-      console.error(`Помилка дії ${action}:`, err.message);
-      alert(`Не вдалося виконати дію: ${err.message}`);
+      alert(`Action failed: ${err.message}`);
     }
   };
 
@@ -129,75 +121,62 @@ const Infrastructure: React.FC = () => {
     return () => clearInterval(interval);
   }, []);
 
-  const themeColor = '#0f172a';
-
   return (
-    <div className="w-full flex flex-col bg-[#f8fafc] min-h-screen font-medium">
-      <div style={{ backgroundColor: themeColor }} className="py-4 px-10 flex justify-between items-center sticky top-0 z-50 shadow-md text-white">
-        <h2 className="text-sm tracking-widest uppercase font-bold flex items-center gap-2">
-          <Globe size={18} className="text-blue-400" />
-          Hybrid Infrastructure Center
-        </h2>
-        <div className="bg-[#1e293b] text-blue-400 text-[10px] px-4 py-1.5 rounded-lg border border-blue-600/20 uppercase tracking-widest">
-          AWS Region: <span className="text-white ml-1">{region}</span>
-        </div>
-      </div>
-
-      <div className="p-10 w-full">
-        <div className="flex justify-between items-center mb-10 border-b border-slate-200 pb-8">
+    <div className="w-full flex flex-col bg-[#151521] min-h-screen font-sans text-[#a2a5b9]">
+      <div className="p-8 w-full max-w-7xl mx-auto flex-1">
+        <div className="flex justify-between items-end mb-8 border-b border-white/[0.05] pb-6">
           <div>
-            <h1 className="text-4xl text-slate-800 uppercase tracking-tighter font-black">System Nodes</h1>
-            <p className="text-slate-400 mt-1 uppercase text-[10px] tracking-[0.3em]">AWS, Linux & Windows Control Pipeline</p>
+            <h1 className="text-3xl text-white uppercase tracking-wide font-bold leading-none">System Nodes</h1>
+            <p className="text-[#a2a5b9] mt-2 uppercase text-[10px] tracking-widest font-semibold">AWS, Linux & Windows Control Pipeline</p>
           </div>
           <button 
             onClick={fetchData}
-            style={{ backgroundColor: themeColor }}
-            className="p-5 text-white rounded-2xl hover:opacity-90 transition-all shadow-xl active:scale-95 border border-slate-700/50"
+            className="p-3 bg-[#1e1e2d] text-[#a2a5b9] hover:text-white rounded-xl transition-all active:scale-95 border border-white/[0.05] hover:border-white/[0.1]"
           >
-            <RefreshCcw size={28} className={loading ? 'animate-spin' : ''} />
+            <RefreshCcw size={20} className={loading ? 'animate-spin text-[#3699ff]' : ''} />
           </button>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 gap-8">
+        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
           {servers.map((server) => {
             const isRunning = server.state === 'running';
             const isTransitioning = ['pending', 'stopping', 'starting', 'shutting-down'].includes(server.state);
             const isWindows = server.type === 'WINDOWS';
             const isKamatera = server.type === 'KAMATERA';
-            const hasMetrics = isWindows || isKamatera; // Метрики є у обох агентів
+            const hasMetrics = isWindows || isKamatera; 
 
-            let tempColor = 'text-slate-700';
-            if (server.temp && Number(server.temp) >= 80) tempColor = 'text-rose-500';
-            else if (server.temp && Number(server.temp) >= 65) tempColor = 'text-amber-500';
+            let tempColor = 'text-white';
+            if (server.temp && Number(server.temp) >= 80) tempColor = 'text-[#f64e60]';
+            else if (server.temp && Number(server.temp) >= 65) tempColor = 'text-[#ffa800]';
 
             return (
               <div 
                 key={server.id} 
                 onClick={() => navigate(`/analytics?node=${server.id}`)}
-                className={`cursor-pointer bg-white rounded-[1.5rem] border shadow-sm p-8 hover:shadow-md transition-all border-t-2 ${
-                  isWindows ? 'border-t-indigo-500/50' : isKamatera ? 'border-t-cyan-500/50' : 'border-t-orange-500/50'
+                className={`cursor-pointer bg-[#1e1e2d] rounded-2xl border border-white/[0.05] shadow-lg p-6 hover:border-white/[0.1] transition-all border-t-2 ${
+                  isWindows ? 'border-t-[#8950fc]/50' : isKamatera ? 'border-t-[#1bc5bd]/50' : 'border-t-[#ffa800]/50'
                 }`}
               >
                 
                 <div className="flex justify-between items-start mb-6">
-                  <div className={`p-2.5 rounded-xl transition-all shadow-lg ${
+                  <div className={`p-3 rounded-xl border ${
                     isRunning 
-                    ? 'bg-emerald-100 text-emerald-600 shadow-emerald-200/20' 
-                    : 'bg-rose-100 text-rose-600 shadow-rose-200/20'
+                    ? 'bg-[#1bc5bd]/10 text-[#1bc5bd] border-[#1bc5bd]/20' 
+                    : 'bg-[#f64e60]/10 text-[#f64e60] border-[#f64e60]/20'
                   }`}>
-                    {isWindows || isKamatera ? <Server size={24} /> : <Activity size={24} />}
+                    {isWindows || isKamatera ? <Server size={20} /> : <Activity size={20} />}
                   </div>
                   
                   <div className="flex flex-col items-end gap-2">
-                    <span className={`px-3 py-1 rounded-lg text-[10px] uppercase tracking-widest border font-bold ${
-                      isWindows ? 'bg-indigo-50 text-indigo-600 border-indigo-100' : 
-                      isKamatera ? 'bg-cyan-50 text-cyan-600 border-cyan-100' :
-                      'bg-orange-50 text-orange-600 border-orange-100'
+                    <span className={`px-2.5 py-1 rounded text-[9px] uppercase tracking-widest border font-bold ${
+                      isWindows ? 'bg-[#8950fc]/10 text-[#8950fc] border-[#8950fc]/20' : 
+                      isKamatera ? 'bg-[#1bc5bd]/10 text-[#1bc5bd] border-[#1bc5bd]/20' :
+                      'bg-[#ffa800]/10 text-[#ffa800] border-[#ffa800]/20'
                     }`}>
                       {isKamatera ? 'LINUX NODE' : `${server.type} NODE`}
                     </span>
-                    <span className={`px-2 py-0.5 rounded-md text-[9px] uppercase tracking-widest border ${
-                      isRunning ? 'bg-emerald-50 text-emerald-600 border-emerald-100' : 'bg-rose-50 text-rose-600 border-rose-100'
+                    <span className={`px-2.5 py-1 rounded text-[9px] uppercase tracking-widest border font-bold ${
+                      isRunning ? 'bg-[#1bc5bd]/10 text-[#1bc5bd] border-[#1bc5bd]/20' : 'bg-[#f64e60]/10 text-[#f64e60] border-[#f64e60]/20'
                     }`}>
                       {server.state}
                     </span>
@@ -205,70 +184,70 @@ const Infrastructure: React.FC = () => {
                 </div>
 
                 <div className="mb-6">
-                  <h3 className="text-xl text-slate-800 font-black mb-2 truncate tracking-tight">
+                  <h3 className="text-lg text-white font-bold mb-1.5 truncate tracking-wide uppercase">
                     {isKamatera ? 'Kamatera Linux Server' : server.name}
                   </h3>
-                  <code className="text-[10px] text-slate-500 bg-slate-50 border border-slate-100 px-2 py-1 rounded tracking-tight">{server.id}</code>
+                  <code className="text-[10px] text-[#a2a5b9] bg-[#151521] border border-white/[0.05] px-2 py-1 rounded tracking-widest font-semibold">{server.id}</code>
                 </div>
 
                 {hasMetrics && (
                   <div className="grid grid-cols-2 gap-3 mb-6">
-                     <div className="bg-slate-50 p-3 rounded-xl border border-slate-100">
-                        <div className="flex items-center gap-1.5 text-slate-400 mb-1">
+                     <div className="bg-[#151521] p-3 rounded-xl border border-white/[0.02]">
+                        <div className="flex items-center gap-1.5 text-[#a2a5b9] mb-1">
                           <Cpu size={12} />
-                          <span className="text-[8px] uppercase tracking-widest font-black">CPU</span>
+                          <span className="text-[9px] uppercase tracking-widest font-bold">CPU</span>
                         </div>
-                        <p className="font-bold text-slate-700 text-sm">{server.cpu}%</p>
+                        <p className="font-bold text-white text-sm">{server.cpu}%</p>
                      </div>
-                     <div className="bg-slate-50 p-3 rounded-xl border border-slate-100">
-                        <div className="flex items-center gap-1.5 text-slate-400 mb-1">
+                     <div className="bg-[#151521] p-3 rounded-xl border border-white/[0.02]">
+                        <div className="flex items-center gap-1.5 text-[#a2a5b9] mb-1">
                           <Thermometer size={12} />
-                          <span className="text-[8px] uppercase tracking-widest font-black">TEMP</span>
+                          <span className="text-[9px] uppercase tracking-widest font-bold">TEMP</span>
                         </div>
                         <p className={`font-bold text-sm ${tempColor}`}>{server.temp}°C</p>
                      </div>
-                     <div className="bg-slate-50 p-3 rounded-xl border border-slate-100">
-                        <div className="flex items-center gap-1.5 text-slate-400 mb-1">
+                     <div className="bg-[#151521] p-3 rounded-xl border border-white/[0.02]">
+                        <div className="flex items-center gap-1.5 text-[#a2a5b9] mb-1">
                           <Activity size={12} />
-                          <span className="text-[8px] uppercase tracking-widest font-black">RAM</span>
+                          <span className="text-[9px] uppercase tracking-widest font-bold">RAM</span>
                         </div>
-                        <p className="font-bold text-slate-700 text-sm">{server.ram} GB</p>
+                        <p className="font-bold text-white text-sm">{server.ram} GB</p>
                      </div>
-                     <div className="bg-slate-50 p-3 rounded-xl border border-slate-100">
-                        <div className="flex items-center gap-1.5 text-slate-400 mb-1">
+                     <div className="bg-[#151521] p-3 rounded-xl border border-white/[0.02]">
+                        <div className="flex items-center gap-1.5 text-[#a2a5b9] mb-1">
                           <Wifi size={12} />
-                          <span className="text-[8px] uppercase tracking-widest font-black">PING</span>
+                          <span className="text-[9px] uppercase tracking-widest font-bold">PING</span>
                         </div>
                         <div className="flex items-baseline gap-1">
-                          <p className="font-bold text-slate-700 text-sm">{server.ping}</p>
-                          <span className="text-[8px] text-slate-400 font-bold">ms</span>
+                          <p className="font-bold text-white text-sm">{server.ping}</p>
+                          <span className="text-[9px] text-[#a2a5b9] font-bold">ms</span>
                         </div>
                      </div>
 
                      {server.packetLoss !== undefined && server.packetLoss > 0 && (
-                        <div className="col-span-2 bg-rose-50 p-2.5 rounded-xl border border-rose-100 flex items-center justify-between">
+                        <div className="col-span-2 bg-[#f64e60]/10 p-3 rounded-xl border border-[#f64e60]/20 flex items-center justify-between">
                           <div className="flex items-center gap-2">
-                            <AlertTriangle size={14} className="text-rose-500" />
-                            <span className="text-[9px] uppercase tracking-widest font-black text-rose-600">Packet Loss</span>
+                            <AlertTriangle size={14} className="text-[#f64e60]" />
+                            <span className="text-[9px] uppercase tracking-widest font-bold text-[#f64e60]">Packet Loss</span>
                           </div>
-                          <span className="text-xs font-bold text-rose-600">{server.packetLoss}%</span>
+                          <span className="text-xs font-bold text-[#f64e60]">{server.packetLoss}%</span>
                         </div>
                      )}
 
-                     <div className="col-span-2 bg-slate-50 p-3 rounded-xl border border-slate-100 flex justify-between items-center mt-1">
-                        <div className="flex items-center gap-1.5 text-slate-400">
-                          <MapPin size={12} className={isKamatera ? "text-cyan-500" : "text-blue-500"} />
-                          <span className="text-[9px] uppercase tracking-wider font-bold truncate max-w-[120px]">{server.location}</span>
+                     <div className="col-span-2 bg-[#151521] p-3 rounded-xl border border-white/[0.02] flex justify-between items-center mt-1">
+                        <div className="flex items-center gap-1.5 text-[#a2a5b9]">
+                          <MapPin size={12} className={isKamatera ? "text-[#1bc5bd]" : "text-[#8950fc]"} />
+                          <span className="text-[9px] uppercase tracking-widest font-bold truncate max-w-[120px]">{server.location}</span>
                         </div>
-                        <span className="text-[10px] font-mono font-bold text-slate-500">{server.ip}</span>
+                        <span className="text-[10px] font-mono font-semibold text-[#a2a5b9]">{server.ip}</span>
                      </div>
                   </div>
                 )}
 
                 {!hasMetrics && (
-                  <div className="mb-6 bg-slate-50 p-3 rounded-xl border border-slate-100 flex items-center gap-2 text-slate-500">
-                    <Globe size={14} className="text-orange-400"/>
-                    <span className="text-[10px] font-mono font-bold">{server.ip || 'No IP'}</span>
+                  <div className="mb-6 bg-[#151521] p-3 rounded-xl border border-white/[0.02] flex items-center gap-2 text-[#a2a5b9]">
+                    <Globe size={14} className="text-[#ffa800]"/>
+                    <span className="text-[10px] font-mono font-semibold">{server.ip || 'No IP'}</span>
                   </div>
                 )}
 
@@ -277,15 +256,14 @@ const Infrastructure: React.FC = () => {
                     <button 
                       onClick={(e) => { e.stopPropagation(); handlePowerAction('start', server.id); }}
                       disabled={isRunning || isTransitioning}
-                      style={{ backgroundColor: themeColor }}
-                      className="flex-1 text-white py-3 rounded-xl text-[10px] uppercase tracking-widest hover:opacity-90 disabled:opacity-20 transition-all shadow-sm font-bold"
+                      className="flex-1 bg-[#1bc5bd]/10 text-[#1bc5bd] border border-[#1bc5bd]/20 py-3 rounded-xl text-[10px] uppercase tracking-widest hover:bg-[#1bc5bd]/20 disabled:opacity-30 transition-all font-bold"
                     >
                       Start
                     </button>
                     <button 
                       onClick={(e) => { e.stopPropagation(); handlePowerAction('stop', server.id); }}
                       disabled={!isRunning || isTransitioning}
-                      className="flex-1 border border-slate-200 text-slate-400 py-3 rounded-xl text-[10px] uppercase tracking-widest hover:bg-rose-50 hover:text-rose-500 transition-all disabled:opacity-20 font-bold"
+                      className="flex-1 bg-[#f64e60]/10 text-[#f64e60] border border-[#f64e60]/20 py-3 rounded-xl text-[10px] uppercase tracking-widest hover:bg-[#f64e60]/20 transition-all disabled:opacity-30 font-bold"
                     >
                       Stop
                     </button>

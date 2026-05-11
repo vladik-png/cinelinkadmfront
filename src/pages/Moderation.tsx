@@ -118,7 +118,7 @@ const Moderation: React.FC = () => {
   return (
     <div className="w-full flex flex-col bg-[#151521] min-h-screen font-sans text-[#a2a5b9] relative">
       <div className="bg-[#1e1e2d] py-4 px-8 flex justify-between items-center sticky top-0 z-50 shadow-sm border-b border-white/[0.05]">
-        <div className="flex items-center gap-3">
+        {/* <div className="flex items-center gap-3">
           <div className="p-2 bg-[#f64e60]/10 rounded-lg border border-[#f64e60]/20">
             <ShieldAlert size={18} className="text-[#f64e60]" />
           </div>
@@ -138,7 +138,7 @@ const Moderation: React.FC = () => {
 
         <button onClick={fetchData} className="p-2.5 hover:bg-white/[0.05] border border-transparent hover:border-white/[0.05] rounded-xl transition-all text-[#a2a5b9] hover:text-white">
           <RefreshCcw size={16} className={loading ? 'animate-spin text-[#3699ff]' : ''} />
-        </button>
+        </button> */}
       </div>
 
       <div className="p-8 space-y-10 max-w-7xl mx-auto w-full">
