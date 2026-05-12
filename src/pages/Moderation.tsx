@@ -1,8 +1,8 @@
 import * as React from 'react';
 import { useEffect, useState } from 'react';
 import axios from 'axios';
-import { 
-  ShieldAlert, Activity, Database, Server, Clock, 
+import {
+  ShieldAlert, Activity, Database, Server, Clock,
   Trash2, Zap, CheckCircle, RefreshCcw, Search, AlertTriangle, Settings, FileText
 } from 'lucide-react';
 
@@ -12,7 +12,7 @@ interface ServerAlert {
   id: number;
   created_at: string;
   server_id: string;
-  type: string; 
+  type: string;
   message: string;
   resolved: boolean;
 }
@@ -68,7 +68,7 @@ const Moderation: React.FC = () => {
 
       setAlerts(mappedAlerts.filter(a => !a.resolved));
       setLogs(mappedLogs);
-      
+
     } catch (err) {
       console.error("Error loading moderation data:", err);
     } finally {
@@ -78,7 +78,7 @@ const Moderation: React.FC = () => {
 
   useEffect(() => {
     fetchData();
-    const interval = setInterval(fetchData, 10000); 
+    const interval = setInterval(fetchData, 10000);
     return () => clearInterval(interval);
   }, []);
 
@@ -102,8 +102,8 @@ const Moderation: React.FC = () => {
     }
   };
 
-  const filteredAlerts = alerts.filter(a => 
-    a.server_id?.toLowerCase().includes(searchTerm.toLowerCase()) || 
+  const filteredAlerts = alerts.filter(a =>
+    a.server_id?.toLowerCase().includes(searchTerm.toLowerCase()) ||
     a.message?.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
@@ -181,12 +181,12 @@ const Moderation: React.FC = () => {
                         {alert.created_at ? new Date(alert.created_at).toLocaleTimeString('uk-UA') : '--:--'}
                       </span>
                     </div>
-                    
+
                     <p className="text-[#a2a5b9] text-xs font-medium leading-relaxed mb-6 h-10 overflow-hidden line-clamp-2">
                       {alert.message}
                     </p>
-                    
-                    <button 
+
+                    <button
                       onClick={() => resolveAlert(alert.id)}
                       className={`w-full py-3 rounded-xl text-[10px] uppercase tracking-widest font-bold transition-all active:scale-95 border ${isCritical ? 'bg-[#f64e60]/10 hover:bg-[#f64e60]/20 text-[#f64e60] border-[#f64e60]/20' : 'bg-[#ffa800]/10 hover:bg-[#ffa800]/20 text-[#ffa800] border-[#ffa800]/20'}`}
                     >
@@ -225,8 +225,8 @@ const Moderation: React.FC = () => {
                     <td colSpan={6} className="py-20 text-center text-[#a2a5b9] uppercase text-xs font-bold tracking-widest">
                       {loading ? (
                         <div className="flex flex-col items-center justify-center">
-                           <div className="w-6 h-6 border-2 border-[#3699ff]/30 border-t-[#3699ff] rounded-full animate-spin mb-4"></div>
-                           <span>Syncing Logs...</span>
+                          <div className="w-6 h-6 border-2 border-[#3699ff]/30 border-t-[#3699ff] rounded-full animate-spin mb-4"></div>
+                          <span>Syncing Logs...</span>
                         </div>
                       ) : 'No logs found in database'}
                     </td>
@@ -240,7 +240,7 @@ const Moderation: React.FC = () => {
                           <span className="text-[#a2a5b9] text-[10px] font-medium mt-1">{log.created_at ? new Date(log.created_at).toLocaleTimeString('uk-UA') : '--:--:--'}</span>
                         </div>
                       </td>
-                      
+
                       <td className="py-4 px-6">
                         <span className="text-[10px] font-bold text-[#a2a5b9] bg-[#151521] border border-white/[0.05] px-2.5 py-1 rounded uppercase tracking-wider">
                           {log.server_id || 'UNKNOWN'}
@@ -272,7 +272,7 @@ const Moderation: React.FC = () => {
                       </td>
 
                       <td className="py-4 px-6 text-right">
-                        <button 
+                        <button
                           onClick={() => deleteLog(log.id)}
                           className="p-2 text-[#a2a5b9] hover:text-[#f64e60] hover:bg-[#f64e60]/10 rounded-lg transition-all opacity-0 group-hover:opacity-100 border border-transparent hover:border-[#f64e60]/20"
                           title="Delete Log"

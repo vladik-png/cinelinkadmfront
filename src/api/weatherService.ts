@@ -5,7 +5,7 @@ export const getLocalWeather = async (location: string) => {
     query += ',Ukraine';
   }
   const encodedQuery = encodeURIComponent(query);
-  
+
   try {
     const res = await fetch(`https://wttr.in/${encodedQuery}?format=j1`);
     return await res.json();

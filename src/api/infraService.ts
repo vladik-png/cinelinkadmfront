@@ -8,7 +8,7 @@ export const getInfrastructureData = async () => {
       axios.get(`${INFRA_BASE_URL}/`),
       axios.get(`${INFRA_BASE_URL}/info`)
     ]);
-    
+
     return {
       instances: instRes.data.flatMap((r: any) => r.Instances || []),
       region: infoRes.data.region?.toUpperCase() || 'NOT FOUND'

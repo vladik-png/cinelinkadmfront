@@ -7,6 +7,6 @@ export const loginEmployee = async (login: string, password: string) => {
     employee_code: login,
     password: password
   });
-  
-  return response; 
+
+  return response;
 };

@@ -1,8 +1,8 @@
 import * as React from 'react';
 import { useEffect, useState, useMemo } from 'react';
 import { getEmployeesList } from '../api/userService';
-import { 
-  ShieldCheck, Search, X, Download, MapPin, 
+import {
+  ShieldCheck, Search, X, Download, MapPin,
   UserCircle, Eye, ArrowUpDown, ArrowUp, ArrowDown, Building2, Hash, Hexagon
 } from 'lucide-react';
 
@@ -24,7 +24,7 @@ const Employees: React.FC = () => {
   const [selectedEmployee, setSelectedEmployee] = useState<EmployeeData | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
   const [searchTerm, setSearchTerm] = useState<string>('');
-  
+
   const [sortConfig, setSortConfig] = useState<{ key: SortKey; direction: SortDirection }>({
     key: 'id',
     direction: 'asc'
@@ -60,7 +60,7 @@ const Employees: React.FC = () => {
       `${e.first_name} ${e.last_name}`,
       e.location
     ].join(delimiter));
-    
+
     const csvContent = "\uFEFF" + [headers, ...dataRows].join("\n");
     const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
     const link = document.createElement("a");
@@ -95,10 +95,10 @@ const Employees: React.FC = () => {
         case 'id':
           aValue = a.employee_id; bValue = b.employee_id; break;
         case 'name':
-          aValue = `${a.first_name} ${a.last_name}`.toLowerCase(); 
+          aValue = `${a.first_name} ${a.last_name}`.toLowerCase();
           bValue = `${b.first_name} ${b.last_name}`.toLowerCase(); break;
         case 'location':
-          aValue = (a.location || '').toLowerCase(); 
+          aValue = (a.location || '').toLowerCase();
           bValue = (b.location || '').toLowerCase(); break;
         default:
           return 0;
@@ -116,8 +116,8 @@ const Employees: React.FC = () => {
     if (sortConfig.key !== columnKey) {
       return <ArrowUpDown size={12} className="text-[#a2a5b9] opacity-0 group-hover:opacity-100 transition-opacity" />;
     }
-    return sortConfig.direction === 'asc' 
-      ? <ArrowUp size={12} className="text-[#3699ff]" /> 
+    return sortConfig.direction === 'asc'
+      ? <ArrowUp size={12} className="text-[#3699ff]" />
       : <ArrowDown size={12} className="text-[#3699ff]" />;
   };
 
@@ -125,18 +125,18 @@ const Employees: React.FC = () => {
     <div className="w-full flex flex-col bg-[#151521] min-h-screen font-sans text-[#a2a5b9] relative">
       <div className="bg-[#1e1e2d] py-4 px-8 flex justify-between items-center sticky top-0 z-40 shadow-sm border-b border-white/[0.05]">
         <div className="flex items-center gap-3">
-           <div className="p-2 bg-[#3699ff]/10 rounded-lg border border-[#3699ff]/20">
-             <ShieldCheck size={18} className="text-[#3699ff]" />
-           </div>
-           <h2 className="text-xs tracking-[0.2em] uppercase font-bold text-white">Staff Management</h2>
+          <div className="p-2 bg-[#3699ff]/10 rounded-lg border border-[#3699ff]/20">
+            <ShieldCheck size={18} className="text-[#3699ff]" />
+          </div>
+          <h2 className="text-xs tracking-[0.2em] uppercase font-bold text-white">Staff Management</h2>
         </div>
         <div className="relative w-96">
-          <input 
-            type="text" 
-            placeholder="Search staff by name, ID or location..." 
-            value={searchTerm} 
-            onChange={(e) => setSearchTerm(e.target.value)} 
-            className="w-full bg-[#151521] border border-white/[0.05] text-white text-xs px-10 py-2.5 rounded-xl outline-none focus:border-[#3699ff]/50 focus:bg-[#151521]/80 transition-all placeholder-[#a2a5b9]/50" 
+          <input
+            type="text"
+            placeholder="Search staff by name, ID or location..."
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+            className="w-full bg-[#151521] border border-white/[0.05] text-white text-xs px-10 py-2.5 rounded-xl outline-none focus:border-[#3699ff]/50 focus:bg-[#151521]/80 transition-all placeholder-[#a2a5b9]/50"
           />
           <Search size={14} className="absolute left-4 top-3 text-[#a2a5b9]" />
         </div>
@@ -157,8 +157,8 @@ const Employees: React.FC = () => {
           </div>
 
           <div className="flex items-center gap-4">
-            <button 
-              onClick={exportToCSV} 
+            <button
+              onClick={exportToCSV}
               className="flex items-center gap-2 bg-[#1e1e2d] text-[#3699ff] text-[10px] font-bold uppercase tracking-widest px-6 py-3 rounded-xl hover:bg-white/[0.02] border border-white/[0.05] transition-all active:scale-95"
             >
               <Download size={14} /> Export CSV
@@ -171,19 +171,19 @@ const Employees: React.FC = () => {
             <table className="w-full text-left border-collapse">
               <thead>
                 <tr className="bg-[#151521]/50 border-b border-white/[0.05] text-[10px] uppercase tracking-widest text-[#a2a5b9] select-none">
-                  <th 
+                  <th
                     className="py-5 px-6 font-bold w-24 text-center cursor-pointer hover:bg-white/[0.02] transition-colors group"
                     onClick={() => handleSort('id')}
                   >
                     <div className="flex items-center justify-center gap-2">ID <SortIcon columnKey="id" /></div>
                   </th>
-                  <th 
+                  <th
                     className="py-5 px-6 font-bold cursor-pointer hover:bg-white/[0.02] transition-colors group"
                     onClick={() => handleSort('name')}
                   >
                     <div className="flex items-center gap-2">Staff Profile <SortIcon columnKey="name" /></div>
                   </th>
-                  <th 
+                  <th
                     className="py-5 px-6 font-bold cursor-pointer hover:bg-white/[0.02] transition-colors group"
                     onClick={() => handleSort('location')}
                   >
@@ -192,24 +192,24 @@ const Employees: React.FC = () => {
                   <th className="py-5 px-6 font-bold text-right">Actions</th>
                 </tr>
               </thead>
-              
+
               <tbody className="text-sm">
                 {processedEmployees.map((emp) => (
-                  <tr 
-                    key={emp.employee_id} 
+                  <tr
+                    key={emp.employee_id}
                     onClick={() => setSelectedEmployee(emp)}
                     className="border-b border-white/[0.02] hover:bg-white/[0.02] transition-colors cursor-pointer group"
                   >
                     <td className="py-4 px-6 text-center text-[#a2a5b9] text-xs font-semibold">
                       #{emp.employee_id}
                     </td>
-                    
+
                     <td className="py-4 px-6">
                       <div className="flex items-center gap-4">
-                        <img 
-                          src={emp.avatar_url || 'https://via.placeholder.com/150'} 
-                          className="w-10 h-10 rounded-xl object-cover border border-white/[0.05] bg-[#151521]" 
-                          alt="avatar" 
+                        <img
+                          src={emp.avatar_url || 'https://via.placeholder.com/150'}
+                          className="w-10 h-10 rounded-xl object-cover border border-white/[0.05] bg-[#151521]"
+                          alt="avatar"
                         />
                         <div className="min-w-0">
                           <h3 className="text-sm font-bold text-white truncate uppercase tracking-wide">
@@ -228,7 +228,7 @@ const Employees: React.FC = () => {
 
                     <td className="py-4 px-6 text-right">
                       <div className="flex items-center justify-end gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
-                        <button 
+                        <button
                           onClick={(e) => { e.stopPropagation(); setSelectedEmployee(emp); }}
                           className="p-2 text-[#3699ff] bg-[#3699ff]/10 hover:bg-[#3699ff]/20 rounded-lg transition-colors border border-[#3699ff]/20"
                           title="Inspect Staff Profile"
@@ -241,12 +241,12 @@ const Employees: React.FC = () => {
                 ))}
               </tbody>
             </table>
-            
+
             {loading && processedEmployees.length === 0 && (
-               <div className="w-full py-20 flex flex-col items-center justify-center">
-                 <div className="w-6 h-6 border-2 border-[#3699ff]/30 border-t-[#3699ff] rounded-full animate-spin mb-4"></div>
-                 <p className="text-[#a2a5b9] uppercase text-[10px] font-bold tracking-widest">Syncing Database...</p>
-               </div>
+              <div className="w-full py-20 flex flex-col items-center justify-center">
+                <div className="w-6 h-6 border-2 border-[#3699ff]/30 border-t-[#3699ff] rounded-full animate-spin mb-4"></div>
+                <p className="text-[#a2a5b9] uppercase text-[10px] font-bold tracking-widest">Syncing Database...</p>
+              </div>
             )}
 
             {processedEmployees.length === 0 && !loading && (
@@ -262,7 +262,7 @@ const Employees: React.FC = () => {
       {selectedEmployee && (
         <div className="fixed inset-0 z-[100] flex items-center justify-center p-6 bg-[#151521]/80 backdrop-blur-sm" onClick={() => setSelectedEmployee(null)}>
           <div className="bg-[#1e1e2d] border border-white/[0.05] w-full max-w-2xl rounded-[2rem] shadow-2xl overflow-hidden relative" onClick={(e) => e.stopPropagation()}>
-            <div 
+            <div
               className="h-32 bg-[#151521] relative bg-cover bg-center border-b border-white/[0.05]"
               style={{ backgroundImage: selectedEmployee.bg_img_url ? `url(${selectedEmployee.bg_img_url})` : 'none' }}
             >
@@ -271,55 +271,55 @@ const Employees: React.FC = () => {
                   <Hexagon size={80} className="text-[#3699ff] fill-[#3699ff]" />
                 </div>
               )}
-              <button 
-                onClick={() => setSelectedEmployee(null)} 
+              <button
+                onClick={() => setSelectedEmployee(null)}
                 className="absolute top-4 right-4 p-2 text-[#a2a5b9] hover:text-white bg-[#151521]/50 border border-white/[0.05] rounded-full backdrop-blur-md transition-colors"
               >
                 <X size={18} />
               </button>
             </div>
-            
+
             <div className="px-10 pb-10">
-                <div className="relative -mt-12 mb-8 flex items-end gap-5">
-                    <img 
-                      src={selectedEmployee.avatar_url || 'https://via.placeholder.com/150'} 
-                      className="w-28 h-28 rounded-full border-[6px] border-[#1e1e2d] shadow-xl object-cover bg-[#151521]" 
-                      alt="profile" 
-                    />
-                    <div className="pb-1">
-                        <h2 className="text-2xl font-bold text-white uppercase tracking-wide leading-tight">
-                          {selectedEmployee.first_name} {selectedEmployee.last_name}
-                        </h2>
-                        <div className="flex items-center gap-2 mt-1.5">
-                          <span className="w-2 h-2 rounded-full bg-[#1bc5bd] shadow-[0_0_8px_rgba(27,197,189,0.5)]"></span>
-                          <p className="text-[#1bc5bd] font-bold uppercase text-[10px] tracking-widest">Active Member</p>
-                        </div>
-                    </div>
+              <div className="relative -mt-12 mb-8 flex items-end gap-5">
+                <img
+                  src={selectedEmployee.avatar_url || 'https://via.placeholder.com/150'}
+                  className="w-28 h-28 rounded-full border-[6px] border-[#1e1e2d] shadow-xl object-cover bg-[#151521]"
+                  alt="profile"
+                />
+                <div className="pb-1">
+                  <h2 className="text-2xl font-bold text-white uppercase tracking-wide leading-tight">
+                    {selectedEmployee.first_name} {selectedEmployee.last_name}
+                  </h2>
+                  <div className="flex items-center gap-2 mt-1.5">
+                    <span className="w-2 h-2 rounded-full bg-[#1bc5bd] shadow-[0_0_8px_rgba(27,197,189,0.5)]"></span>
+                    <p className="text-[#1bc5bd] font-bold uppercase text-[10px] tracking-widest">Active Member</p>
+                  </div>
                 </div>
+              </div>
 
-                <div className="grid grid-cols-2 gap-5 mb-8">
-                    <div className="bg-[#151521] p-5 rounded-xl border border-white/[0.02]">
-                        <p className="text-[10px] text-[#a2a5b9] uppercase font-bold mb-1 tracking-widest flex items-center gap-2 leading-none">
-                          <Building2 size={12} className="text-[#3699ff]" /> Base Location
-                        </p>
-                        <p className="text-white font-semibold truncate text-sm mt-2">{selectedEmployee.location || 'Unknown'}</p>
-                    </div>
-                    <div className="bg-[#151521] p-5 rounded-xl border border-white/[0.02]">
-                        <p className="text-[10px] text-[#a2a5b9] uppercase font-bold mb-1 tracking-widest flex items-center gap-2 leading-none">
-                          <Hash size={12} className="text-[#3699ff]" /> Staff ID Number
-                        </p>
-                        <p className="text-white font-semibold truncate text-sm mt-2">#{selectedEmployee.employee_id}</p>
-                    </div>
+              <div className="grid grid-cols-2 gap-5 mb-8">
+                <div className="bg-[#151521] p-5 rounded-xl border border-white/[0.02]">
+                  <p className="text-[10px] text-[#a2a5b9] uppercase font-bold mb-1 tracking-widest flex items-center gap-2 leading-none">
+                    <Building2 size={12} className="text-[#3699ff]" /> Base Location
+                  </p>
+                  <p className="text-white font-semibold truncate text-sm mt-2">{selectedEmployee.location || 'Unknown'}</p>
                 </div>
+                <div className="bg-[#151521] p-5 rounded-xl border border-white/[0.02]">
+                  <p className="text-[10px] text-[#a2a5b9] uppercase font-bold mb-1 tracking-widest flex items-center gap-2 leading-none">
+                    <Hash size={12} className="text-[#3699ff]" /> Staff ID Number
+                  </p>
+                  <p className="text-white font-semibold truncate text-sm mt-2">#{selectedEmployee.employee_id}</p>
+                </div>
+              </div>
 
-                <div className="flex flex-col gap-3">
-                    <button 
-                      onClick={() => setSelectedEmployee(null)} 
-                      className="w-full py-4 rounded-xl text-[10px] uppercase tracking-widest font-bold transition-all active:scale-95 flex items-center justify-center gap-2 bg-[#3699ff]/10 hover:bg-[#3699ff]/20 text-[#3699ff] border border-[#3699ff]/20"
-                    >
-                      Close Inspection
-                    </button>
-                </div>
+              <div className="flex flex-col gap-3">
+                <button
+                  onClick={() => setSelectedEmployee(null)}
+                  className="w-full py-4 rounded-xl text-[10px] uppercase tracking-widest font-bold transition-all active:scale-95 flex items-center justify-center gap-2 bg-[#3699ff]/10 hover:bg-[#3699ff]/20 text-[#3699ff] border border-[#3699ff]/20"
+                >
+                  Close Inspection
+                </button>
+              </div>
             </div>
           </div>
         </div>

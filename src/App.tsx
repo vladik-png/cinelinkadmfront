@@ -10,6 +10,7 @@ import Users from './pages/Users';
 import Dashboard from './pages/Dashboard';
 import Employees from './pages/Employees';
 import Moderation from './pages/Moderation';
+import TerminalPage from './pages/Terminal';
 
 const ProtectedLayout = () => {
   const isAuth = localStorage.getItem('admin_token') !== null;
@@ -19,21 +20,14 @@ const ProtectedLayout = () => {
   }
 
   return (
-    // Змінив фон на темний преміальний (#151521)
     <div className="flex w-full min-h-screen bg-[#151521] text-slate-200">
       
-      {/* Ліва панель навігації */}
       <Sidebar />
-          
-      {/* Права частина екрану (відступ ml-64 потрібен, бо Sidebar має фіксовану ширину w-64) */}
       <div className="flex-1 ml-64 min-h-screen flex flex-col relative">
-        
-        {/* ОСЬ ТУТ має бути Header, щоб він завжди був зверху кожної сторінки */}
         <div className="sticky top-0 z-40 w-full">
           <Header />
         </div>
 
-        {/* Основний контент (сторінки, які перемикаються) */}
         <main className="flex-1 w-full flex flex-col">
           <Outlet /> 
         </main>
@@ -57,6 +51,7 @@ const App: React.FC = () => {
           <Route path="/moderation" element={<Moderation />} />
           <Route path="/users" element={<Users />} />
           <Route path="/employees" element={<Employees />} />
+          <Route path="/terminal" element={<TerminalPage />} />
           
           <Route path="*" element={<Navigate to="/dashboard" replace />} />
         </Route>

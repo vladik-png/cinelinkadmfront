@@ -37,12 +37,12 @@ export const toggleUserAccountStatus = async (userId: number, currentActive: boo
   try {
     const response = await fetch(`${AWS_BASE_URL}/users/${userId}`, {
       method: method,
-      headers: { 
+      headers: {
         "Content-Type": "application/json",
-        "Authorization": `Bearer ${token}` 
+        "Authorization": `Bearer ${token}`
       }
     });
-    
+
     if (!response.ok) throw new Error("Не вдалося змінити статус");
     return response;
   } catch (error) {
@@ -57,7 +57,7 @@ export const getUserDetailedProfile = async (userId: number, token: string | nul
       method: 'GET',
       headers: { 'Authorization': `Bearer ${token}` }
     });
-    
+
     if (!response.ok) throw new Error("Не вдалося отримати деталі");
     return await response.json();
   } catch (error) {

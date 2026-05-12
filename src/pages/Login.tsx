@@ -13,13 +13,13 @@ const Login: React.FC = () => {
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     console.log("1. Form submitted, preventDefault executed. Starting login process...");
-    
+
     setError(null);
     setIsLoading(true);
 
     try {
       console.log("2. Sending request to server with data:", { login: employeeCode, password: password });
-      
+
       const response = await loginEmployee(employeeCode, password);
 
       console.log("3. Response from server received:", response);
@@ -29,18 +29,18 @@ const Login: React.FC = () => {
         const realId = (typeof data === 'object' && data !== null) ? data.user_id : data;
 
         if (realId) {
-            console.log("4. Success! Received ID:", realId);
-            localStorage.setItem('admin_token', 'true'); 
-            localStorage.setItem('employee_id', realId.toString()); 
-            navigate('/dashboard');
-          } else {
-            console.warn("4. ID is missing. Here's what was received:", data);
-            setError("Error processing data: ID is missing  in response");
-          }
+          console.log("4. Success! Received ID:", realId);
+          localStorage.setItem('admin_token', 'true');
+          localStorage.setItem('employee_id', realId.toString());
+          navigate('/dashboard');
+        } else {
+          console.warn("4. ID is missing. Here's what was received:", data);
+          setError("Error processing data: ID is missing  in response");
         }
+      }
     } catch (err: any) {
       console.error("3. Error:", err);
-      
+
       if (err.response) {
         const status = err.response.status;
         console.log("Error status:", status);
@@ -62,21 +62,21 @@ const Login: React.FC = () => {
 
   return (
     <div className="min-h-screen bg-[#151521] flex items-center justify-center p-6 relative overflow-hidden font-sans">
-      
+
       <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-[#3699ff]/10 rounded-full blur-[100px] pointer-events-none"></div>
       <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-[#1bc5bd]/5 rounded-full blur-[100px] pointer-events-none"></div>
 
       <div className="max-w-md w-full bg-[#1e1e2d] rounded-2xl p-10 shadow-2xl border border-white/[0.05] relative z-10 backdrop-blur-sm">
-        
+
         <div className="text-center mb-10">
           <div className="w-16 h-16 bg-[#3699ff]/10 border border-[#3699ff]/20 rounded-2xl flex items-center justify-center mx-auto mb-6 shadow-[0_0_20px_rgba(54,153,255,0.15)]">
             <Hexagon size={32} className="text-[#3699ff] fill-[#3699ff]/20" />
           </div>
           <h2 className="text-2xl font-bold text-white tracking-wide">Cinelink Admin</h2>
         </div>
-        
+
         <form onSubmit={handleLogin} className="space-y-6">
-          
+
           <div>
             <label className="text-xs font-semibold text-[#a2a5b9] uppercase tracking-wider mb-2 block">
               Employee Code
@@ -85,8 +85,8 @@ const Login: React.FC = () => {
               <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
                 <User size={18} className="text-[#a2a5b9]" />
               </div>
-              <input 
-                type="text" 
+              <input
+                type="text"
                 required
                 className="w-full pl-11 pr-4 py-3.5 bg-[#151521] border border-white/[0.05] rounded-xl text-white focus:border-[#3699ff] focus:ring-1 focus:ring-[#3699ff] outline-none transition-all placeholder:text-white/[0.2] font-mono"
                 placeholder="e.g. 0000"
@@ -104,8 +104,8 @@ const Login: React.FC = () => {
               <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
                 <Lock size={18} className="text-[#a2a5b9]" />
               </div>
-              <input 
-                type="password" 
+              <input
+                type="password"
                 required
                 className="w-full pl-11 pr-4 py-3.5 bg-[#151521] border border-white/[0.05] rounded-xl text-white focus:border-[#3699ff] focus:ring-1 focus:ring-[#3699ff] outline-none transition-all placeholder:text-white/[0.2]"
                 placeholder="••••••••"
@@ -124,7 +124,7 @@ const Login: React.FC = () => {
             </div>
           )}
 
-          <button 
+          <button
             type="submit"
             disabled={isLoading}
             className={`w-full mt-4 bg-[#3699ff] hover:bg-[#2884e0] text-white font-bold py-4 rounded-xl text-sm tracking-wide transition-all duration-300 shadow-[0_4px_12px_rgba(54,153,255,0.25)] hover:shadow-[0_6px_20px_rgba(54,153,255,0.4)] ${isLoading ? 'opacity-70 cursor-not-allowed' : 'hover:-translate-y-0.5'}`}
