@@ -25,8 +25,8 @@ const Terminal: React.FC = () => {
     const [showPassword, setShowPassword] = useState(false);
     const [savedNodes, setSavedNodes] = useState<SavedNode[]>([]);
 
-    const TERMINAL_URL = import.meta.env.TERMINAL_URL || 'http://localhost:8085';
-    const WS_URL = import.meta.env.WS_URL || 'ws://localhost:8085';
+    const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:8085';
+    const WS_URL = import.meta.env.VITE_WS_URL || 'ws://localhost:8085';
 
     useEffect(() => {
         const saved = localStorage.getItem('cinelink_terminal_nodes');
@@ -79,7 +79,7 @@ const Terminal: React.FC = () => {
         formData.append('remoteDir', credentials.remoteDir);
 
         try {
-            const res = await fetch(`${TERMINAL_URL}/upload`, { method: 'POST', body: formData });
+            const res = await fetch(`${API_URL}/upload`, { method: 'POST', body: formData });
             if (res.ok) {
                 setUploadStatus('Upload successful');
                 xtermRef.current?.writeln(`\x1b[32m[SUCCESS]\x1b[0m File saved to ${credentials.remoteDir}${file.name}\r\n`);
@@ -196,7 +196,8 @@ const Terminal: React.FC = () => {
                                         <button
                                             type="button"
                                             onClick={() => setShowPassword(!showPassword)}
-                                            className="absolute right-3 top-1/2 -translate-y-1/2 p-1.5 text-[#a2a5b9] hover:text-white bg-transparent border-none outline-none transition-colors"
+                                            className="absolute right-3 top-1/2 -translate-y-1/2 p-1.5 text-[#a2a5b9] hover:text-white !bg-transparent hover:!bg-transparent focus:!bg-transparent !border-none !shadow-none !outline-none"
+                                            style={{ backgroundColor: 'transparent', borderColor: 'transparent', boxShadow: 'none' }}
                                         >
                                             {showPassword ? <EyeOff size={16} /> : <Eye size={16} />}
                                         </button>
@@ -209,7 +210,7 @@ const Terminal: React.FC = () => {
                                 </div>
 
                                 <button onClick={startConnection} className="w-full mt-4 bg-[#8950fc]/20 text-[#8950fc] border border-[#8950fc]/30 hover:bg-[#8950fc]/30 py-3 rounded-xl font-bold uppercase tracking-widest text-[11px] transition-all">
-                                    Connect
+                                    Establish Connection
                                 </button>
                             </div>
                         </div>
@@ -234,8 +235,9 @@ const Terminal: React.FC = () => {
 
                                             <button
                                                 onClick={(e) => removeSavedNode(node.host, e)}
-                                                className="text-[#f64e60]/50 hover:text-[#f64e60] hover:bg-[#f64e60]/10 p-2 rounded-lg transition-all"
+                                                className="text-[#f64e60]/50 hover:text-[#f64e60] hover:bg-[#f64e60]/10 p-2 rounded-lg transition-all !bg-transparent"
                                                 title="Delete node"
+                                                style={{ backgroundColor: 'transparent' }}
                                             >
                                                 <Trash2 size={16} />
                                             </button>
