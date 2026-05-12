@@ -5,7 +5,7 @@ export const getSystemMetrics = async () => {
     const response = await api.get('/system-metrics');
     return response.data;
   } catch (error) {
-    console.error("Помилка отримання метрик:", error);
+    console.error("Error fetching metrics:", error);
     throw error;
   }
 };

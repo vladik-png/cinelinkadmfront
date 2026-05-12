@@ -6,12 +6,13 @@ import { useDropzone } from 'react-dropzone';
 import { Terminal as TerminalIcon, Wifi, WifiOff, UploadCloud, Server, Key, User, Eye, EyeOff, Bookmark, Trash2 } from 'lucide-react';
 import 'xterm/css/xterm.css';
 
-interface SavedNode {
-    host: string;
-    user: string;
-    pass: string;
-    remoteDir: string;
-}
+import {
+    fetchSavedNodes,
+    syncNodesToBackend,
+    uploadFileViaTerminal,
+    getTerminalWsUrl,
+    SavedNode
+} from '../api/terminalService';
 
 const Terminal: React.FC = () => {
     const terminalRef = useRef<HTMLDivElement>(null);
@@ -25,17 +26,15 @@ const Terminal: React.FC = () => {
     const [showPassword, setShowPassword] = useState(false);
     const [savedNodes, setSavedNodes] = useState<SavedNode[]>([]);
 
-    const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:8085';
-    const WS_URL = import.meta.env.VITE_WS_URL || 'ws://localhost:8085';
-
     useEffect(() => {
-        const saved = localStorage.getItem('cinelink_terminal_nodes');
-        if (saved) {
-            setSavedNodes(JSON.parse(saved));
-        }
+        const loadData = async () => {
+            const nodes = await fetchSavedNodes();
+            setSavedNodes(nodes);
+        };
+        loadData();
     }, []);
 
-    const startConnection = () => {
+    const startConnection = async () => {
         if (!credentials.host || !credentials.pass) {
             alert("Enter IP and password!");
             return;
@@ -47,15 +46,15 @@ const Terminal: React.FC = () => {
         ].slice(0, 5);
 
         setSavedNodes(newNodes);
-        localStorage.setItem('cinelink_terminal_nodes', JSON.stringify(newNodes));
+        await syncNodesToBackend(newNodes);
         setIsFormVisible(false);
     };
 
-    const removeSavedNode = (hostToRemove: string, e: React.MouseEvent) => {
+    const removeSavedNode = async (hostToRemove: string, e: React.MouseEvent) => {
         e.stopPropagation();
         const newNodes = savedNodes.filter(n => n.host !== hostToRemove);
         setSavedNodes(newNodes);
-        localStorage.setItem('cinelink_terminal_nodes', JSON.stringify(newNodes));
+        await syncNodesToBackend(newNodes);
     };
 
     const disconnect = () => {
@@ -71,21 +70,10 @@ const Terminal: React.FC = () => {
         setUploadStatus(`Uploading: ${file.name}...`);
         xtermRef.current?.writeln(`\r\n\x1b[36m[SYSTEM]\x1b[0m Sending ${file.name} via SFTP...\r\n`);
 
-        const formData = new FormData();
-        formData.append('file', file);
-        formData.append('host', credentials.host);
-        formData.append('user', credentials.user);
-        formData.append('pass', credentials.pass);
-        formData.append('remoteDir', credentials.remoteDir);
-
         try {
-            const res = await fetch(`${API_URL}/upload`, { method: 'POST', body: formData });
-            if (res.ok) {
-                setUploadStatus('Upload successful');
-                xtermRef.current?.writeln(`\x1b[32m[SUCCESS]\x1b[0m File saved to ${credentials.remoteDir}${file.name}\r\n`);
-            } else {
-                throw new Error();
-            }
+            await uploadFileViaTerminal(file, credentials);
+            setUploadStatus('Upload successful');
+            xtermRef.current?.writeln(`\x1b[32m[SUCCESS]\x1b[0m File saved to ${credentials.remoteDir}${file.name}\r\n`);
         } catch {
             setUploadStatus('Upload failed');
             xtermRef.current?.writeln(`\x1b[31m[ERROR]\x1b[0m Failed to upload file.\r\n`);
@@ -111,7 +99,7 @@ const Terminal: React.FC = () => {
         fitAddon.fit();
         xtermRef.current = term;
 
-        const ws = new WebSocket(`${WS_URL}/ssh`);
+        const ws = new WebSocket(`${getTerminalWsUrl()}/ssh`);
         socketRef.current = ws;
 
         ws.onopen = () => {

@@ -10,7 +10,7 @@ export const getLocalWeather = async (location: string) => {
     const res = await fetch(`https://wttr.in/${encodedQuery}?format=j1`);
     return await res.json();
   } catch (error) {
-    console.error("Помилка отримання погоди:", error);
+    console.error("Error fetching weather:", error);
     throw error;
   }
 };

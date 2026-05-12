@@ -7,7 +7,7 @@ export const getUsers = async () => {
     const response = await axios.get(`${AWS_BASE_URL}/users`);
     return response.data;
   } catch (error) {
-    console.error("Помилка отримання користувачів:", error);
+    console.error("Error fetching users:", error);
     throw error;
   }
 };
@@ -17,7 +17,7 @@ export const getEmployee = async (id: string | number) => {
     const response = await axios.get(`${AWS_BASE_URL}/employee/${id}`);
     return response.data;
   } catch (error) {
-    console.error("Помилка отримання співробітника:", error);
+    console.error("Error fetching employee:", error);
     throw error;
   }
 };
@@ -27,7 +27,7 @@ export const getEmployeesList = async () => {
     const response = await axios.get(`${AWS_BASE_URL}/employee`);
     return response.data;
   } catch (error) {
-    console.error("Помилка отримання списку працівників:", error);
+    console.error("Error fetching employees list:", error);
     throw error;
   }
 };
@@ -43,10 +43,10 @@ export const toggleUserAccountStatus = async (userId: number, currentActive: boo
       }
     });
 
-    if (!response.ok) throw new Error("Не вдалося змінити статус");
+    if (!response.ok) throw new Error("Error changing account status");
     return response;
   } catch (error) {
-    console.error("Помилка запиту зміни статусу:", error);
+    console.error("Error changing account status:", error);
     throw error;
   }
 };
@@ -58,7 +58,7 @@ export const getUserDetailedProfile = async (userId: number, token: string | nul
       headers: { 'Authorization': `Bearer ${token}` }
     });
 
-    if (!response.ok) throw new Error("Не вдалося отримати деталі");
+    if (!response.ok) throw new Error("Error loading detailed profile");
     return await response.json();
   } catch (error) {
     console.error("Error loading detailed profile:", error);

@@ -13,7 +13,7 @@ api.interceptors.response.use(
       if (originalRequestUrl.includes('/login')) {
         return Promise.reject(error);
       }
-      console.warn("Сесія недійсна. Вихід...");
+      console.warn("Session is invalid. Logging out...");
       localStorage.removeItem('admin_token');
       localStorage.removeItem('employee_id');
       if (window.location.pathname !== '/login') {

@@ -14,7 +14,7 @@ export const getInfrastructureData = async () => {
       region: infoRes.data.region?.toUpperCase() || 'NOT FOUND'
     };
   } catch (error) {
-    console.error("Помилка підключення до сервісу інфраструктури:", error);
+    console.error("Error connecting to infrastructure service:", error);
     throw error;
   }
 };
@@ -26,7 +26,7 @@ export const performPowerAction = async (action: 'start' | 'stop', id: string) =
     });
     return response.data;
   } catch (error) {
-    console.error(`Помилка дії ${action}:`, error);
+    console.error(`Error ${action}:`, error);
     throw error;
   }
 };
