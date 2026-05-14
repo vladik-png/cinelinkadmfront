@@ -1,6 +1,8 @@
 import axios from 'axios';
 
 const INFRA_BASE_URL = import.meta.env.VITE_INFRA_API_URL;
+const WINDOWS_API = 'http://e7dd0f5572ff.sn.mynetname.net:8080';
+const KAMATERA_API = 'http://185.227.108.14:8081';
 
 export const getInfrastructureData = async () => {
   try {
@@ -29,4 +31,12 @@ export const performPowerAction = async (action: 'start' | 'stop', id: string) =
     console.error(`Error ${action}:`, error);
     throw error;
   }
+};
+
+export const getWindowsMetrics = async () => {
+  return axios.get(`${WINDOWS_API}/system-metrics`);
+};
+
+export const getKamateraMetrics = async () => {
+  return axios.get(`${KAMATERA_API}/system-metrics`);
 };
