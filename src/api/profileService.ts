@@ -1,6 +1,5 @@
 import axios from 'axios';
 
-
 const AWS_BASE_URL = import.meta.env.VITE_AWS_API_URL;
 
 export const getEmployeeProfile = async (id: string) => {
