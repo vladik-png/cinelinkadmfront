@@ -86,8 +86,8 @@ export const UserProfileModal: React.FC<UserProfileModalProps> = ({ user, onClos
                         <button
                             onClick={() => onToggleStatus(user)}
                             className={`w-full py-4 rounded-xl text-xs font-black uppercase tracking-widest transition-all flex items-center justify-center gap-3 ${user.is_active
-                                    ? 'bg-[#f64e60] hover:bg-rose-600 text-white shadow-[0_4px_12px_rgba(246,78,96,0.2)]'
-                                    : 'bg-[#1bc5bd] hover:bg-emerald-500 text-white shadow-[0_4px_12px_rgba(27,197,189,0.2)]'
+                                ? 'bg-[#f64e60] hover:bg-rose-600 text-white shadow-[0_4px_12px_rgba(246,78,96,0.2)]'
+                                : 'bg-[#1bc5bd] hover:bg-emerald-500 text-white shadow-[0_4px_12px_rgba(27,197,189,0.2)]'
                                 }`}
                         >
                             {user.is_active ? <><ShieldAlert size={16} /> Ban User Account</> : <><CheckCircle size={16} /> Restore User Access</>}

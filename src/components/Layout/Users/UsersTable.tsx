@@ -109,8 +109,8 @@ export const UsersTable: React.FC<UsersTableProps> = ({
 
                                     <td className="py-4 px-6 text-center">
                                         <span className={`inline-flex items-center justify-center px-2.5 py-1.5 rounded text-[9px] font-black uppercase tracking-widest border ${user.is_active
-                                                ? 'bg-[#1bc5bd]/10 text-[#1bc5bd] border-[#1bc5bd]/20'
-                                                : 'bg-[#f64e60]/10 text-[#f64e60] border-[#f64e60]/20'
+                                            ? 'bg-[#1bc5bd]/10 text-[#1bc5bd] border-[#1bc5bd]/20'
+                                            : 'bg-[#f64e60]/10 text-[#f64e60] border-[#f64e60]/20'
                                             }`}>
                                             {user.is_active ? 'Active' : 'Banned'}
                                         </span>
@@ -121,8 +121,8 @@ export const UsersTable: React.FC<UsersTableProps> = ({
                                             <button
                                                 onClick={(e) => onToggleStatus(user, e)}
                                                 className={`p-2 rounded-md transition-colors ${user.is_active
-                                                        ? 'text-[#f64e60] bg-[#f64e60]/10 hover:bg-[#f64e60]/20'
-                                                        : 'text-[#1bc5bd] bg-[#1bc5bd]/10 hover:bg-[#1bc5bd]/20'
+                                                    ? 'text-[#f64e60] bg-[#f64e60]/10 hover:bg-[#f64e60]/20'
+                                                    : 'text-[#1bc5bd] bg-[#1bc5bd]/10 hover:bg-[#1bc5bd]/20'
                                                     }`}
                                                 title={user.is_active ? "Ban User" : "Restore User"}
                                             >

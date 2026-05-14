@@ -45,8 +45,8 @@ export const UsersToolbar: React.FC<UsersToolbarProps> = ({
                 <button
                     onClick={() => setShowBlockedOnly(!showBlockedOnly)}
                     className={`flex items-center gap-2 px-4 py-2.5 rounded-xl border text-xs font-bold uppercase tracking-wider transition-all ${showBlockedOnly
-                            ? 'bg-[#f64e60]/10 border-[#f64e60]/20 text-[#f64e60]'
-                            : 'bg-[#1e1e2d] border-white/[0.05] text-[#a2a5b9] hover:bg-white/[0.02] hover:text-white'
+                        ? 'bg-[#f64e60]/10 border-[#f64e60]/20 text-[#f64e60]'
+                        : 'bg-[#1e1e2d] border-white/[0.05] text-[#a2a5b9] hover:bg-white/[0.02] hover:text-white'
                         }`}
                 >
                     <ShieldAlert size={14} className={showBlockedOnly ? 'text-[#f64e60]' : 'text-[#a2a5b9]'} />
