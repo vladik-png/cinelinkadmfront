@@ -26,7 +26,6 @@ export const useDashboardLogic = () => {
                 });
             }
         } catch (e) {
-            // Silently handle weather fetch errors
         }
     };
 

@@ -14,13 +14,11 @@ const Dashboard: React.FC = () => {
   return (
     <div className="w-full min-h-screen bg-[#151521] text-[#a2a5b9] font-sans p-6 lg:p-8">
 
-      {/* --- TOP BANNER ROW --- */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 mb-6">
         <WelcomeBanner activeNodes={stats.activeNodes} />
         <TimeWeatherCard time={time} location={employee?.location} weather={weather} />
       </div>
 
-      {/* --- STATS CARDS ROW --- */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-6">
         <StatCard
           title="Total Users"
