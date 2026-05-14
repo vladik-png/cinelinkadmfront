@@ -1,13 +1,7 @@
 import axios from 'axios';
+import { SavedNode } from '../types/terminal';
 
 const TERMINAL_URL = import.meta.env.VITE_TERMINAL_URL || 'http://localhost:8085';
-
-export interface SavedNode {
-    host: string;
-    user: string;
-    pass: string;
-    remoteDir: string;
-}
 
 export const fetchSavedNodes = async (): Promise<SavedNode[]> => {
     try {
