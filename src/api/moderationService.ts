@@ -1,7 +1,7 @@
 import axios from 'axios';
 import { ServerAlert, ServerLog } from '../types/moderation';
 
-const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://e7dd0f5572ff.sn.mynetname.net:8080';
+const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://127.0.0.1:8086';
 
 export const fetchModerationData = async (token: string | null) => {
   const headers = { Authorization: `Bearer ${token}` };

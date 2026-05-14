@@ -1,8 +1,8 @@
 import axios from 'axios';
 
 const INFRA_BASE_URL = import.meta.env.VITE_INFRA_API_URL;
-const WINDOWS_API = 'http://e7dd0f5572ff.sn.mynetname.net:8080';
-const KAMATERA_API = 'http://185.227.108.14:8081';
+const WINDOWS_API = import.meta.env.VITE_WINDOWS_API_URL;
+const KAMATERA_API = import.meta.env.VITE_KAMATERA_API_URL;
 
 export const getInfrastructureData = async () => {
   try {
