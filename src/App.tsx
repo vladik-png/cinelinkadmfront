@@ -11,6 +11,7 @@ import Dashboard from './pages/Dashboard';
 import Employees from './pages/Employees';
 import Moderation from './pages/Moderation';
 import TerminalPage from './pages/Terminal';
+import Messages from './pages/Messages';
 
 const App: React.FC = () => {
   return (
@@ -27,6 +28,7 @@ const App: React.FC = () => {
           <Route path="/users" element={<Users />} />
           <Route path="/employees" element={<Employees />} />
           <Route path="/terminal" element={<TerminalPage />} />
+          <Route path="/messages" element={<Messages />} />
 
           <Route path="*" element={<Navigate to="/dashboard" replace />} />
         </Route>
