@@ -22,9 +22,9 @@ export interface Conversation {
 }
 
 export const MOCK_USERS: Record<string, ChatUser> = {
-    '1': { id: '1', name: 'Vladislav', username: 'vladik_codm', avatar: 'https://ui-avatars.com/api/?name=V+S&background=3699ff&color=fff', isOnline: true },
-    '2': { id: '2', name: 'Andriy', username: 'andriy_dev', avatar: 'https://ui-avatars.com/api/?name=A+D&background=1e1e2d&color=a2a5b9', isOnline: false },
-    '3': { id: '3', name: 'Maria', username: 'yuliikk_', avatar: 'https://ui-avatars.com/api/?name=M+R&background=f64e60&color=fff', isOnline: true },
+    '1': { id: '1', name: 'Vladislav', username: 'vlad', avatar: 'https://ui-avatars.com/api/?name=V+S&background=3699ff&color=fff', isOnline: true },
+    '2': { id: '2', name: 'Andriy', username: 'taras', avatar: 'https://ui-avatars.com/api/?name=A+D&background=1e1e2d&color=a2a5b9', isOnline: false },
+    '3': { id: '3', name: 'Maria', username: 'marko', avatar: 'https://ui-avatars.com/api/?name=M+R&background=f64e60&color=fff', isOnline: true },
 };
 
 export const MOCK_CONVERSATIONS: Conversation[] = [
