@@ -15,6 +15,7 @@ interface TerminalInstanceProps {
 }
 
 export const TerminalInstance: React.FC<TerminalInstanceProps> = ({ node, isActive, onClose }) => {
+    const containerRef = useRef<HTMLDivElement>(null);
     const terminalRef = useRef<HTMLDivElement>(null);
     const xtermRef = useRef<XTerm | null>(null);
     const fitAddonRef = useRef<FitAddon | null>(null);
@@ -64,12 +65,7 @@ export const TerminalInstance: React.FC<TerminalInstanceProps> = ({ node, isActi
         ws.onopen = () => {
             ws.send(JSON.stringify({ type: 'auth', host: node.host, user: node.user, pass: node.pass }));
             setIsConnected(true);
-            
-            setTimeout(() => {
-                if (fitAddonRef.current) {
-                    fitAddonRef.current.fit();
-                }
-            }, 100);
+            setTimeout(() => fitAddonRef.current?.fit(), 100);
         };
 
         ws.onmessage = (event) => term.write(event.data);
@@ -115,55 +111,72 @@ export const TerminalInstance: React.FC<TerminalInstanceProps> = ({ node, isActi
         }
     }, [isActive]);
 
+    useEffect(() => {
+        const onFullscreenChange = () => {
+            const isFS = document.fullscreenElement === containerRef.current;
+            setIsFullscreen(isFS);
+            setTimeout(() => fitAddonRef.current?.fit(), 100);
+        };
+        document.addEventListener('fullscreenchange', onFullscreenChange);
+        return () => document.removeEventListener('fullscreenchange', onFullscreenChange);
+    }, []);
+
     const toggleFullscreen = () => {
-        setIsFullscreen(!isFullscreen);
-        setTimeout(() => {
-            fitAddonRef.current?.fit();
-            xtermRef.current?.focus();
-        }, 100);
+        if (!document.fullscreenElement) {
+            containerRef.current?.requestFullscreen().catch(err => console.error(err));
+        } else {
+            document.exitFullscreen();
+        }
     };
 
     return (
         <div 
-            className={`bg-[#1e1e2d] flex flex-col transition-all duration-200 
-            ${isFullscreen 
-                ? 'fixed inset-0 z-[100] rounded-none border-0' 
-                : 'absolute inset-0 rounded-2xl border border-white/[0.05] border-t-2 border-t-[#8950fc]/50 shadow-lg' 
-            }
-            ${isActive ? 'opacity-100 pointer-events-auto z-10' : 'opacity-0 pointer-events-none z-0'}`}
+            ref={containerRef}
+            className={`terminal-custom-scrollbar bg-[#1e1e2d] flex flex-col transition-all duration-200 overflow-hidden w-full h-full
+            ${isFullscreen ? 'rounded-none border-0' : 'rounded-2xl border border-white/[0.05] border-t-2 border-t-[#8950fc]/50 shadow-lg'}`}
         >
-            <div {...getRootProps()} className="flex-1 flex flex-col relative min-h-0 w-full">
+            <style dangerouslySetInnerHTML={{__html: `
+                .terminal-custom-scrollbar .xterm-viewport::-webkit-scrollbar { width: 8px; height: 8px; }
+                .terminal-custom-scrollbar .xterm-viewport::-webkit-scrollbar-track { background: transparent; }
+                .terminal-custom-scrollbar .xterm-viewport::-webkit-scrollbar-thumb { background: #2b2b40; border-radius: 4px; }
+                .terminal-custom-scrollbar .xterm-viewport::-webkit-scrollbar-thumb:hover { background: #8950fc; }
+            `}} />
+
+            <div {...getRootProps()} className="flex-1 flex flex-col relative min-h-0 min-w-0 w-full h-full overflow-hidden">
                 <input {...getInputProps()} />
 
-                <div className="flex-none flex justify-between items-center px-6 py-3 bg-[#151521] border-b border-white/[0.05]">
-                    <div className="flex items-center gap-2 text-[9px] uppercase tracking-widest font-bold text-[#a2a5b9]">
-                        <Server size={12} /> Host: <span className="text-white">{node.host}</span>
+                {/* ХЕДЕР: min-w-0 + flex-1 для тексту гарантує, що він зіжметься і обріжеться (...), а не розірве блок */}
+                <div className="flex-none flex justify-between items-center px-3 py-2 bg-[#151521] border-b border-white/[0.05] w-full min-w-0 overflow-hidden">
+                    <div className="flex items-center gap-2 min-w-0 flex-1 pr-2">
+                        <Server size={12} className="shrink-0 text-[#a2a5b9]" /> 
+                        <span className="text-[10px] uppercase tracking-widest font-bold text-white truncate w-full">
+                            Host: {node.host}
+                        </span>
                     </div>
-                    <div className="flex items-center gap-4">
-                        <div className={`flex items-center gap-2 font-bold text-[9px] uppercase tracking-widest ${isConnected ? 'text-[#1bc5bd]' : 'text-[#f64e60]'}`}>
+                    <div className="flex items-center gap-2 shrink-0">
+                        <div className={`hidden lg:flex items-center gap-1 font-bold text-[9px] uppercase tracking-widest ${isConnected ? 'text-[#1bc5bd]' : 'text-[#f64e60]'}`}>
                             {isConnected ? <Wifi size={12} /> : <WifiOff size={12} />}
-                            {isConnected ? 'Connected' : 'Disconnected'}
+                            <span className="hidden xl:inline">{isConnected ? 'Connected' : 'Disconnected'}</span>
                         </div>
-                        
-                        <div className="flex items-center gap-1 border-l border-white/[0.1] pl-4 ml-2">
-                            <button 
-                                onClick={toggleFullscreen} 
-                                className="p-1.5 hover:bg-white/[0.1] rounded-lg text-[#a2a5b9] hover:text-white transition-colors"
-                            >
+                        <div className="flex items-center border-l border-white/[0.1] pl-2 ml-1">
+                            <button onClick={toggleFullscreen} className="p-1 hover:bg-white/[0.1] rounded-lg text-[#a2a5b9] hover:text-white transition-colors">
                                 {isFullscreen ? <Minimize size={14} /> : <Maximize size={14} />}
                             </button>
-                            <button 
-                                onClick={onClose} 
-                                className="p-1.5 hover:bg-white/[0.1] rounded-lg text-[#a2a5b9] hover:text-[#f64e60] transition-colors"
-                            >
+                            <button onClick={onClose} className="p-1 hover:bg-white/[0.1] rounded-lg text-[#a2a5b9] hover:text-[#f64e60] transition-colors ml-1">
                                 <X size={14} />
                             </button>
                         </div>
                     </div>
                 </div>
 
-                <div className="flex-auto relative min-h-0 bg-[#151521] overflow-hidden">
-                    <div ref={terminalRef} className="absolute inset-2 md:inset-4 h-auto w-auto" />
+                {/* РОБОЧА ЗОНА: absolute inset-2 фізично відриває xterm від потоку */}
+                <div className="flex-1 relative min-h-0 min-w-0 w-full bg-[#151521] overflow-hidden">
+                    {isDragActive && (
+                        <div className="absolute inset-0 bg-[#151521]/90 backdrop-blur-sm z-50 flex flex-col items-center justify-center border-4 border-dashed border-[#1bc5bd] m-4 rounded-xl">
+                            <UploadCloud size={48} className="text-[#1bc5bd] mb-4" />
+                        </div>
+                    )}
+                    <div ref={terminalRef} className="absolute inset-2 outline-none overflow-hidden" />
                 </div>
             </div>
         </div>
