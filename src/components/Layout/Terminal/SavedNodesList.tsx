@@ -28,9 +28,11 @@ export const SavedNodesList: React.FC<SavedNodesListProps> = ({ savedNodes, onSe
                             <div className="text-[10px] uppercase tracking-widest font-bold text-[#a2a5b9]">{node.user}</div>
                         </div>
                         <button
-                            onClick={(e) => onRemoveNode(node.host, e)}
-                            className="text-[#f64e60]/50 hover:text-[#f64e60] hover:bg-[#f64e60]/10 p-2 rounded-lg transition-all !bg-transparent"
-                            style={{ backgroundColor: 'transparent' }}
+                            onClick={(e) => {
+                                e.stopPropagation();
+                                onRemoveNode(node.host, e);
+                            }}
+                            className="text-[#f64e60]/50 hover:text-[#f64e60] hover:bg-[#f64e60]/10 p-2 rounded-lg transition-all bg-transparent border-none outline-none"
                         >
                             <Trash2 size={16} />
                         </button>

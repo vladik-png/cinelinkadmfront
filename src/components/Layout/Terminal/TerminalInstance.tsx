@@ -3,7 +3,7 @@ import { useEffect, useRef, useState } from 'react';
 import { Terminal as XTerm } from 'xterm';
 import { FitAddon } from 'xterm-addon-fit';
 import { useDropzone } from 'react-dropzone';
-import { Server, Wifi, WifiOff, UploadCloud, X } from 'lucide-react';
+import { Server, Wifi, WifiOff, UploadCloud, X, Maximize, Minimize } from 'lucide-react';
 import { SavedNode } from '../../../types/terminal';
 import { uploadFileViaTerminal, getTerminalWsUrl } from '../../../api/terminalService';
 import 'xterm/css/xterm.css';
@@ -22,14 +22,13 @@ export const TerminalInstance: React.FC<TerminalInstanceProps> = ({ node, isActi
 
     const [isConnected, setIsConnected] = useState<boolean>(false);
     const [uploadStatus, setUploadStatus] = useState<string | null>(null);
+    const [isFullscreen, setIsFullscreen] = useState<boolean>(false);
 
     const onDrop = async (acceptedFiles: File[]) => {
         const file = acceptedFiles[0];
         if (!file || !isConnected) return;
-
         setUploadStatus(`Uploading: ${file.name}...`);
         xtermRef.current?.writeln(`\r\n\x1b[36m[SYSTEM]\x1b[0m Sending ${file.name} via SFTP...\r\n`);
-
         try {
             await uploadFileViaTerminal(file, node);
             setUploadStatus('Upload successful');
@@ -45,6 +44,7 @@ export const TerminalInstance: React.FC<TerminalInstanceProps> = ({ node, isActi
 
     useEffect(() => {
         if (!terminalRef.current) return;
+        if (terminalRef.current.children.length > 0) terminalRef.current.innerHTML = '';
 
         const term = new XTerm({
             cursorBlink: true,
@@ -57,15 +57,19 @@ export const TerminalInstance: React.FC<TerminalInstanceProps> = ({ node, isActi
         fitAddonRef.current = fitAddon;
         term.loadAddon(fitAddon);
         term.open(terminalRef.current);
-        fitAddon.fit();
-        xtermRef.current = term;
-
+        
         const ws = new WebSocket(`${getTerminalWsUrl()}/ssh`);
         socketRef.current = ws;
 
         ws.onopen = () => {
             ws.send(JSON.stringify({ type: 'auth', host: node.host, user: node.user, pass: node.pass }));
             setIsConnected(true);
+            
+            setTimeout(() => {
+                if (fitAddonRef.current) {
+                    fitAddonRef.current.fit();
+                }
+            }, 100);
         };
 
         ws.onmessage = (event) => term.write(event.data);
@@ -78,30 +82,60 @@ export const TerminalInstance: React.FC<TerminalInstanceProps> = ({ node, isActi
             if (ws.readyState === WebSocket.OPEN) ws.send(data);
         });
 
-        const handleResize = () => {
-            if (isActive) fitAddon.fit();
-        };
-        window.addEventListener('resize', handleResize);
+        term.onResize(({ cols, rows }) => {
+            if (ws.readyState === WebSocket.OPEN) {
+                ws.send(JSON.stringify({ type: 'resize', cols, rows }));
+            }
+        });
+
+        const resizeObserver = new ResizeObserver(() => {
+            requestAnimationFrame(() => {
+                if (fitAddonRef.current && terminalRef.current?.clientHeight) {
+                    try { fitAddonRef.current.fit(); } catch (e) {}
+                }
+            });
+        });
+        
+        resizeObserver.observe(terminalRef.current);
+        xtermRef.current = term;
 
         return () => {
-            window.removeEventListener('resize', handleResize);
+            resizeObserver.disconnect();
             ws.close();
             term.dispose();
         };
     }, []);
 
     useEffect(() => {
-        if (isActive && fitAddonRef.current) {
-            setTimeout(() => fitAddonRef.current?.fit(), 50);
+        if (isActive) {
+            setTimeout(() => {
+                fitAddonRef.current?.fit();
+                xtermRef.current?.focus();
+            }, 50);
         }
     }, [isActive]);
 
+    const toggleFullscreen = () => {
+        setIsFullscreen(!isFullscreen);
+        setTimeout(() => {
+            fitAddonRef.current?.fit();
+            xtermRef.current?.focus();
+        }, 100);
+    };
+
     return (
-        <div className={`relative flex-1 bg-[#1e1e2d] rounded-2xl border border-white/[0.05] shadow-lg flex flex-col overflow-hidden border-t-2 border-t-[#8950fc]/50 ${isActive ? 'flex' : 'hidden'}`}>
-            <div {...getRootProps()} className="flex-1 flex flex-col relative h-full">
+        <div 
+            className={`bg-[#1e1e2d] flex flex-col transition-all duration-200 
+            ${isFullscreen 
+                ? 'fixed inset-0 z-[100] rounded-none border-0' 
+                : 'absolute inset-0 rounded-2xl border border-white/[0.05] border-t-2 border-t-[#8950fc]/50 shadow-lg' 
+            }
+            ${isActive ? 'opacity-100 pointer-events-auto z-10' : 'opacity-0 pointer-events-none z-0'}`}
+        >
+            <div {...getRootProps()} className="flex-1 flex flex-col relative min-h-0 w-full">
                 <input {...getInputProps()} />
 
-                <div className="flex justify-between items-center px-6 py-3 bg-[#151521] border-b border-white/[0.05]">
+                <div className="flex-none flex justify-between items-center px-6 py-3 bg-[#151521] border-b border-white/[0.05]">
                     <div className="flex items-center gap-2 text-[9px] uppercase tracking-widest font-bold text-[#a2a5b9]">
                         <Server size={12} /> Host: <span className="text-white">{node.host}</span>
                     </div>
@@ -110,25 +144,26 @@ export const TerminalInstance: React.FC<TerminalInstanceProps> = ({ node, isActi
                             {isConnected ? <Wifi size={12} /> : <WifiOff size={12} />}
                             {isConnected ? 'Connected' : 'Disconnected'}
                         </div>
-                        <button onClick={onClose} className="p-1 hover:bg-white/[0.1] rounded-lg text-[#a2a5b9] hover:text-[#f64e60] transition-colors">
-                            <X size={14} />
-                        </button>
+                        
+                        <div className="flex items-center gap-1 border-l border-white/[0.1] pl-4 ml-2">
+                            <button 
+                                onClick={toggleFullscreen} 
+                                className="p-1.5 hover:bg-white/[0.1] rounded-lg text-[#a2a5b9] hover:text-white transition-colors"
+                            >
+                                {isFullscreen ? <Minimize size={14} /> : <Maximize size={14} />}
+                            </button>
+                            <button 
+                                onClick={onClose} 
+                                className="p-1.5 hover:bg-white/[0.1] rounded-lg text-[#a2a5b9] hover:text-[#f64e60] transition-colors"
+                            >
+                                <X size={14} />
+                            </button>
+                        </div>
                     </div>
                 </div>
 
-                <div className="flex-1 p-6 relative overflow-hidden">
-                    {isDragActive && (
-                        <div className="absolute inset-0 bg-[#151521]/90 backdrop-blur-sm z-50 flex flex-col items-center justify-center border-4 border-dashed border-[#1bc5bd] m-4 rounded-xl">
-                            <UploadCloud size={64} className="text-[#1bc5bd] mb-4" />
-                            <span className="text-[#1bc5bd] text-xl font-bold uppercase tracking-widest">Drop files to upload via SFTP</span>
-                        </div>
-                    )}
-                    {uploadStatus && (
-                        <div className="absolute bottom-6 right-6 bg-[#1bc5bd]/10 border border-[#1bc5bd]/30 text-[#1bc5bd] px-4 py-3 rounded-xl text-xs font-bold uppercase tracking-widest shadow-lg flex items-center gap-2 z-40">
-                            {uploadStatus}
-                        </div>
-                    )}
-                    <div ref={terminalRef} className="h-full w-full" />
+                <div className="flex-auto relative min-h-0 bg-[#151521] overflow-hidden">
+                    <div ref={terminalRef} className="absolute inset-2 md:inset-4 h-auto w-auto" />
                 </div>
             </div>
         </div>
