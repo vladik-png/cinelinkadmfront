@@ -58,7 +58,7 @@ export const TerminalInstance: React.FC<TerminalInstanceProps> = ({ node, isActi
         fitAddonRef.current = fitAddon;
         term.loadAddon(fitAddon);
         term.open(terminalRef.current);
-
+        
         const ws = new WebSocket(`${getTerminalWsUrl()}/ssh`);
         socketRef.current = ws;
 
@@ -87,11 +87,11 @@ export const TerminalInstance: React.FC<TerminalInstanceProps> = ({ node, isActi
         const resizeObserver = new ResizeObserver(() => {
             requestAnimationFrame(() => {
                 if (fitAddonRef.current && terminalRef.current?.clientHeight) {
-                    try { fitAddonRef.current.fit(); } catch (e) { }
+                    try { fitAddonRef.current.fit(); } catch (e) {}
                 }
             });
         });
-
+        
         resizeObserver.observe(terminalRef.current);
         xtermRef.current = term;
 
@@ -130,28 +130,21 @@ export const TerminalInstance: React.FC<TerminalInstanceProps> = ({ node, isActi
     };
 
     return (
-        <div
+        <div 
             ref={containerRef}
-            className={`terminal-custom-scrollbar bg-[#1e1e2d] flex flex-col transition-all duration-200 overflow-hidden w-full h-full
-            ${isFullscreen
-                    ? 'rounded-none border-0'
-                    : `rounded-2xl border-2 shadow-lg ${isActive ? 'border-[#8950fc] shadow-[#8950fc]/20' : 'border-white/[0.05] border-t-[#8950fc]/50 hover:border-white/[0.1]'}`
-                }`}
+            className={`terminal-custom-scrollbar ${isActive ? 'is-active' : ''} bg-[#1e1e2d] flex flex-col transition-all duration-200 overflow-hidden w-full h-full
+            ${isFullscreen 
+                ? 'rounded-none border-0' 
+                : `rounded-2xl border-2 shadow-lg ${isActive ? 'border-[#8950fc] shadow-[#8950fc]/40' : 'border-white/[0.05] border-t-[#8950fc]/50 hover:border-white/[0.1]'}`
+            }`}
         >
-            <style dangerouslySetInnerHTML={{
-                __html: `
-                .terminal-custom-scrollbar .xterm-viewport::-webkit-scrollbar { width: 8px; height: 8px; }
-                .terminal-custom-scrollbar .xterm-viewport::-webkit-scrollbar-track { background: transparent; }
-                .terminal-custom-scrollbar .xterm-viewport::-webkit-scrollbar-thumb { background: #2b2b40; border-radius: 4px; }
-                .terminal-custom-scrollbar .xterm-viewport::-webkit-scrollbar-thumb:hover { background: #8950fc; }
-            `}} />
-
             <div {...getRootProps()} className="flex-1 flex flex-col relative min-h-0 min-w-0 w-full h-full overflow-hidden">
                 <input {...getInputProps()} />
 
-                <div className="flex-none flex justify-between items-center px-4 py-3 bg-transparent border-b border-white/[0.05] w-full min-w-0 overflow-hidden">
+                {/* ХЕДЕР: min-w-0 + flex-1 для тексту гарантує, що він зіжметься і обріжеться (...), а не розірве блок */}
+                <div className={`flex-none flex justify-between items-center px-4 py-3 bg-transparent border-b border-white/[0.05] w-full min-w-0 overflow-hidden ${isActive ? 'bg-white/[0.02]' : ''}`}>
                     <div className="flex items-center gap-2 min-w-0 flex-1 pr-2">
-                        <Server size={12} className="shrink-0 text-[#a2a5b9]" />
+                        <Server size={12} className="shrink-0 text-[#a2a5b9]" /> 
                         <span className="text-[10px] uppercase tracking-widest font-bold text-white truncate w-full">
                             Host: {node.host}
                         </span>
@@ -162,17 +155,16 @@ export const TerminalInstance: React.FC<TerminalInstanceProps> = ({ node, isActi
                             <span className="hidden xl:inline">{isConnected ? 'Connected' : 'Disconnected'}</span>
                         </div>
                         <div className="flex items-center border-l border-white/[0.1] pl-2 ml-1">
-                            <button onClick={toggleFullscreen} className="p-1 hover:bg-white/[0.1] rounded-lg text-[#a2a5b9] hover:text-white transition-colors">
+                            <button onClick={(e) => { e.stopPropagation(); toggleFullscreen(); }} className="p-1 hover:bg-white/[0.1] rounded-lg text-[#a2a5b9] hover:text-white transition-colors">
                                 {isFullscreen ? <Minimize size={14} /> : <Maximize size={14} />}
                             </button>
-                            <button onClick={onClose} className="p-1 hover:bg-white/[0.1] rounded-lg text-[#a2a5b9] hover:text-[#f64e60] transition-colors ml-1">
+                            <button onClick={(e) => { e.stopPropagation(); onClose(); }} className="p-1 hover:bg-white/[0.1] rounded-lg text-[#a2a5b9] hover:text-[#f64e60] transition-colors ml-1">
                                 <X size={14} />
                             </button>
                         </div>
                     </div>
                 </div>
 
-                {/* РОБОЧА ЗОНА: absolute inset-2 фізично відриває xterm від потоку */}
                 <div className="flex-1 relative min-h-0 min-w-0 w-full bg-[#151521] overflow-hidden">
                     {isDragActive && (
                         <div className="absolute inset-0 bg-[#151521]/90 backdrop-blur-sm z-50 flex flex-col items-center justify-center border-4 border-dashed border-[#1bc5bd] m-4 rounded-xl">

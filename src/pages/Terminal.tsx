@@ -26,9 +26,10 @@ const Terminal: React.FC = () => {
     if (sessions.length === 0) return null;
 
     return (
-      <div className="w-full h-full overflow-y-auto no-scrollbar flex flex-wrap content-start gap-4 p-2 relative">
+      <div className="w-full h-full flex flex-wrap gap-4 overflow-y-auto content-start p-2 relative">
         {sessions.map((session) => {
           const isActive = activeTabId === session.id;
+
           return (
             <Resizable
               key={session.id}
@@ -39,10 +40,15 @@ const Terminal: React.FC = () => {
               className={`relative flex-shrink-0 ${isActive ? 'z-10' : 'z-0'}`}
             >
               <div
-                className="absolute inset-0"
+                className="absolute inset-0 outline-none flex flex-col pointer-events-auto"
                 onClickCapture={() => setActiveTabId(session.id)}
+                tabIndex={-1}
               >
-                <TerminalInstance node={session.node} isActive={isActive} onClose={() => closeSession(session.id)} />
+                <TerminalInstance 
+                    node={session.node} 
+                    isActive={isActive} 
+                    onClose={() => closeSession(session.id)} 
+                />
               </div>
             </Resizable>
           );
@@ -58,6 +64,18 @@ const Terminal: React.FC = () => {
         __html: `
           .no-scrollbar::-webkit-scrollbar { display: none !important; width: 0 !important; height: 0 !important; }
           .no-scrollbar { -ms-overflow-style: none !important; scrollbar-width: none !important; }
+
+          .custom-tabs-scrollbar::-webkit-scrollbar { height: 6px; }
+          .custom-tabs-scrollbar::-webkit-scrollbar-track { background: rgba(255, 255, 255, 0.02); border-radius: 4px; }
+          .custom-tabs-scrollbar::-webkit-scrollbar-thumb { background: rgba(255, 255, 255, 0.1); border-radius: 4px; }
+          .custom-tabs-scrollbar::-webkit-scrollbar-thumb:hover { background: rgba(137, 80, 252, 0.5); }
+
+          .terminal-custom-scrollbar .xterm-viewport::-webkit-scrollbar { width: 0px; height: 0px; }
+          .terminal-custom-scrollbar.is-active .xterm-viewport::-webkit-scrollbar,
+          .terminal-custom-scrollbar:focus-within .xterm-viewport::-webkit-scrollbar { width: 8px; height: 8px; }
+          .terminal-custom-scrollbar .xterm-viewport::-webkit-scrollbar-track { background: transparent; }
+          .terminal-custom-scrollbar .xterm-viewport::-webkit-scrollbar-thumb { background: #2b2b40; border-radius: 4px; }
+          .terminal-custom-scrollbar .xterm-viewport::-webkit-scrollbar-thumb:hover { background: #8950fc; }
       `}} />
 
       <div className="p-4 md:p-6 w-full max-w-[1600px] mx-auto flex-1 flex flex-col min-h-0 min-w-0 overflow-hidden relative">
@@ -68,19 +86,17 @@ const Terminal: React.FC = () => {
           </h1>
         </div>
 
-        <div className="flex-none flex justify-between items-center mb-2 min-w-0 w-full overflow-hidden">
-          <div className="flex-1 min-w-0 overflow-x-auto no-scrollbar" style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}>
+        <div className="flex-none w-full overflow-hidden mb-2">
             <TerminalTabs
               sessions={sessions}
               activeTabId={activeTabId}
               onTabSelect={setActiveTabId}
               onCloseSession={closeSession}
             />
-          </div>
         </div>
 
         <div className="flex-1 relative min-h-0 min-w-0 w-full overflow-hidden">
-          <div className={`absolute inset-0 z-20 flex flex-col lg:flex-row items-start justify-center gap-8 overflow-y-auto no-scrollbar pb-10 transition-opacity duration-200 ${activeTabId === 'new' ? 'opacity-100 pointer-events-auto' : 'opacity-0 pointer-events-none'}`}>
+          <div className={`absolute inset-0 z-30 flex flex-col lg:flex-row items-start justify-center gap-8 overflow-y-auto terminal-custom-scrollbar pt-8 lg:pt-16 pb-10 transition-opacity duration-200 ${activeTabId === 'new' ? 'opacity-100 pointer-events-auto' : 'opacity-0 pointer-events-none'}`}>
             <TerminalConnectionForm credentials={credentials} setCredentials={setCredentials} showPassword={showPassword} setShowPassword={setShowPassword} onConnect={startConnection} />
             <SavedNodesList savedNodes={savedNodes} onSelectNode={setCredentials} onRemoveNode={removeSavedNode} />
           </div>
