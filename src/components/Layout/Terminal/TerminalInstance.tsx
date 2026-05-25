@@ -58,7 +58,7 @@ export const TerminalInstance: React.FC<TerminalInstanceProps> = ({ node, isActi
         fitAddonRef.current = fitAddon;
         term.loadAddon(fitAddon);
         term.open(terminalRef.current);
-        
+
         const ws = new WebSocket(`${getTerminalWsUrl()}/ssh`);
         socketRef.current = ws;
 
@@ -87,11 +87,11 @@ export const TerminalInstance: React.FC<TerminalInstanceProps> = ({ node, isActi
         const resizeObserver = new ResizeObserver(() => {
             requestAnimationFrame(() => {
                 if (fitAddonRef.current && terminalRef.current?.clientHeight) {
-                    try { fitAddonRef.current.fit(); } catch (e) {}
+                    try { fitAddonRef.current.fit(); } catch (e) { }
                 }
             });
         });
-        
+
         resizeObserver.observe(terminalRef.current);
         xtermRef.current = term;
 
@@ -130,12 +130,16 @@ export const TerminalInstance: React.FC<TerminalInstanceProps> = ({ node, isActi
     };
 
     return (
-        <div 
+        <div
             ref={containerRef}
             className={`terminal-custom-scrollbar bg-[#1e1e2d] flex flex-col transition-all duration-200 overflow-hidden w-full h-full
-            ${isFullscreen ? 'rounded-none border-0' : 'rounded-2xl border border-white/[0.05] border-t-2 border-t-[#8950fc]/50 shadow-lg'}`}
+            ${isFullscreen
+                    ? 'rounded-none border-0'
+                    : `rounded-2xl border-2 shadow-lg ${isActive ? 'border-[#8950fc] shadow-[#8950fc]/20' : 'border-white/[0.05] border-t-[#8950fc]/50 hover:border-white/[0.1]'}`
+                }`}
         >
-            <style dangerouslySetInnerHTML={{__html: `
+            <style dangerouslySetInnerHTML={{
+                __html: `
                 .terminal-custom-scrollbar .xterm-viewport::-webkit-scrollbar { width: 8px; height: 8px; }
                 .terminal-custom-scrollbar .xterm-viewport::-webkit-scrollbar-track { background: transparent; }
                 .terminal-custom-scrollbar .xterm-viewport::-webkit-scrollbar-thumb { background: #2b2b40; border-radius: 4px; }
@@ -145,10 +149,9 @@ export const TerminalInstance: React.FC<TerminalInstanceProps> = ({ node, isActi
             <div {...getRootProps()} className="flex-1 flex flex-col relative min-h-0 min-w-0 w-full h-full overflow-hidden">
                 <input {...getInputProps()} />
 
-                {/* ХЕДЕР: min-w-0 + flex-1 для тексту гарантує, що він зіжметься і обріжеться (...), а не розірве блок */}
-                <div className="flex-none flex justify-between items-center px-3 py-2 bg-[#151521] border-b border-white/[0.05] w-full min-w-0 overflow-hidden">
+                <div className="flex-none flex justify-between items-center px-4 py-3 bg-transparent border-b border-white/[0.05] w-full min-w-0 overflow-hidden">
                     <div className="flex items-center gap-2 min-w-0 flex-1 pr-2">
-                        <Server size={12} className="shrink-0 text-[#a2a5b9]" /> 
+                        <Server size={12} className="shrink-0 text-[#a2a5b9]" />
                         <span className="text-[10px] uppercase tracking-widest font-bold text-white truncate w-full">
                             Host: {node.host}
                         </span>

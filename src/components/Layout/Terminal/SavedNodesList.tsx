@@ -12,7 +12,7 @@ export const SavedNodesList: React.FC<SavedNodesListProps> = ({ savedNodes, onSe
     if (savedNodes.length === 0) return null;
 
     return (
-        <div className="bg-[#1e1e2d] p-8 rounded-2xl border border-white/[0.05] shadow-lg w-full max-w-sm">
+        <div className="bg-[#1e1e2d] p-8 rounded-2xl border border-white/[0.05] shadow-lg w-full max-w-sm border-t-2 border-t-[#1bc5bd]/50">
             <h2 className="text-xl text-white font-bold mb-6 flex items-center gap-2 uppercase tracking-wide">
                 <Bookmark size={20} className="text-[#1bc5bd]" /> Saved Nodes
             </h2>
