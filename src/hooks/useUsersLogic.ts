@@ -8,6 +8,8 @@ export const useUsersLogic = () => {
     const [loading, setLoading] = useState<boolean>(true);
     const [searchTerm, setSearchTerm] = useState<string>('');
     const [showBlockedOnly, setShowBlockedOnly] = useState<boolean>(false);
+    const [currentPage, setCurrentPage] = useState<number>(1);
+    const itemsPerPage = 20;
 
     const [sortConfig, setSortConfig] = useState<{ key: SortKey; direction: SortDirection }>({
         key: 'date',
@@ -18,17 +20,32 @@ export const useUsersLogic = () => {
         try {
             setLoading(true);
             const data = await getUsers();
-            if (data && data.results && Array.isArray(data.results)) {
+
+            if (data && data.results && Array.isArray(data.results.data)) {
+                setUsers(data.results.data);
+            }
+            else if (data && Array.isArray(data.results)) {
                 setUsers(data.results);
+            }
+            else if (Array.isArray(data)) {
+                setUsers(data);
+            } else {
+                console.warn("Unexpected API response format:", data);
+                setUsers([]);
             }
         } catch (err) {
             console.error("Error fetching users:", err);
+            setUsers([]);
         } finally {
             setLoading(false);
         }
     };
 
     useEffect(() => { fetchUsers(); }, []);
+
+    useEffect(() => {
+        setCurrentPage(1);
+    }, [searchTerm, showBlockedOnly, sortConfig]);
 
     const handleToggleStatus = async (user: UserData) => {
         if (!user || !user.user_id) return;
@@ -59,7 +76,15 @@ export const useUsersLogic = () => {
     const processedUsers = useMemo(() => {
         let result = users.filter(u => {
             const search = searchTerm.toLowerCase();
-            const matchesSearch = (u.username + u.first_name + u.last_name + (u.email || '')).toLowerCase().includes(search);
+            const searchString = (
+                (u.user_id?.toString() || '') + ' ' +
+                (u.username || '') + ' ' +
+                (u.first_name || '') + ' ' +
+                (u.last_name || '') + ' ' +
+                (u.email || '')
+            ).toLowerCase();
+            
+            const matchesSearch = searchString.includes(search);
             return showBlockedOnly ? (matchesSearch && !u.is_active) : matchesSearch;
         });
 
@@ -83,6 +108,13 @@ export const useUsersLogic = () => {
         return result;
     }, [users, searchTerm, showBlockedOnly, sortConfig]);
 
+    const paginatedUsers = useMemo(() => {
+        const startIndex = (currentPage - 1) * itemsPerPage;
+        return processedUsers.slice(startIndex, startIndex + itemsPerPage);
+    }, [processedUsers, currentPage]);
+
+    const totalPages = Math.ceil(processedUsers.length / itemsPerPage);
+
     const exportToCSV = () => {
         const delimiter = ";";
         const headers = ["ID", "Username", "Name", "Active", "Joined"].join(delimiter);
@@ -103,6 +135,10 @@ export const useUsersLogic = () => {
     return {
         users,
         processedUsers,
+        paginatedUsers,
+        currentPage,
+        setCurrentPage,
+        totalPages,
         loading,
         searchTerm,
         setSearchTerm,

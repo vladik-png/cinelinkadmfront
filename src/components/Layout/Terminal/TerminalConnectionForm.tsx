@@ -68,13 +68,13 @@ export const TerminalConnectionForm: React.FC<TerminalConnectionFormProps> = ({
                 </div>
                 <div>
                     <label className="text-[10px] uppercase tracking-widest font-bold mb-2 flex items-center gap-2">
-                        Download Folder
+                        Remote Upload Path
                     </label>
                     <input
                         type="text"
                         value={credentials.remoteDir}
                         onChange={e => setCredentials({ ...credentials, remoteDir: e.target.value })}
-                        className="w-full bg-[#151521] border border-white/[0.1] rounded-xl px-4 py-3 text-[#a2a5b9] text-xs font-mono focus:outline-none focus:border-[#8950fc]"
+                        className="w-full bg-[#151521] border border-white/[0.1] rounded-xl px-4 py-3 text-[#a2a5b9] text-xs font-mono focus:outline-none focus:border-[#8950fc] transition-colors"
                     />
                 </div>
 

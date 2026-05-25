@@ -6,11 +6,16 @@ import { getUserDetailedProfile } from '../api/userService';
 import { UsersToolbar } from '../components/Layout/Users/UsersToolbar';
 import { UsersTable } from '../components/Layout/Users/UsersTable';
 import { UserProfileModal } from '../components/Layout/Users/UserProfileModal';
+import { UsersPagination } from '../components/Layout/Users/UsersPagination';
 
 const Users: React.FC = () => {
   const {
     users,
     processedUsers,
+    paginatedUsers,
+    currentPage,
+    setCurrentPage,
+    totalPages,
     loading,
     searchTerm,
     setSearchTerm,
@@ -65,13 +70,21 @@ const Users: React.FC = () => {
       />
 
       <UsersTable
-        users={processedUsers}
+        users={paginatedUsers}
         loading={loading}
         sortConfig={sortConfig}
         onSort={handleSort}
         onViewProfile={handleViewProfile}
         onToggleStatus={onToggleUserStatus}
       />
+
+      {!loading && (
+        <UsersPagination
+          currentPage={currentPage}
+          totalPages={totalPages}
+          onPageChange={setCurrentPage}
+        />
+      )}
 
       {selectedUser && (
         <UserProfileModal

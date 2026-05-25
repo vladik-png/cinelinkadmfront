@@ -132,11 +132,7 @@ export const TerminalInstance: React.FC<TerminalInstanceProps> = ({ node, isActi
     return (
         <div 
             ref={containerRef}
-            className={`terminal-custom-scrollbar ${isActive ? 'is-active' : ''} bg-[#1e1e2d] flex flex-col transition-all duration-200 overflow-hidden w-full h-full
-            ${isFullscreen 
-                ? 'rounded-none border-0' 
-                : `rounded-2xl border-2 shadow-lg ${isActive ? 'border-[#8950fc] shadow-[#8950fc]/40' : 'border-white/[0.05] border-t-[#8950fc]/50 hover:border-white/[0.1]'}`
-            }`}
+            className={`terminal-custom-scrollbar ${isActive ? 'is-active' : ''} flex flex-col transition-all duration-200 overflow-hidden w-full h-full bg-[#1e1e2d]`}
         >
             <div {...getRootProps()} className="flex-1 flex flex-col relative min-h-0 min-w-0 w-full h-full overflow-hidden">
                 <input {...getInputProps()} />

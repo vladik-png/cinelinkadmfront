@@ -17,6 +17,17 @@ export const useTerminalLogic = () => {
     });
 
     useEffect(() => {
+        if (activeTabId !== 'new' && sessions.length > 0) {
+            const exists = sessions.some(s => s.id === activeTabId);
+            if (!exists) {
+                setActiveTabId(sessions[sessions.length - 1].id);
+            }
+        } else if (activeTabId !== 'new' && sessions.length === 0) {
+            setActiveTabId('new');
+        }
+    }, [sessions, activeTabId]);
+
+    useEffect(() => {
         sessionStorage.setItem('cinelink_active_sessions', JSON.stringify(sessions));
     }, [sessions]);
 
