@@ -27,7 +27,7 @@ export interface SystemMetricsMap {
 export interface UnifiedServer {
   id: string;
   name: string;
-  type: 'AWS' | 'WINDOWS' | 'KAMATERA';
+  type: 'AWS' | 'WINDOWS' | 'KAMATERA' | 'DIGITAL_OCEAN';
   state: string;
   ip?: string;
   cpu?: number | string;

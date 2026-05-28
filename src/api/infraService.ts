@@ -3,6 +3,7 @@ import axios from 'axios';
 const INFRA_BASE_URL = import.meta.env.VITE_INFRA_API_URL;
 const WINDOWS_API = import.meta.env.VITE_WINDOWS_API_URL;
 const KAMATERA_API = import.meta.env.VITE_KAMATERA_API_URL;
+const DIGITAL_OCEAN_API = import.meta.env.VITE_DIGITAL_OCEAN_API_URL;
 
 export const getInfrastructureData = async () => {
   try {
@@ -39,4 +40,8 @@ export const getWindowsMetrics = async () => {
 
 export const getKamateraMetrics = async () => {
   return axios.get(`${KAMATERA_API}/system-metrics`);
+};
+
+export const getDigitalOceanMetrics = async () => {
+  return axios.get(`${DIGITAL_OCEAN_API}/system-metrics`);
 };

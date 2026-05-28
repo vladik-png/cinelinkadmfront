@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { getInfrastructureData, performPowerAction, getWindowsMetrics, getKamateraMetrics } from '../api/infraService';
+import { getInfrastructureData, performPowerAction, getWindowsMetrics, getKamateraMetrics, getDigitalOceanMetrics } from '../api/infraService';
 import { UnifiedServer } from '../types/infrastructure';
 
 export const useInfrastructureLogic = () => {
@@ -72,7 +72,29 @@ export const useInfrastructureLogic = () => {
                 console.error("Kamatera Agent API Error:", err);
             }
 
-            setServers([...awsServers, ...winServers, ...kamServers]);
+            let doServers: UnifiedServer[] = [];
+            try {
+                const doRes = await getDigitalOceanMetrics();
+                doServers = Object.values(doRes.data).map((s: any) => ({
+                    id: s.instance_id,
+                    name: s.device_name || 'Digital Ocean Droplet',
+                    type: 'DIGITAL_OCEAN',
+                    state: 'running',
+                    ip: s.public_ip,
+                    cpu: s.cpu_usage ?? s.cpu ?? 0,
+                    temp: s.cpu_temp ?? 0,
+                    ping: s.ping ?? 0,
+                    packetLoss: parseFloat(s.packet_loss) || 0,
+                    ram: s.ram ?? 0,
+                    disk: s.disk,
+                    location: s.location,
+                    uptime: s.time
+                }));
+            } catch (err) {
+                console.error("Digital Ocean Agent API Error:", err);
+            }
+
+            setServers([...awsServers, ...winServers, ...kamServers, ...doServers]);
 
         } catch (err) {
             console.error("Global Infrastructure Error:", err);

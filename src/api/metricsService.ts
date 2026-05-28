@@ -3,6 +3,7 @@ import api from './axios';
 
 const WINDOWS_API = import.meta.env.VITE_WINDOWS_API_URL;
 const KAMATERA_API = import.meta.env.VITE_KAMATERA_API_URL;
+const DIGITAL_OCEAN_API = import.meta.env.VITE_DIGITAL_OCEAN_API_URL;
 
 export const getSystemMetrics = async () => {
   try {
@@ -30,6 +31,14 @@ export const fetchNodeMetrics = async (token: string | null) => {
     const winRes = await axios.get(`${WINDOWS_API}/system-metrics`, { headers });
     if (winRes.data && typeof winRes.data === 'object') {
       combinedData = { ...combinedData, ...winRes.data };
+    }
+  } catch (e) {
+  }
+
+  try {
+    const doRes = await axios.get(`${DIGITAL_OCEAN_API}/system-metrics`, { headers });
+    if (doRes.data && typeof doRes.data === 'object') {
+      combinedData = { ...combinedData, ...doRes.data };
     }
   } catch (e) {
   }
