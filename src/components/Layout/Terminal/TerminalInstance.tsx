@@ -22,23 +22,18 @@ export const TerminalInstance: React.FC<TerminalInstanceProps> = ({ node, isActi
     const socketRef = useRef<WebSocket | null>(null);
 
     const [isConnected, setIsConnected] = useState<boolean>(false);
-    const [uploadStatus, setUploadStatus] = useState<string | null>(null);
     const [isFullscreen, setIsFullscreen] = useState<boolean>(false);
 
     const onDrop = async (acceptedFiles: File[]) => {
         const file = acceptedFiles[0];
         if (!file || !isConnected) return;
-        setUploadStatus(`Uploading: ${file.name}...`);
         xtermRef.current?.writeln(`\r\n\x1b[36m[SYSTEM]\x1b[0m Sending ${file.name} via SFTP...\r\n`);
         try {
             await uploadFileViaTerminal(file, node);
-            setUploadStatus('Upload successful');
             xtermRef.current?.writeln(`\x1b[32m[SUCCESS]\x1b[0m File saved to ${node.remoteDir}${file.name}\r\n`);
         } catch {
-            setUploadStatus('Upload failed');
             xtermRef.current?.writeln(`\x1b[31m[ERROR]\x1b[0m Failed to upload file.\r\n`);
         }
-        setTimeout(() => setUploadStatus(null), 3000);
     };
 
     const { getRootProps, getInputProps, isDragActive } = useDropzone({ onDrop, noClick: true, noKeyboard: true });

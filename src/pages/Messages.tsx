@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { useState } from 'react';
 import { Search, Send, Image as ImageIcon, Paperclip, MoreVertical, CheckCheck, MessageCircle} from 'lucide-react';
-import { MOCK_CONVERSATIONS, MOCK_MESSAGES, MOCK_USERS, Conversation } from '../types/chat';
+import { MOCK_CONVERSATIONS, MOCK_MESSAGES, Conversation } from '../types/chat';
 
 
 const Messages: React.FC = () => {
