@@ -1,13 +1,14 @@
 import * as React from 'react';
-import { Download } from 'lucide-react';
+import { Download, Plus } from 'lucide-react';
 
 interface EmployeesHeaderProps {
     total: number;
     showing: number;
     onExport: () => void;
+    onAddEmployee?: () => void;
 }
 
-export const EmployeesHeader: React.FC<EmployeesHeaderProps> = ({ total, showing, onExport }) => {
+export const EmployeesHeader: React.FC<EmployeesHeaderProps> = ({ total, showing, onExport, onAddEmployee }) => {
     return (
         <div className="mb-8 flex flex-col md:flex-row justify-between items-start md:items-end gap-4">
             <div>
@@ -23,6 +24,14 @@ export const EmployeesHeader: React.FC<EmployeesHeaderProps> = ({ total, showing
             </div>
 
             <div className="flex items-center gap-4">
+                {onAddEmployee && (
+                    <button
+                        onClick={onAddEmployee}
+                        className="flex items-center gap-2 bg-[#3699ff] text-white text-[10px] font-bold uppercase tracking-widest px-6 py-3 rounded-xl hover:bg-[#3699ff]/90 transition-all active:scale-95"
+                    >
+                        <Plus size={14} /> Add Employee
+                    </button>
+                )}
                 <button
                     onClick={onExport}
                     className="flex items-center gap-2 bg-[#1e1e2d] text-[#3699ff] text-[10px] font-bold uppercase tracking-widest px-6 py-3 rounded-xl hover:bg-white/[0.02] border border-white/[0.05] transition-all active:scale-95"

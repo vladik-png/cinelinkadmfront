@@ -6,6 +6,9 @@ export interface EmployeeData {
     location: string;
     created_at: string;
     bg_img_url?: string;
+    phone?: string;
+    email?: string;
+    department?: string;
 }
 
 export type SortKey = 'id' | 'name' | 'location';
