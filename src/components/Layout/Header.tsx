@@ -1,7 +1,8 @@
 import * as React from 'react';
 import { Link } from 'react-router-dom';
-import { Search, Bell, LogOut } from 'lucide-react';
+import { Bell, LogOut } from 'lucide-react';
 import { useHeaderLogic } from '../../hooks/useHeaderLogic';
+import { GlobalSearch } from './GlobalSearch';
 
 const Header: React.FC = () => {
   const { employee, handleLogout } = useHeaderLogic();
@@ -9,15 +10,8 @@ const Header: React.FC = () => {
   return (
     <header className="h-20 bg-[#1e1e2d] border-b border-white/[0.05] flex items-center justify-between px-8 w-full shadow-sm relative z-10">
 
-      <div className="flex items-center w-96">
-        <div className="relative w-full">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-[#a2a5b9]" size={18} />
-          <input
-            type="text"
-            placeholder="Search..."
-            className="w-full bg-[#151521] text-sm text-white rounded-lg pl-10 pr-4 py-2 outline-none border border-white/[0.05] focus:border-[#3699ff]/50 transition-colors placeholder:text-[#a2a5b9]/50"
-          />
-        </div>
+      <div className="flex items-center w-[500px]">
+        <GlobalSearch />
       </div>
 
       <div className="flex items-center gap-5">

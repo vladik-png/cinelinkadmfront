@@ -1,15 +1,24 @@
 import { useState, useEffect, useMemo } from 'react';
+import { useSearchParams } from 'react-router-dom';
 import { getUsers, toggleUserAccountStatus } from '../api/userService';
 import { UserData, SortKey, SortDirection } from '../types/user';
 import { formatDate } from '../utils/dateHelpers';
 
 export const useUsersLogic = () => {
+    const [searchParams, setSearchParams] = useSearchParams();
     const [users, setUsers] = useState<UserData[]>([]);
     const [loading, setLoading] = useState<boolean>(true);
-    const [searchTerm, setSearchTerm] = useState<string>('');
+    const [searchTerm, setSearchTerm] = useState<string>(searchParams.get('search') || '');
     const [showBlockedOnly, setShowBlockedOnly] = useState<boolean>(false);
     const [currentPage, setCurrentPage] = useState<number>(1);
     const itemsPerPage = 20;
+
+    useEffect(() => {
+        const s = searchParams.get('search');
+        if (s !== null && s !== searchTerm) {
+            setSearchTerm(s);
+        }
+    }, [searchParams]);
 
     const [sortConfig, setSortConfig] = useState<{ key: SortKey; direction: SortDirection }>({
         key: 'date',

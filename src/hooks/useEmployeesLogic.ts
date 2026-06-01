@@ -1,13 +1,22 @@
 import { useState, useEffect, useMemo } from 'react';
+import { useSearchParams } from 'react-router-dom';
 import { getEmployeesList } from '../api/userService';
 import { EmployeeData, SortKey, SortDirection } from '../types/employee';
 
 export const useEmployeesLogic = () => {
+    const [searchParams, setSearchParams] = useSearchParams();
     const [employees, setEmployees] = useState<EmployeeData[]>([]);
     const [loading, setLoading] = useState<boolean>(true);
-    const [searchTerm, setSearchTerm] = useState<string>('');
+    const [searchTerm, setSearchTerm] = useState<string>(searchParams.get('search') || '');
     const [currentPage, setCurrentPage] = useState<number>(1);
     const itemsPerPage = 20;
+
+    useEffect(() => {
+        const s = searchParams.get('search');
+        if (s !== null && s !== searchTerm) {
+            setSearchTerm(s);
+        }
+    }, [searchParams]);
 
     const [sortConfig, setSortConfig] = useState<{ key: SortKey; direction: SortDirection }>({
         key: 'id',
