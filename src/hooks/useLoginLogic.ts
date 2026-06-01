@@ -20,14 +20,14 @@ export const useLoginLogic = () => {
 
             if (response.status === 200) {
                 const data = response.data.results;
-                const realId = (typeof data === 'object' && data !== null) ? data.user_id : data;
-
-                if (realId) {
-                    localStorage.setItem('admin_token', 'true');
+                const realToken = data.jwt;
+                const realId = data.employee_id;
+                if (realId && realToken) {
+                    localStorage.setItem('admin_token', realToken);
                     localStorage.setItem('employee_id', realId.toString());
                     navigate('/dashboard');
                 } else {
-                    console.warn("Missing ID in response:", data);
+                    console.warn("Missing ID in response:", response.data);
                     setError("Error processing data: ID is missing in response");
                 }
             }

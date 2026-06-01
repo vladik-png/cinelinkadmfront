@@ -1,4 +1,4 @@
-import axios from 'axios';
+import api from './axios';
 import { ServerAlert, ServerLog } from '../types/moderation';
 
 const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://127.0.0.1:8086';
@@ -7,8 +7,8 @@ export const fetchModerationData = async (token: string | null) => {
   const headers = { Authorization: `Bearer ${token}` };
   
   const [alertsRes, logsRes] = await Promise.all([
-    axios.get(`${API_BASE_URL}/alerts`, { headers }),
-    axios.get(`${API_BASE_URL}/logs`, { headers })
+    api.get(`${API_BASE_URL}/alerts`, { headers }),
+    api.get(`${API_BASE_URL}/logs`, { headers })
   ]);
 
   const rawAlerts = alertsRes.data.results || alertsRes.data || [];
@@ -38,10 +38,10 @@ export const fetchModerationData = async (token: string | null) => {
 
 export const resolveAlertRequest = async (id: number, token: string | null) => {
   const headers = { Authorization: `Bearer ${token}` };
-  return axios.delete(`${API_BASE_URL}/alerts/${id}`, { headers });
+  return api.delete(`${API_BASE_URL}/alerts/${id}`, { headers });
 };
 
 export const deleteLogRequest = async (id: number, token: string | null) => {
   const headers = { Authorization: `Bearer ${token}` };
-  return axios.delete(`${API_BASE_URL}/logs/${id}`, { headers });
+  return api.delete(`${API_BASE_URL}/logs/${id}`, { headers });
 };

@@ -20,7 +20,7 @@ export const fetchNodeMetrics = async (token: string | null) => {
   let combinedData: Record<string, any> = {};
 
   try {
-    const kamRes = await axios.get(`${KAMATERA_API}/system-metrics`, { headers });
+    const kamRes = await api.get(`${KAMATERA_API}/system-metrics`, { headers });
     if (kamRes.data && typeof kamRes.data === 'object') {
       combinedData = { ...combinedData, ...kamRes.data };
     }
@@ -28,7 +28,7 @@ export const fetchNodeMetrics = async (token: string | null) => {
   }
 
   try {
-    const winRes = await axios.get(`${WINDOWS_API}/system-metrics`, { headers });
+    const winRes = await api.get(`${WINDOWS_API}/system-metrics`, { headers });
     if (winRes.data && typeof winRes.data === 'object') {
       combinedData = { ...combinedData, ...winRes.data };
     }
@@ -36,7 +36,7 @@ export const fetchNodeMetrics = async (token: string | null) => {
   }
 
   try {
-    const doRes = await axios.get(`${DIGITAL_OCEAN_API}/system-metrics`, { headers });
+    const doRes = await api.get(`${DIGITAL_OCEAN_API}/system-metrics`, { headers });
     if (doRes.data && typeof doRes.data === 'object') {
       combinedData = { ...combinedData, ...doRes.data };
     }

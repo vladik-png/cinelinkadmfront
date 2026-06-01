@@ -1,4 +1,4 @@
-import axios from 'axios';
+import api from './axios';
 
 const INFRA_BASE_URL = import.meta.env.VITE_INFRA_API_URL;
 const WINDOWS_API = import.meta.env.VITE_WINDOWS_API_URL;
@@ -8,8 +8,8 @@ const DIGITAL_OCEAN_API = import.meta.env.VITE_DIGITAL_OCEAN_API_URL;
 export const getInfrastructureData = async () => {
   try {
     const [instRes, infoRes] = await Promise.all([
-      axios.get(`${INFRA_BASE_URL}/`),
-      axios.get(`${INFRA_BASE_URL}/info`)
+      api.get(`${INFRA_BASE_URL}/`),
+      api.get(`${INFRA_BASE_URL}/info`)
     ]);
 
     return {
@@ -24,7 +24,7 @@ export const getInfrastructureData = async () => {
 
 export const performPowerAction = async (action: 'start' | 'stop', id: string) => {
   try {
-    const response = await axios.get(`${INFRA_BASE_URL}/${action}`, {
+    const response = await api.get(`${INFRA_BASE_URL}/${action}`, {
       params: { id: id }
     });
     return response.data;
@@ -35,13 +35,13 @@ export const performPowerAction = async (action: 'start' | 'stop', id: string) =
 };
 
 export const getWindowsMetrics = async () => {
-  return axios.get(`${WINDOWS_API}/system-metrics`);
+  return api.get(`${WINDOWS_API}/system-metrics`);
 };
 
 export const getKamateraMetrics = async () => {
-  return axios.get(`${KAMATERA_API}/system-metrics`);
+  return api.get(`${KAMATERA_API}/system-metrics`);
 };
 
 export const getDigitalOceanMetrics = async () => {
-  return axios.get(`${DIGITAL_OCEAN_API}/system-metrics`);
+  return api.get(`${DIGITAL_OCEAN_API}/system-metrics`);
 };

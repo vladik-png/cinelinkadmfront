@@ -1,10 +1,8 @@
-import axios from 'axios';
-
-const AWS_BASE_URL = import.meta.env.VITE_AWS_API_URL;
+import api from './axios';
 
 export const getEmployeeProfile = async (id: string) => {
   try {
-    const response = await axios.get(`${AWS_BASE_URL}/employee/${id}`);
+    const response = await api.get(`/employee/${id}`);
     return response.data;
   } catch (error) {
     console.error("Error loading profile:", error);
@@ -14,7 +12,7 @@ export const getEmployeeProfile = async (id: string) => {
 
 export const deactivateEmployee = async (id: number) => {
   try {
-    const response = await axios.delete(`${AWS_BASE_URL}/employee/${id}`);
+    const response = await api.delete(`/employee/${id}`);
     return response.data;
   } catch (error) {
     console.error("Error deactivating employee:", error);

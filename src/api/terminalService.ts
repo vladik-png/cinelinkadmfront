@@ -1,11 +1,11 @@
-import axios from 'axios';
+import api from './axios';
 import { SavedNode } from '../types/terminal';
 
 const TERMINAL_URL = import.meta.env.VITE_TERMINAL_URL || 'http://localhost:8085';
 
 export const fetchSavedNodes = async (): Promise<SavedNode[]> => {
     try {
-        const response = await axios.get(`${TERMINAL_URL}/servers`);
+        const response = await api.get(`${TERMINAL_URL}/servers`);
         if (!response.data || response.data === "") return [];
         return response.data;
     } catch (error) {
@@ -16,7 +16,7 @@ export const fetchSavedNodes = async (): Promise<SavedNode[]> => {
 
 export const syncNodesToBackend = async (nodes: SavedNode[]) => {
     try {
-        await axios.post(`${TERMINAL_URL}/servers`, nodes);
+        await api.post(`${TERMINAL_URL}/servers`, nodes);
     } catch (error) {
         console.error('Failed to sync terminal nodes:', error);
         throw error;
@@ -32,7 +32,7 @@ export const uploadFileViaTerminal = async (file: File, creds: SavedNode) => {
     formData.append('remoteDir', creds.remoteDir);
 
     try {
-        const response = await axios.post(`${TERMINAL_URL}/upload`, formData);
+        const response = await api.post(`${TERMINAL_URL}/upload`, formData);
         return response.data;
     } catch (error) {
         console.error('Failed to upload file:', error);
