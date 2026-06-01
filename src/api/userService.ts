@@ -22,9 +22,9 @@ export const getEmployee = async (id: string | number) => {
   }
 };
 
-export const getEmployeesList = async () => {
+export const getEmployeesList = async (cursor: number = 1, limit: number = 1000) => {
   try {
-    const response = await axios.get(`${AWS_BASE_URL}/employee`);
+    const response = await axios.get(`${AWS_BASE_URL}/employee?cursor=${cursor}&limit=${limit}`);
     return response.data;
   } catch (error) {
     console.error("Error fetching employees list:", error);

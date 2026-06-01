@@ -6,6 +6,8 @@ export const useEmployeesLogic = () => {
     const [employees, setEmployees] = useState<EmployeeData[]>([]);
     const [loading, setLoading] = useState<boolean>(true);
     const [searchTerm, setSearchTerm] = useState<string>('');
+    const [currentPage, setCurrentPage] = useState<number>(1);
+    const itemsPerPage = 20;
 
     const [sortConfig, setSortConfig] = useState<{ key: SortKey; direction: SortDirection }>({
         key: 'id',
@@ -35,6 +37,10 @@ export const useEmployeesLogic = () => {
         fetchEmployees();
     }, []);
 
+    useEffect(() => {
+        setCurrentPage(1);
+    }, [searchTerm, sortConfig]);
+
     const handleSort = (key: SortKey) => {
         setSortConfig(prev => ({
             key,
@@ -62,6 +68,8 @@ export const useEmployeesLogic = () => {
     const processedEmployees = useMemo(() => {
         const list = Array.isArray(employees) ? employees : [];
         let result = list.filter(e => {
+            if (e.employee_id === 0) return false;
+            
             const search = searchTerm.toLowerCase();
             return (
                 (e.first_name || "").toLowerCase().includes(search) ||
@@ -95,6 +103,13 @@ export const useEmployeesLogic = () => {
         return result;
     }, [employees, searchTerm, sortConfig]);
 
+    const paginatedEmployees = useMemo(() => {
+        const startIndex = (currentPage - 1) * itemsPerPage;
+        return processedEmployees.slice(startIndex, startIndex + itemsPerPage);
+    }, [processedEmployees, currentPage]);
+
+    const totalPages = Math.ceil(processedEmployees.length / itemsPerPage);
+
     const exportToCSV = () => {
         if (processedEmployees.length === 0) return;
         const delimiter = ";";
@@ -116,6 +131,10 @@ export const useEmployeesLogic = () => {
     return {
         employees,
         processedEmployees,
+        paginatedEmployees,
+        currentPage,
+        setCurrentPage,
+        totalPages,
         loading,
         searchTerm,
         setSearchTerm,

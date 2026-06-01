@@ -8,11 +8,16 @@ import { EmployeesHeader } from '../components/Layout/Employees/EmployeesHeader'
 import { EmployeesTable } from '../components/Layout/Employees/EmployeesTable';
 import { EmployeeProfileModal } from '../components/Layout/Employees/EmployeeProfileModal';
 import { AddEmployeeModal } from '../components/Layout/Employees/AddEmployeeModal';
+import { EmployeesPagination } from '../components/Layout/Employees/EmployeesPagination';
 
 const Employees: React.FC = () => {
   const {
     employees,
     processedEmployees,
+    paginatedEmployees,
+    currentPage,
+    setCurrentPage,
+    totalPages,
     loading,
     searchTerm,
     setSearchTerm,
@@ -48,11 +53,17 @@ const Employees: React.FC = () => {
         />
 
         <EmployeesTable
-          employees={processedEmployees}
+          employees={paginatedEmployees}
           loading={loading}
           sortConfig={sortConfig}
           onSort={handleSort}
           onViewEmployee={setSelectedEmployee}
+        />
+
+        <EmployeesPagination
+          currentPage={currentPage}
+          totalPages={totalPages}
+          onPageChange={setCurrentPage}
         />
 
       </div>
