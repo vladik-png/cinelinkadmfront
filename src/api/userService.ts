@@ -12,26 +12,6 @@ export const getUsers = async (limit: number = 1000) => {
   }
 };
 
-export const getEmployee = async (id: string | number) => {
-  try {
-    const response = await axios.get(`${AWS_BASE_URL}/employee/${id}`);
-    return response.data;
-  } catch (error) {
-    console.error("Error fetching employee:", error);
-    throw error;
-  }
-};
-
-export const getEmployeesList = async (cursor: number = 1, limit: number = 1000) => {
-  try {
-    const response = await axios.get(`${AWS_BASE_URL}/employee?cursor=${cursor}&limit=${limit}`);
-    return response.data;
-  } catch (error) {
-    console.error("Error fetching employees list:", error);
-    throw error;
-  }
-};
-
 export const toggleUserAccountStatus = async (userId: number, currentActive: boolean, token: string | null) => {
   const method = currentActive ? "DELETE" : "POST";
   try {

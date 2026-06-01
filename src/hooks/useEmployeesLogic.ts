@@ -1,6 +1,6 @@
 import { useState, useEffect, useMemo } from 'react';
 import { useSearchParams } from 'react-router-dom';
-import { getEmployeesList } from '../api/userService';
+import { getEmployeesList, createEmployee } from '../api/employeeService';
 import { EmployeeData, SortKey, SortDirection } from '../types/employee';
 
 export const useEmployeesLogic = () => {
@@ -57,21 +57,29 @@ export const useEmployeesLogic = () => {
         }));
     };
 
-    const addEmployee = (newEmployee: Partial<EmployeeData>) => {
-        const nextId = employees.length > 0 ? Math.max(...employees.map(e => e.employee_id)) + 1 : 1;
-        const employee: EmployeeData = {
-            employee_id: nextId,
-            first_name: newEmployee.first_name || '',
-            last_name: newEmployee.last_name || '',
-            avatar_url: newEmployee.avatar_url || '',
-            location: newEmployee.location || '',
-            created_at: newEmployee.created_at || new Date().toISOString(),
-            bg_img_url: newEmployee.bg_img_url,
-            phone: newEmployee.phone,
-            email: newEmployee.email,
-            department: newEmployee.department
-        };
-        setEmployees(prev => [employee, ...prev]);
+    const addEmployee = async (newEmployee: Partial<EmployeeData>) => {
+        try {
+            setLoading(true);
+            const token = localStorage.getItem('admin_token');
+            const employeeData = {
+                user_id: 3,
+                first_name: newEmployee.first_name,
+                last_name: newEmployee.last_name,
+                avatar_url: newEmployee.avatar_url,
+                location: newEmployee.location,
+                is_online: false,
+                phone: newEmployee.phone,
+                email: newEmployee.email,
+                department: newEmployee.department
+            };
+            
+            await createEmployee(employeeData, token);
+            await fetchEmployees();
+        } catch (err: any) {
+            console.error("Error adding employee:", err);
+        } finally {
+            setLoading(false);
+        }
     };
 
     const processedEmployees = useMemo(() => {

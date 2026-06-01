@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
-import { getUsers, getEmployee } from '../api/userService';
+import { getUsers } from '../api/userService';
+import { getEmployee } from '../api/employeeService';
 import { getSystemMetrics } from '../api/metricsService';
 import { getLocalWeather } from '../api/weatherService';
 import { DashboardStats, SystemMetricsSummary, WeatherInfo, RecentUser } from '../types/dashboard';
