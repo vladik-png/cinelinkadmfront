@@ -80,8 +80,7 @@ export const useEmployeesLogic = () => {
                 department_id: departmentMap[newEmployee.department as string] || 1,
                 location: newEmployee.location || '',
                 avatar_url: newEmployee.avatar_url || '',
-                created_at: newEmployee.created_at || new Date().toISOString(),
-                role: 'administrator',
+                role: 1,
                 password: "password123"
             };
 
