@@ -11,7 +11,7 @@ interface ProfileCardProps {
 
 export const ProfileCard: React.FC<ProfileCardProps> = ({ emp, onDeactivate }) => {
     return (
-        <div className="bg-[#1e1e2d] rounded-2xl border border-white/[0.05] overflow-hidden shadow-lg max-w-6xl">
+        <div className="bg-[#1e1e2d] rounded-2xl border border-white/[0.05] overflow-hidden shadow-lg max-w-6xl w-full mx-auto">
             <div className="h-48 md:h-56 bg-[#151521] relative border-b border-white/[0.05] overflow-hidden"
                 style={{
                     backgroundImage: emp.bg_img_url ? `url(${emp.bg_img_url})` : 'none',

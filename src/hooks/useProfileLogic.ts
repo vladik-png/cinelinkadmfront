@@ -15,8 +15,10 @@ export const useProfileLogic = () => {
 
         try {
             const data = await getEmployeeProfile(id);
-            if (data.results) {
+            if (data && data.results) {
                 setEmp(data.results);
+            } else if (data) {
+                setEmp(data);
             }
         } catch (err) {
             console.error("Error loading profile", err);

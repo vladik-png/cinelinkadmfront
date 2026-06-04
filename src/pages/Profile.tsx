@@ -28,12 +28,14 @@ const Profile: React.FC = () => {
 
   return (
     <div className="w-full min-h-screen bg-[#151521] text-[#a2a5b9] font-sans p-6 lg:p-8 flex flex-col relative z-0">
-      <div className="mb-8">
-        <h1 className="text-2xl font-bold text-white mb-1">My Profile</h1>
-        <p className="text-[#a2a5b9] text-sm">Manage your personal information and system preferences.</p>
-      </div>
+      <div className="max-w-6xl mx-auto w-full">
+        <div className="mb-8">
+          <h1 className="text-2xl font-bold text-white mb-1">My Profile</h1>
+          <p className="text-[#a2a5b9] text-sm">Manage your personal information and system preferences.</p>
+        </div>
 
-      <ProfileCard emp={emp} onDeactivate={handleDeactivate} />
+        <ProfileCard emp={emp} onDeactivate={handleDeactivate} />
+      </div>
     </div>
   );
 };

@@ -36,7 +36,11 @@ const Users: React.FC = () => {
       if (data && data.results) {
         setSelectedUser(prev => {
           if (!prev) return null;
-          return { ...prev, ...data.results };
+          return { 
+            ...prev, 
+            ...data.results,
+            is_active: data.results.is_active !== undefined ? data.results.is_active : prev.is_active 
+          };
         });
       }
     } catch (err) {
@@ -48,8 +52,8 @@ const Users: React.FC = () => {
     if (e) e.stopPropagation();
     try {
       const nextState = await handleToggleStatus(user);
-      if (selectedUser && selectedUser.user_id === user.user_id && nextState !== undefined) {
-        setSelectedUser({ ...selectedUser, is_active: nextState });
+      if (nextState !== undefined) {
+        setSelectedUser(prev => prev && prev.user_id === user.user_id ? { ...prev, is_active: nextState } : prev);
       }
     } catch (err) {
       console.error(err);
