@@ -65,7 +65,7 @@ export const useEmployeesLogic = () => {
             const departmentMap: Record<string, number> = {
                 'Administration': 1,
             };
-            
+
             const employeeData = {
                 FirstName: newEmployee.first_name || '',
                 LastName: newEmployee.last_name || '',
@@ -73,13 +73,12 @@ export const useEmployeesLogic = () => {
                 Email: newEmployee.email || '',
                 DepartmentID: departmentMap[newEmployee.department as string] || 1
             };
-            
+
             console.log('Adding employee with data:', employeeData);
 
-            const createdEmployee = await createEmployee(employeeData, token);
+            const createdEmployee = await createEmployee(employeeData);
 
-            if (createdEmployee) {
-                const newEmployeeData: EmployeeData = {
+            if (createdEmployee) {                const newEmployeeData: EmployeeData = {
                     employee_id: createdEmployee.employee_id || createdEmployee.EmployeeID || Date.now(),
                     first_name: createdEmployee.FirstName || createdEmployee.first_name || newEmployee.first_name || '',
                     last_name: createdEmployee.LastName || createdEmployee.last_name || newEmployee.last_name || '',
