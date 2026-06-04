@@ -57,7 +57,7 @@ export const useUsersLogic = () => {
     }, [searchTerm, showBlockedOnly, sortConfig]);
 
     const handleToggleStatus = async (user: UserData) => {
-        if (!user || !user.user_id) return;
+        if (!user || user.user_id === undefined) return;
 
         try {
             await toggleUserAccountStatus(user.user_id, user.is_active);

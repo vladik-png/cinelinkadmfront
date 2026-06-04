@@ -3,8 +3,7 @@ import { useState } from 'react';
 import { useEmployeesLogic } from '../hooks/useEmployeesLogic';
 import { EmployeeData } from '../types/employee';
 
-import { EmployeesTopBar } from '../components/Layout/Employees/EmployeesTopBar';
-import { EmployeesHeader } from '../components/Layout/Employees/EmployeesHeader';
+import { EmployeesToolbar } from '../components/Layout/Employees/EmployeesToolbar';
 import { EmployeesTable } from '../components/Layout/Employees/EmployeesTable';
 import { EmployeeProfileModal } from '../components/Layout/Employees/EmployeeProfileModal';
 import { AddEmployeeModal } from '../components/Layout/Employees/AddEmployeeModal';
@@ -36,37 +35,31 @@ const Employees: React.FC = () => {
   };
 
   return (
-    <div className="w-full flex flex-col bg-[#151521] min-h-screen font-sans text-[#a2a5b9] relative">
-
-      <EmployeesTopBar
+    <div className="w-full min-h-screen bg-[#151521] text-[#a2a5b9] font-sans p-6 lg:p-8 flex flex-col relative z-0">
+      <EmployeesToolbar
+        total={employees.length}
+        showing={processedEmployees.length}
         searchTerm={searchTerm}
         setSearchTerm={setSearchTerm}
+        onExport={exportToCSV}
+        onAddEmployee={() => setIsAddingEmployee(true)}
       />
 
-      <div className="p-8 w-full flex-1 flex flex-col max-w-7xl mx-auto">
+      <EmployeesTable
+        employees={paginatedEmployees}
+        loading={loading}
+        sortConfig={sortConfig}
+        onSort={handleSort}
+        onViewEmployee={setSelectedEmployee}
+      />
 
-        <EmployeesHeader
-          total={employees.length}
-          showing={processedEmployees.length}
-          onExport={exportToCSV}
-          onAddEmployee={() => setIsAddingEmployee(true)}
-        />
-
-        <EmployeesTable
-          employees={paginatedEmployees}
-          loading={loading}
-          sortConfig={sortConfig}
-          onSort={handleSort}
-          onViewEmployee={setSelectedEmployee}
-        />
-
+      {!loading && (
         <EmployeesPagination
           currentPage={currentPage}
           totalPages={totalPages}
           onPageChange={setCurrentPage}
         />
-
-      </div>
+      )}
 
       {selectedEmployee && (
         <EmployeeProfileModal
@@ -81,7 +74,6 @@ const Employees: React.FC = () => {
           onAdd={handleAddEmployee}
         />
       )}
-
     </div>
   );
 };

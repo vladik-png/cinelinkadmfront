@@ -33,13 +33,15 @@ const Users: React.FC = () => {
     setSelectedUser(user);
     try {
       const data = await getUserDetailedProfile(user.user_id);
-      if (data && data.results) {
+      const profileData = data?.results || data;
+      if (profileData) {
         setSelectedUser(prev => {
           if (!prev) return null;
           return { 
             ...prev, 
-            ...data.results,
-            is_active: data.results.is_active !== undefined ? data.results.is_active : prev.is_active 
+            ...profileData,
+            user_id: prev.user_id,
+            is_active: prev.is_active
           };
         });
       }

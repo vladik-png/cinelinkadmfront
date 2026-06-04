@@ -63,31 +63,43 @@ export const useEmployeesLogic = () => {
             const token = localStorage.getItem('admin_token');
             
             const departmentMap: Record<string, number> = {
-                'Administration': 1,
+                'Engineering': 1,
+                'Marketing': 2,
+                'Sales': 3,
+                'Human Resources': 4,
+                'Support': 5,
+                'Design': 6,
+                'Administration': 7
             };
 
             const employeeData = {
-                FirstName: newEmployee.first_name || '',
-                LastName: newEmployee.last_name || '',
-                Phone: newEmployee.phone || '',
-                Email: newEmployee.email || '',
-                DepartmentID: departmentMap[newEmployee.department as string] || 1
+                first_name: newEmployee.first_name || '',
+                last_name: newEmployee.last_name || '',
+                phone: newEmployee.phone || '',
+                email: newEmployee.email || '',
+                department_id: departmentMap[newEmployee.department as string] || 1,
+                location: newEmployee.location || '',
+                avatar_url: newEmployee.avatar_url || '',
+                created_at: newEmployee.created_at || new Date().toISOString(),
+                role: 'administrator',
+                password: "password123"
             };
 
             console.log('Adding employee with data:', employeeData);
 
             const createdEmployee = await createEmployee(employeeData);
 
-            if (createdEmployee) {                const newEmployeeData: EmployeeData = {
-                    employee_id: createdEmployee.employee_id || createdEmployee.EmployeeID || Date.now(),
-                    first_name: createdEmployee.FirstName || createdEmployee.first_name || newEmployee.first_name || '',
-                    last_name: createdEmployee.LastName || createdEmployee.last_name || newEmployee.last_name || '',
+            if (createdEmployee) {
+                const newEmployeeData: EmployeeData = {
+                    employee_id: createdEmployee.employee_id || Date.now(),
+                    first_name: createdEmployee.first_name || employeeData.first_name,
+                    last_name: createdEmployee.last_name || employeeData.last_name,
                     avatar_url: createdEmployee.avatar_url || newEmployee.avatar_url || '',
                     location: createdEmployee.location || newEmployee.location || '',
                     created_at: createdEmployee.created_at || new Date().toISOString(),
-                    phone: createdEmployee.Phone || createdEmployee.phone || newEmployee.phone || '',
-                    email: createdEmployee.Email || createdEmployee.email || newEmployee.email || '',
-                    department: createdEmployee.department || newEmployee.department || ''
+                    phone: createdEmployee.phone || employeeData.phone,
+                    email: createdEmployee.email || employeeData.email,
+                    department: newEmployee.department || ''
                 };
 
                 setEmployees(prev => [newEmployeeData, ...prev]);
