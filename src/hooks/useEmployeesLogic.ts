@@ -57,26 +57,48 @@ export const useEmployeesLogic = () => {
         }));
     };
 
-    const addEmployee = async (newEmployee: Partial<EmployeeData>) => {
+     const addEmployee = async (newEmployee: Partial<EmployeeData>) => {
         try {
             setLoading(true);
             const token = localStorage.getItem('admin_token');
-            const employeeData = {
-                user_id: 3,
-                first_name: newEmployee.first_name,
-                last_name: newEmployee.last_name,
-                avatar_url: newEmployee.avatar_url,
-                location: newEmployee.location,
-                is_online: false,
-                phone: newEmployee.phone,
-                email: newEmployee.email,
-                department: newEmployee.department
+            
+            const departmentMap: Record<string, number> = {
+                'Administration': 1,
             };
             
-            await createEmployee(employeeData, token);
-            await fetchEmployees();
+            const employeeData = {
+                FirstName: newEmployee.first_name || '',
+                LastName: newEmployee.last_name || '',
+                Phone: newEmployee.phone || '',
+                Email: newEmployee.email || '',
+                DepartmentID: departmentMap[newEmployee.department as string] || 1
+            };
+            
+            console.log('Adding employee with data:', employeeData);
+
+            const createdEmployee = await createEmployee(employeeData, token);
+
+            if (createdEmployee) {
+                const newEmployeeData: EmployeeData = {
+                    employee_id: createdEmployee.employee_id || createdEmployee.EmployeeID || Date.now(),
+                    first_name: createdEmployee.FirstName || createdEmployee.first_name || newEmployee.first_name || '',
+                    last_name: createdEmployee.LastName || createdEmployee.last_name || newEmployee.last_name || '',
+                    avatar_url: createdEmployee.avatar_url || newEmployee.avatar_url || '',
+                    location: createdEmployee.location || newEmployee.location || '',
+                    created_at: createdEmployee.created_at || new Date().toISOString(),
+                    phone: createdEmployee.Phone || createdEmployee.phone || newEmployee.phone || '',
+                    email: createdEmployee.Email || createdEmployee.email || newEmployee.email || '',
+                    department: createdEmployee.department || newEmployee.department || ''
+                };
+
+                setEmployees(prev => [newEmployeeData, ...prev]);
+                console.log('New employee added to list:', newEmployeeData);
+            } else {
+                await fetchEmployees();
+            }
         } catch (err: any) {
             console.error("Error adding employee:", err);
+            await fetchEmployees();
         } finally {
             setLoading(false);
         }
@@ -86,7 +108,7 @@ export const useEmployeesLogic = () => {
         const list = Array.isArray(employees) ? employees : [];
         let result = list.filter(e => {
             if (e.employee_id === 0) return false;
-            
+
             const search = searchTerm.toLowerCase();
             return (
                 (e.first_name || "").toLowerCase().includes(search) ||

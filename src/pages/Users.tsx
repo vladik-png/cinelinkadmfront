@@ -32,8 +32,7 @@ const Users: React.FC = () => {
   const handleViewProfile = async (user: UserData) => {
     setSelectedUser(user);
     try {
-      const token = localStorage.getItem('admin_token') || '';
-      const data = await getUserDetailedProfile(user.user_id, token);
+      const data = await getUserDetailedProfile(user.user_id);
       if (data && data.results) {
         setSelectedUser(prev => {
           if (!prev) return null;

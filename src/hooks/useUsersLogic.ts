@@ -60,8 +60,7 @@ export const useUsersLogic = () => {
         if (!user || !user.user_id) return;
 
         try {
-            const token = localStorage.getItem('admin_token') || '';
-            await toggleUserAccountStatus(user.user_id, user.is_active, token);
+            await toggleUserAccountStatus(user.user_id, user.is_active);
             const nextState = !user.is_active;
 
             setUsers(prev => prev.map(u =>

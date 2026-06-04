@@ -12,34 +12,24 @@ export const getUsers = async (limit: number = 1000) => {
   }
 };
 
-export const toggleUserAccountStatus = async (userId: number, currentActive: boolean, token: string | null) => {
-  const method = currentActive ? "DELETE" : "POST";
+export const toggleUserAccountStatus = async (userId: number, currentActive: boolean) => {
   try {
-    const response = await fetch(`${AWS_BASE_URL}/users/${userId}`, {
-      method: method,
-      headers: {
-        "Content-Type": "application/json",
-        "Authorization": `Bearer ${token}`
-      }
-    });
-
-    if (!response.ok) throw new Error("Error changing account status");
-    return response;
+    const url = `${AWS_BASE_URL}/users/${userId}`;
+    const response = currentActive 
+      ? await api.delete(url)
+      : await api.post(url);
+    
+    return response.data;
   } catch (error) {
     console.error("Error changing account status:", error);
     throw error;
   }
 };
 
-export const getUserDetailedProfile = async (userId: number, token: string | null) => {
+export const getUserDetailedProfile = async (userId: number) => {
   try {
-    const response = await fetch(`${AWS_BASE_URL}/users/${userId}`, {
-      method: 'GET',
-      headers: { 'Authorization': `Bearer ${token}` }
-    });
-
-    if (!response.ok) throw new Error("Error loading detailed profile");
-    return await response.json();
+    const response = await api.get(`${AWS_BASE_URL}/users/${userId}`);
+    return response.data;
   } catch (error) {
     console.error("Error loading detailed profile:", error);
     throw error;

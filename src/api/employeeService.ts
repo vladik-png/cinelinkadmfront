@@ -20,9 +20,15 @@ export const createEmployee = async (employeeData: any, token: string | null) =>
       }
     });
 
+    console.log("Employee created successfully:", response.data);
     return response.data;
-  } catch (error) {
+  } catch (error: any) {
     console.error("Error creating employee:", error);
+    if (error.response) {
+      console.error("Response status:", error.response.status);
+      console.error("Response data:", error.response.data);
+      console.error("Error message:", error.response.data?.error || error.response.data?.message);
+    }
     throw error;
   }
 };
