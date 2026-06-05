@@ -34,14 +34,24 @@ export const useDashboardLogic = () => {
         const empId = localStorage.getItem('employee_id');
         if (!empId) return;
 
-        try {
-            const usersData = await getUsers();
-            if (usersData?.results) {
-                setStats(prev => ({ ...prev, users: usersData.results.length }));
-                setLastUsers(usersData.results.slice(-4).reverse());
+        getUsers().then(usersData => {
+            let extractedUsers: RecentUser[] = [];
+            if (usersData && usersData.results && Array.isArray(usersData.results.data)) {
+                extractedUsers = usersData.results.data;
+            } else if (usersData && Array.isArray(usersData.results)) {
+                extractedUsers = usersData.results;
+            } else if (Array.isArray(usersData)) {
+                extractedUsers = usersData;
             }
+            
+            if (extractedUsers) {
+                setStats(prev => ({ ...prev, users: extractedUsers.length }));
+                setLastUsers(extractedUsers.slice(-4).reverse());
+            }
+        }).catch(err => console.error("Error loading users:", err));
 
-            const allNodesData = await getSystemMetrics();
+        getSystemMetrics().then(allNodesData => {
+            if (!allNodesData) return;
             const nodeIds = Object.keys(allNodesData);
 
             if (nodeIds.length > 0) {
@@ -61,15 +71,14 @@ export const useDashboardLogic = () => {
                     ping: allNodesData[nodeIds[0]].ping || 0
                 });
             }
+        }).catch(err => console.error("Error loading system metrics:", err));
 
-            const empData = await getEmployee(empId);
+        getEmployee(empId).then(empData => {
             if (empData?.results) {
                 setEmployee(empData.results);
                 fetchWeather(empData.results.location);
             }
-        } catch (err: any) {
-            console.error("Error loading dashboard data:", err);
-        }
+        }).catch(err => console.error("Error loading employee data:", err));
     };
 
     useEffect(() => {
