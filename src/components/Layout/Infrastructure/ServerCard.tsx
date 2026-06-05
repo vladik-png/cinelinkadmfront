@@ -14,6 +14,7 @@ export const ServerCard: React.FC<Props> = ({ server, onClick, onPowerAction }) 
     const isWindows = server.type === 'WINDOWS';
     const isKamatera = server.type === 'KAMATERA';
     const isDigitalOcean = server.type === 'DIGITAL_OCEAN';
+    const isAws = server.type === 'AWS';
     const hasMetrics = isWindows || isKamatera || isDigitalOcean;
 
     let tempColor = 'text-white';
@@ -23,7 +24,7 @@ export const ServerCard: React.FC<Props> = ({ server, onClick, onPowerAction }) 
     return (
         <div
             onClick={onClick}
-            className={`cursor-pointer bg-[#1e1e2d] rounded-2xl border border-white/[0.05] shadow-lg p-6 hover:border-white/[0.1] transition-all border-t-2 ${isWindows ? 'border-t-[#8950fc]/50' : isKamatera ? 'border-t-[#1bc5bd]/50' : isDigitalOcean ? 'border-t-[#0069ff]/50' : 'border-t-[#ffa800]/50'
+            className={`cursor-pointer bg-[#1e1e2d] rounded-2xl border border-white/[0.05] shadow-lg p-6 hover:border-white/[0.1] transition-all border-t-2 h-full flex flex-col ${isWindows ? 'border-t-[#8950fc]/50' : isKamatera ? 'border-t-[#1bc5bd]/50' : isDigitalOcean ? 'border-t-[#0069ff]/50' : isAws ? 'border-t-[#ffa800]/50' : 'border-t-[#ffa800]/50'
                 }`}
         >
             <div className="flex justify-between items-start mb-6">
@@ -38,6 +39,7 @@ export const ServerCard: React.FC<Props> = ({ server, onClick, onPowerAction }) 
                     <span className={`px-2.5 py-1 rounded text-[9px] uppercase tracking-widest border font-bold ${isWindows ? 'bg-[#8950fc]/10 text-[#8950fc] border-[#8950fc]/20' :
                         isKamatera ? 'bg-[#1bc5bd]/10 text-[#1bc5bd] border-[#1bc5bd]/20' :
                         isDigitalOcean ? 'bg-[#0069ff]/10 text-[#0069ff] border-[#0069ff]/20' :
+                        isAws ? 'bg-[#ffa800]/10 text-[#ffa800] border-[#ffa800]/20' :
                             'bg-[#ffa800]/10 text-[#ffa800] border-[#ffa800]/20'
                         }`}>
                         {isKamatera ? 'LINUX NODE' : isDigitalOcean ? 'DIGITAL OCEAN NODE' : `${server.type} NODE`}
@@ -49,11 +51,11 @@ export const ServerCard: React.FC<Props> = ({ server, onClick, onPowerAction }) 
                 </div>
             </div>
 
-            <div className="mb-6">
+            <div className="mb-6 flex-grow">
                 <h3 className="text-lg text-white font-bold mb-1.5 truncate tracking-wide uppercase">
                     {isKamatera ? 'Kamatera Linux Server' : isDigitalOcean ? 'Digital Ocean Droplet' : server.name}
                 </h3>
-                <code className="text-[10px] text-[#a2a5b9] bg-[#151521] border border-white/[0.05] px-2 py-1 rounded tracking-widest font-semibold">
+                <code className="text-[10px] text-[#a2a5b9] bg-[#151521] border border-white/[0.05] px-2 py-1 rounded tracking-widest font-semibold inline-block">
                     {server.id}
                 </code>
             </div>

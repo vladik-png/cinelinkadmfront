@@ -15,10 +15,15 @@ const Moderation: React.FC = () => {
 
   return (
     <div className="w-full flex flex-col bg-[#151521] min-h-screen font-sans text-[#a2a5b9] relative">
-      <div className="bg-[#1e1e2d] py-4 px-8 flex justify-between items-center sticky top-0 z-50 shadow-sm border-b border-white/[0.05]">
-      </div>
+      <div className="p-8 w-full max-w-7xl mx-auto flex-1 flex flex-col space-y-10">
+        
+        <div className="flex justify-between items-end border-b border-white/[0.05] pb-6 -mb-2">
+            <div>
+                <h1 className="text-3xl text-white tracking-wide uppercase font-bold leading-none">Moderation Center</h1>
+                <p className="text-[10px] text-[#a2a5b9] tracking-widest uppercase font-semibold mt-2">Review alerts and system logs</p>
+            </div>
+        </div>
 
-      <div className="p-8 space-y-10 max-w-7xl mx-auto w-full">
         <AlertsSection 
           alerts={alerts} 
           filteredAlerts={filteredAlerts} 

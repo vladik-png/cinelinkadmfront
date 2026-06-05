@@ -32,12 +32,12 @@ export const NodeCard: React.FC<NodeCardProps> = ({ nodeId, history, viewMode, s
                 <div className="flex items-center gap-6">
                     {viewMode === 'combined' && (
                         <div className="hidden lg:flex gap-6 text-[10px] uppercase font-bold tracking-widest">
-                            <div className="text-[#3699ff]">CPU: {latest?.cpu}%</div>
-                            <div className="text-[#f64e60]">TEMP: {latest?.temp}°C</div>
-                            <div className="text-[#8950fc]">RAM: {latest?.ram}%</div>
-                            <div className="text-[#1bc5bd]">PING: {latest?.ping}MS</div>
-                            <div className={latest?.packet_loss > 0 ? "text-[#f64e60] animate-pulse" : "text-[#a2a5b9]"}>
-                                LOSS: {latest?.packet_loss}%
+                            <div className="text-[#3699ff]">CPU: {latest?.cpu ?? 0}%</div>
+                            <div className="text-[#f64e60]">TEMP: {latest?.temp ?? 0}°C</div>
+                            <div className="text-[#8950fc]">RAM: {latest?.ram ?? 0}%</div>
+                            <div className="text-[#1bc5bd]">PING: {latest?.ping ?? 0}MS</div>
+                            <div className={(latest?.packet_loss ?? 0) > 0 ? "text-[#f64e60] animate-pulse" : "text-[#a2a5b9]"}>
+                                LOSS: {latest?.packet_loss ?? 0}%
                             </div>
                         </div>
                     )}
@@ -80,12 +80,12 @@ export const NodeCard: React.FC<NodeCardProps> = ({ nodeId, history, viewMode, s
                     </div>
                 ) : (
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                        <MiniChart title="CPU Usage" value={`${latest?.cpu}%`} data={history} dataKey="cpu" color="#3699ff" icon={<Cpu size={14} />} />
-                        <MiniChart title="Temperature" value={`${latest?.temp}°C`} data={history} dataKey="temp" color="#f64e60" icon={<Thermometer size={14} />} />
-                        <MiniChart title="RAM Usage" value={`${latest?.ram}%`} data={history} dataKey="ram" color="#8950fc" icon={<Activity size={14} />} />
-                        <MiniChart title="Network Ping" value={`${latest?.ping}MS`} data={history} dataKey="ping" color="#1bc5bd" icon={<Clock size={14} />} yDomain={['auto', 'auto']} />
-                        <MiniChart title="Disk Load" value={`${latest?.disk}%`} data={history} dataKey="disk" color="#ffa800" icon={<HardDrive size={14} />} />
-                        <MiniChart title="Packet Loss" value={`${latest?.packet_loss}%`} data={history} dataKey="packet_loss" color="#f64e60" icon={<Zap size={14} />} isStep />
+                        <MiniChart title="CPU Usage" value={`${latest?.cpu ?? 0}%`} data={history} dataKey="cpu" color="#3699ff" icon={<Cpu size={14} />} />
+                        <MiniChart title="Temperature" value={`${latest?.temp ?? 0}°C`} data={history} dataKey="temp" color="#f64e60" icon={<Thermometer size={14} />} />
+                        <MiniChart title="RAM Usage" value={`${latest?.ram ?? 0}%`} data={history} dataKey="ram" color="#8950fc" icon={<Activity size={14} />} />
+                        <MiniChart title="Network Ping" value={`${latest?.ping ?? 0}MS`} data={history} dataKey="ping" color="#1bc5bd" icon={<Clock size={14} />} yDomain={['auto', 'auto']} />
+                        <MiniChart title="Disk Load" value={`${latest?.disk ?? 0}%`} data={history} dataKey="disk" color="#ffa800" icon={<HardDrive size={14} />} />
+                        <MiniChart title="Packet Loss" value={`${latest?.packet_loss ?? 0}%`} data={history} dataKey="packet_loss" color="#f64e60" icon={<Zap size={14} />} isStep />
                     </div>
                 )}
             </div>

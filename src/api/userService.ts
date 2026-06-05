@@ -1,6 +1,7 @@
 import api from './axios';
 
 const AWS_BASE_URL = import.meta.env.VITE_AWS_API_URL || 'http://localhost:8080';
+const ADMIN_BASE_URL = import.meta.env.VITE_ADMIN_API_URL || 'https://admin.cinelink.lol';
 
 export const getUsers = async (limit: number = 1000) => {
   try {
@@ -38,7 +39,7 @@ export const getUserDetailedProfile = async (userId: number) => {
 
 export const getUserFollowers = async (userId: number) => {
   try {
-    const response = await api.get(`${AWS_BASE_URL}/users/${userId}/followers`);
+    const response = await api.get(`${ADMIN_BASE_URL}/users/${userId}/followers`);
     return response.data;
   } catch (error) {
     console.error("Error loading user followers:", error);
@@ -48,7 +49,7 @@ export const getUserFollowers = async (userId: number) => {
 
 export const getUserFollowing = async (userId: number) => {
   try {
-    const response = await api.get(`${AWS_BASE_URL}/users/${userId}/followings`);
+    const response = await api.get(`${ADMIN_BASE_URL}/users/${userId}/followings`);
     return response.data;
   } catch (error) {
     console.error("Error loading user following:", error);
