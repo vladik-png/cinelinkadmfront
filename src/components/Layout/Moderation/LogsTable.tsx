@@ -20,7 +20,7 @@ export const LogsTable: React.FC<LogsTableProps> = ({ logs, loading, onDeleteLog
             </div>
 
             <div className="overflow-x-auto">
-                <table className="w-full text-left border-collapse">
+                <table className="w-full text-left border-collapse whitespace-nowrap">
                     <thead>
                         <tr className="bg-[#151521]/50 border-b border-white/[0.05] text-[10px] uppercase tracking-widest text-[#a2a5b9]">
                             <th className="py-5 px-6 font-bold w-40">Timestamp</th>

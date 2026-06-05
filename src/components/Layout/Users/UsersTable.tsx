@@ -92,7 +92,7 @@ export const UsersTable: React.FC<UsersTableProps> = ({
                                     <td className="py-4 px-6">
                                         <div className="flex items-center gap-2 text-[#a2a5b9] group-hover:text-white transition-colors">
                                             <Mail size={14} className="text-[#a2a5b9]" />
-                                            <span className="text-xs font-medium truncate max-w-[200px]">{user.email || 'N/A'}</span>
+                                            <span className="text-xs font-medium truncate max-w-[200px]">{user.email || 'Not specified'}</span>
                                         </div>
                                     </td>
 

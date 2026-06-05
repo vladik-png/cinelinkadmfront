@@ -53,7 +53,7 @@ export const EmployeesTable: React.FC<EmployeesTableProps> = ({
 
                     <tbody>
                         {employees.map((employee) => {
-                            const { date, time } = employee.created_at ? formatDate(employee.created_at) : { date: 'N/A', time: '' };
+                            const { date, time } = employee.created_at ? formatDate(employee.created_at) : { date: 'Not specified', time: '' };
 
                             return (
                                 <tr
@@ -96,7 +96,7 @@ export const EmployeesTable: React.FC<EmployeesTableProps> = ({
                                     <td className="py-4 px-6">
                                         <div className="flex items-center gap-2 text-[#a2a5b9] group-hover:text-white transition-colors">
                                             <Mail size={14} className="text-[#a2a5b9]" />
-                                            <span className="text-xs font-medium truncate max-w-[200px]">{employee.email || 'N/A'}</span>
+                                            <span className="text-xs font-medium truncate max-w-[200px]">{employee.email || employee.phone || 'Not specified'}</span>
                                         </div>
                                     </td>
 

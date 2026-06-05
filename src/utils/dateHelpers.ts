@@ -1,5 +1,5 @@
 export const formatDate = (dateString?: string) => {
-    if (!dateString) return { date: 'N/A', time: '' };
+    if (!dateString) return { date: 'Not specified', time: '' };
 
     try {
         let fixedString = dateString.trim().replace(' ', 'T');
@@ -10,7 +10,7 @@ export const formatDate = (dateString?: string) => {
                 const [y, m, d] = simpleDate.split('-');
                 return { date: `${d}.${m}.${y}`, time: '' };
             }
-            return { date: 'N/A', time: '' };
+            return { date: 'Not specified', time: '' };
         }
 
         return {
@@ -18,6 +18,6 @@ export const formatDate = (dateString?: string) => {
             time: date.toLocaleTimeString('uk-UA', { hour: '2-digit', minute: '2-digit' })
         };
     } catch (err) {
-        return { date: 'N/A', time: '' };
+        return { date: 'Not specified', time: '' };
     }
 };
