@@ -10,7 +10,7 @@ const Infrastructure: React.FC = () => {
 
   return (
     <div className="w-full flex flex-col bg-[#151521] min-h-screen font-sans text-[#a2a5b9]">
-      <div className="p-8 w-full max-w-7xl mx-auto flex-1">
+      <div className="p-6 lg:p-8 w-full flex-1">
 
         <InfrastructureHeader loading={loading} onRefresh={fetchData} />
 
