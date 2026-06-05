@@ -35,3 +35,23 @@ export const getUserDetailedProfile = async (userId: number) => {
     throw error;
   }
 };
+
+export const getUserFollowers = async (userId: number) => {
+  try {
+    const response = await api.get(`${AWS_BASE_URL}/users/${userId}/followers`);
+    return response.data;
+  } catch (error) {
+    console.error("Error loading user followers:", error);
+    throw error;
+  }
+};
+
+export const getUserFollowing = async (userId: number) => {
+  try {
+    const response = await api.get(`${AWS_BASE_URL}/users/${userId}/followings`);
+    return response.data;
+  } catch (error) {
+    console.error("Error loading user following:", error);
+    throw error;
+  }
+};
