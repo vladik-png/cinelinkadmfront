@@ -22,7 +22,7 @@ export const EmployeeProfileModal: React.FC<EmployeeProfileModalProps> = ({ empl
                     )}
                     <button
                         onClick={onClose}
-                        className="absolute top-4 right-4 p-2 text-[#a2a5b9] hover:text-white bg-[#151521]/50 border border-white/[0.05] rounded-full backdrop-blur-md transition-colors"
+                        className="absolute top-4 right-4 p-2 text-[#a2a5b9] hover:text-white bg-[#151521]/50 border border-white/[0.05] rounded-full backdrop-blur-md transition-colors cursor-pointer"
                     >
                         <X size={18} />
                     </button>
@@ -64,7 +64,7 @@ export const EmployeeProfileModal: React.FC<EmployeeProfileModalProps> = ({ empl
                     <div className="flex flex-col gap-3">
                         <button
                             onClick={onClose}
-                            className="w-full py-4 rounded-xl text-[10px] uppercase tracking-widest font-bold transition-all active:scale-95 flex items-center justify-center gap-2 bg-[#3699ff]/10 hover:bg-[#3699ff]/20 text-[#3699ff] border border-[#3699ff]/20"
+                            className="w-full py-4 rounded-xl text-[10px] uppercase tracking-widest font-bold transition-all active:scale-95 flex items-center justify-center gap-2 bg-[#3699ff]/10 hover:bg-[#3699ff]/20 text-[#3699ff] border border-[#3699ff]/20 cursor-pointer"
                         >
                             Close Inspection
                         </button>

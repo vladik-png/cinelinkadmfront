@@ -80,7 +80,7 @@ export const TerminalConnectionForm: React.FC<TerminalConnectionFormProps> = ({
 
                 <button
                     onClick={onConnect}
-                    className="w-full mt-4 bg-[#8950fc]/20 text-[#8950fc] border border-[#8950fc]/30 hover:bg-[#8950fc]/30 py-3 rounded-xl font-bold uppercase tracking-widest text-[11px] transition-all"
+                    className="w-full mt-4 bg-[#8950fc]/20 text-[#8950fc] border border-[#8950fc]/30 hover:bg-[#8950fc]/30 py-3 rounded-xl font-bold uppercase tracking-widest text-[11px] transition-all cursor-pointer"
                 >
                     Establish Connection
                 </button>

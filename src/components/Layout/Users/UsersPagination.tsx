@@ -40,14 +40,14 @@ export const UsersPagination: React.FC<UsersPaginationProps> = ({ currentPage, t
         const neighbors = 1;
 
         const renderEllipsis = (key: string) => (
-            <div key={key} className="flex items-center justify-center w-8 h-8 text-[#a2a5b9]">
+            <div key={key} className="flex items-center justify-center w-8 h-8 text-[#a2a5b9] ">
                 {showInputKey === key ? (
                     <input
                         ref={inputRef}
                         type="number"
                         min="1"
                         max={totalPages}
-                        className="w-12 text-center bg-[#151521] border border-white/[0.1] rounded-md text-white focus:outline-none focus:border-[#8950fc] py-1 text-sm"
+                        className="w-12 text-center bg-[#151521] border border-white/[0.1] rounded-md text-white focus:outline-none focus:border-[#8950fc] py-1 text-sm "
                         value={inputValue}
                         onChange={(e) => setInputValue(e.target.value)}
                         onKeyDown={handlePageInput}
@@ -57,7 +57,7 @@ export const UsersPagination: React.FC<UsersPaginationProps> = ({ currentPage, t
                         }}
                     />
                 ) : (
-                    <button onClick={() => setShowInputKey(key)} className="w-8 h-8 flex items-center justify-center hover:text-white transition-colors">...</button>
+                    <button onClick={() => setShowInputKey(key)} className="w-8 h-8 flex items-center justify-center hover:text-white transition-colors cursor-pointer">...</button>
                 )}
             </div>
         );
@@ -66,7 +66,7 @@ export const UsersPagination: React.FC<UsersPaginationProps> = ({ currentPage, t
             <button
                 key={page}
                 onClick={() => onPageChange(page)}
-                className={`w-8 h-8 rounded-lg text-sm font-bold transition-all ${currentPage === page
+                className={`w-8 h-8 rounded-lg text-sm font-bold transition-all cursor-pointer ${currentPage === page
                     ? 'bg-[#8950fc] text-white shadow-lg shadow-[#8950fc]/20'
                     : 'bg-[#1e1e2d] border border-white/[0.05] text-[#a2a5b9] hover:text-white hover:bg-white/[0.05]'
                     }`}
@@ -112,7 +112,7 @@ export const UsersPagination: React.FC<UsersPaginationProps> = ({ currentPage, t
             <button
                 onClick={() => onPageChange(currentPage - 1)}
                 disabled={currentPage === 1}
-                className="p-2 rounded-lg bg-[#1e1e2d] border border-white/[0.05] text-[#a2a5b9] hover:text-white hover:bg-white/[0.05] disabled:opacity-50 disabled:cursor-not-allowed transition-all"
+                className="p-2 rounded-lg bg-[#1e1e2d] border border-white/[0.05] text-[#a2a5b9] hover:text-white hover:bg-white/[0.05] disabled:opacity-50 disabled:cursor-not-allowed transition-all cursor-pointer"
             >
                 <ChevronLeft size={16} />
             </button>
@@ -122,7 +122,7 @@ export const UsersPagination: React.FC<UsersPaginationProps> = ({ currentPage, t
             <button
                 onClick={() => onPageChange(currentPage + 1)}
                 disabled={currentPage === totalPages}
-                className="p-2 rounded-lg bg-[#1e1e2d] border border-white/[0.05] text-[#a2a5b9] hover:text-white hover:bg-white/[0.05] disabled:opacity-50 disabled:cursor-not-allowed transition-all"
+                className="p-2 rounded-lg bg-[#1e1e2d] border border-white/[0.05] text-[#a2a5b9] hover:text-white hover:bg-white/[0.05] disabled:opacity-50 disabled:cursor-not-allowed transition-all cursor-pointer"
             >
                 <ChevronRight size={16} />
             </button>

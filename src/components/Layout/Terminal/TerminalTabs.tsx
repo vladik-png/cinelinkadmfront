@@ -14,7 +14,7 @@ export const TerminalTabs: React.FC<TerminalTabsProps> = ({ sessions, activeTabI
         <div className="flex gap-2 mb-6 overflow-x-auto pb-3 custom-tabs-scrollbar w-full">
             <button
                 onClick={() => onTabSelect('new')}
-                className={`flex items-center gap-2 px-5 py-3 rounded-xl border font-bold text-[10px] uppercase tracking-widest transition-all whitespace-nowrap shrink-0 ${activeTabId === 'new'
+                className={`flex items-center gap-2 px-5 py-3 rounded-xl border font-bold text-[10px] uppercase tracking-widest transition-all whitespace-nowrap shrink-0 cursor-pointer ${activeTabId === 'new'
                         ? 'bg-[#8950fc]/10 text-[#8950fc] border-[#8950fc]/30'
                         : 'bg-[#1e1e2d] text-[#a2a5b9] border-white/[0.05] hover:border-white/[0.1]'
                     }`}

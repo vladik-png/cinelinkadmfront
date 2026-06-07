@@ -16,7 +16,7 @@ const Header: React.FC = () => {
 
       <div className="flex items-center gap-5">
 
-        <button className="relative text-[#a2a5b9] hover:text-[#3699ff] transition-colors">
+        <button className="relative text-[#a2a5b9] hover:text-[#3699ff] transition-colors cursor-pointer">
           <Bell size={20} />
           <span className="absolute -top-1 -right-1 w-2.5 h-2.5 bg-[#f64e60] rounded-full border-2 border-[#1e1e2d]"></span>
         </button>
@@ -24,7 +24,7 @@ const Header: React.FC = () => {
         <div className="w-px h-6 bg-white/[0.05]"></div>
 
         <div className="flex items-center gap-3">
-          <Link to="/profile" className="text-right hidden sm:block group mr-2">
+          <Link to="/profile" className="text-right hidden sm:block group mr-2 cursor-pointer">
             <p className="text-sm font-bold text-white group-hover:text-[#3699ff] transition-colors">
               {employee ? `${employee.first_name} ${employee.last_name}` : 'Loading...'}
             </p>
@@ -33,7 +33,7 @@ const Header: React.FC = () => {
             </p>
           </Link>
 
-          <Link to="/profile" className="w-10 h-10 rounded-lg overflow-hidden bg-[#151521] border border-white/[0.05] flex items-center justify-center hover:border-[#3699ff]/50 transition-colors">
+          <Link to="/profile" className="w-10 h-10 rounded-lg overflow-hidden bg-[#151521] border border-white/[0.05] flex items-center justify-center hover:border-[#3699ff]/50 transition-colors cursor-pointer">
             {employee?.avatar_url ? (
               <img src={employee.avatar_url} alt="avatar" className="w-full h-full object-cover" />
             ) : (
@@ -45,7 +45,7 @@ const Header: React.FC = () => {
 
           <button
             onClick={handleLogout}
-            className="ml-2 flex items-center gap-2 px-4 py-2.5 rounded-lg bg-[#f64e60]/10 hover:bg-[#f64e60]/20 text-[#f64e60] border border-[#f64e60]/20 transition-all duration-200 font-semibold text-sm shadow-sm"
+            className="ml-2 flex items-center gap-2 px-4 py-2.5 rounded-lg bg-[#f64e60]/10 hover:bg-[#f64e60]/20 text-[#f64e60] border border-[#f64e60]/20 transition-all duration-200 font-semibold text-sm shadow-sm cursor-pointer"
             title="Sign Out"
           >
             <LogOut size={16} />

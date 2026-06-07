@@ -120,7 +120,7 @@ export const UsersTable: React.FC<UsersTableProps> = ({
                                         <div className="flex items-center justify-end gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
                                             <button
                                                 onClick={(e) => onToggleStatus(user, e)}
-                                                className={`p-2 rounded-md transition-colors ${user.is_active
+                                                className={`p-2 rounded-md transition-colors cursor-pointer ${user.is_active
                                                     ? 'text-[#f64e60] bg-[#f64e60]/10 hover:bg-[#f64e60]/20'
                                                     : 'text-[#1bc5bd] bg-[#1bc5bd]/10 hover:bg-[#1bc5bd]/20'
                                                     }`}

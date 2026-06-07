@@ -14,7 +14,7 @@ export const InfrastructureHeader: React.FC<Props> = ({ loading, onRefresh }) =>
             </div>
             <button
                 onClick={onRefresh}
-                className="p-3 bg-[#1e1e2d] text-[#a2a5b9] hover:text-white rounded-xl transition-all active:scale-95 border border-white/[0.05] hover:border-white/[0.1]"
+                className="p-3 bg-[#1e1e2d] text-[#a2a5b9] hover:text-white rounded-xl transition-all active:scale-95 border border-white/[0.05] hover:border-white/[0.1] cursor-pointer"
             >
                 <RefreshCcw size={20} className={loading ? 'animate-spin text-[#3699ff]' : ''} />
             </button>

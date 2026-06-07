@@ -43,7 +43,7 @@ export const EmployeesToolbar: React.FC<EmployeesToolbarProps> = ({
                 {onAddEmployee && (
                     <button
                         onClick={onAddEmployee}
-                        className="flex items-center gap-2 bg-[#3699ff] text-white text-xs font-bold uppercase tracking-wider px-4 py-2.5 rounded-xl hover:bg-[#3699ff]/90 transition-all active:scale-95"
+                        className="flex items-center gap-2 bg-[#3699ff] text-white text-xs font-bold uppercase tracking-wider px-4 py-2.5 rounded-xl hover:bg-[#3699ff]/90 transition-all active:scale-95 cursor-pointer"
                     >
                         <Plus size={14} /> Add Employee
                     </button>
@@ -51,7 +51,7 @@ export const EmployeesToolbar: React.FC<EmployeesToolbarProps> = ({
 
                 <button
                     onClick={onExport}
-                    className="flex items-center gap-2 bg-[#1e1e2d] border border-white/[0.05] hover:bg-white/[0.05] text-white text-xs font-bold uppercase tracking-wider px-4 py-2.5 rounded-xl transition-all active:scale-95"
+                    className="flex items-center gap-2 bg-[#1e1e2d] border border-white/[0.05] hover:bg-white/[0.05] text-white text-xs font-bold uppercase tracking-wider px-4 py-2.5 rounded-xl transition-all active:scale-95 cursor-pointer"
                 >
                     <Download size={14} /> Export
                 </button>

@@ -44,7 +44,7 @@ export const UsersToolbar: React.FC<UsersToolbarProps> = ({
 
                 <button
                     onClick={() => setShowBlockedOnly(!showBlockedOnly)}
-                    className={`flex items-center gap-2 px-4 py-2.5 rounded-xl border text-xs font-bold uppercase tracking-wider transition-all ${showBlockedOnly
+                    className={`flex items-center gap-2 px-4 py-2.5 rounded-xl border text-xs font-bold uppercase tracking-wider transition-all cursor-pointer ${showBlockedOnly
                         ? 'bg-[#f64e60]/10 border-[#f64e60]/20 text-[#f64e60]'
                         : 'bg-[#1e1e2d] border-white/[0.05] text-[#a2a5b9] hover:bg-white/[0.02] hover:text-white'
                         }`}
@@ -55,7 +55,7 @@ export const UsersToolbar: React.FC<UsersToolbarProps> = ({
 
                 <button
                     onClick={onExport}
-                    className="flex items-center gap-2 bg-[#1e1e2d] border border-white/[0.05] hover:bg-white/[0.05] text-white text-xs font-bold uppercase tracking-wider px-4 py-2.5 rounded-xl transition-all"
+                    className="flex items-center gap-2 bg-[#1e1e2d] border border-white/[0.05] hover:bg-white/[0.05] text-white text-xs font-bold uppercase tracking-wider px-4 py-2.5 rounded-xl transition-all cursor-pointer"
                 >
                     <Download size={14} /> Export
                 </button>

@@ -18,7 +18,7 @@ export const RecentUsersList: React.FC<RecentUsersListProps> = ({ users, onViewA
                 </h3>
                 <button
                     onClick={onViewAll}
-                    className="text-xs font-semibold px-4 py-2 bg-white/[0.05] hover:bg-white/[0.1] text-white rounded-md transition-colors"
+                    className="text-xs font-semibold px-4 py-2 bg-white/[0.05] hover:bg-white/[0.1] text-white rounded-md transition-colors cursor-pointer"
                 >
                     View All
                 </button>

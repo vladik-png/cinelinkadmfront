@@ -17,8 +17,6 @@ export const UserProfileModal: React.FC<UserProfileModalProps> = ({ user, onClos
     React.useEffect(() => {
         if (!user.user_id) return;
         
-        // Attempt to fetch followers and followings dynamically as a fallback
-        // for when the detailed profile API fails.
         const fetchCounts = async () => {
             try {
                 const fData = await getUserFollowers(user.user_id);
@@ -96,7 +94,7 @@ export const UserProfileModal: React.FC<UserProfileModalProps> = ({ user, onClos
                 >
                     <button
                         onClick={onClose}
-                        className="absolute top-4 right-4 p-2 text-white/50 hover:text-white bg-black/40 rounded-lg backdrop-blur-sm transition-colors border border-white/[0.1]"
+                        className="absolute top-4 right-4 p-2 text-white/50 hover:text-white bg-black/40 rounded-lg backdrop-blur-sm transition-colors border border-white/[0.1] cursor-pointer"
                     >
                         <X size={18} />
                     </button>
@@ -127,7 +125,7 @@ export const UserProfileModal: React.FC<UserProfileModalProps> = ({ user, onClos
                             </div>
                             <button 
                                 onClick={handleExportFollowers}
-                                className="p-2 text-[#a2a5b9] hover:text-[#3699ff] hover:bg-[#3699ff]/10 rounded-lg transition-colors"
+                                className="p-2 text-[#a2a5b9] hover:text-[#3699ff] hover:bg-[#3699ff]/10 rounded-lg transition-colors cursor-pointer"
                                 title="Export Followers to CSV"
                             >
                                 <Download size={16} />
@@ -145,7 +143,7 @@ export const UserProfileModal: React.FC<UserProfileModalProps> = ({ user, onClos
                             </div>
                             <button 
                                 onClick={handleExportFollowing}
-                                className="p-2 text-[#a2a5b9] hover:text-[#3699ff] hover:bg-[#3699ff]/10 rounded-lg transition-colors"
+                                className="p-2 text-[#a2a5b9] hover:text-[#3699ff] hover:bg-[#3699ff]/10 rounded-lg transition-colors cursor-pointer"
                                 title="Export Following to CSV"
                             >
                                 <Download size={16} />
@@ -180,7 +178,7 @@ export const UserProfileModal: React.FC<UserProfileModalProps> = ({ user, onClos
                     <div className="flex flex-col gap-3 pt-6 border-t border-white/[0.05]">
                         <button
                             onClick={() => onToggleStatus(user)}
-                            className={`w-full py-4 rounded-xl text-xs font-black uppercase tracking-widest transition-all flex items-center justify-center gap-3 ${user.is_active
+                            className={`w-full py-4 rounded-xl text-xs font-black uppercase tracking-widest transition-all flex items-center justify-center gap-3 cursor-pointer ${user.is_active
                                 ? 'bg-[#f64e60] hover:bg-rose-600 text-white shadow-[0_4px_12px_rgba(246,78,96,0.2)]'
                                 : 'bg-[#1bc5bd] hover:bg-emerald-500 text-white shadow-[0_4px_12px_rgba(27,197,189,0.2)]'
                                 }`}

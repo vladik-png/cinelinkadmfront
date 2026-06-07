@@ -75,7 +75,7 @@ export const ProfileCard: React.FC<ProfileCardProps> = ({ emp, onDeactivate }) =
                     <h3 className="text-sm font-semibold text-white mb-4">Danger Zone</h3>
                     <button
                         onClick={onDeactivate}
-                        className="flex items-center gap-2 px-6 py-3 bg-[#f64e60]/10 hover:bg-[#f64e60]/20 text-[#f64e60] border border-[#f64e60]/20 rounded-xl transition-all duration-300 font-bold text-xs uppercase tracking-widest"
+                        className="flex items-center gap-2 px-6 py-3 bg-[#f64e60]/10 hover:bg-[#f64e60]/20 text-[#f64e60] border border-[#f64e60]/20 rounded-xl transition-all duration-300 font-bold text-xs uppercase tracking-widest cursor-pointer"
                     >
                         <Trash2 size={16} />
                         Deactivate Account

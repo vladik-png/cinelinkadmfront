@@ -132,7 +132,6 @@ export const TerminalInstance: React.FC<TerminalInstanceProps> = ({ node, isActi
             <div {...getRootProps()} className="flex-1 flex flex-col relative min-h-0 min-w-0 w-full h-full overflow-hidden">
                 <input {...getInputProps()} />
 
-                {/* ХЕДЕР: min-w-0 + flex-1 для тексту гарантує, що він зіжметься і обріжеться (...), а не розірве блок */}
                 <div className={`flex-none flex justify-between items-center px-4 py-3 bg-transparent border-b border-white/[0.05] w-full min-w-0 overflow-hidden ${isActive ? 'bg-white/[0.02]' : ''}`}>
                     <div className="flex items-center gap-2 min-w-0 flex-1 pr-2">
                         <Server size={12} className="shrink-0 text-[#a2a5b9]" /> 
