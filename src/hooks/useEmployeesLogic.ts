@@ -28,13 +28,21 @@ export const useEmployeesLogic = () => {
             setLoading(true);
             const responseData = await getEmployeesList();
 
+            let fetchedList: any[] = [];
             if (responseData && responseData.results && Array.isArray(responseData.results)) {
-                setEmployees(responseData.results);
+                fetchedList = responseData.results;
             } else if (Array.isArray(responseData)) {
-                setEmployees(responseData);
+                fetchedList = responseData;
             } else if (responseData && Array.isArray(responseData.data)) {
-                setEmployees(responseData.data);
+                fetchedList = responseData.data;
             }
+            
+            const listWithKeys = fetchedList.map((item, index) => ({
+                ...item,
+                _react_key: item.employee_id || item.id || `fallback-${index}-${Math.random()}`
+            }));
+            
+            setEmployees(listWithKeys);
         } catch (err: any) {
             console.error("API Error:", err);
         } finally {
@@ -78,34 +86,31 @@ export const useEmployeesLogic = () => {
                 phone: newEmployee.phone || '',
                 email: newEmployee.email || '',
                 department_id: departmentMap[newEmployee.department as string] || 1,
-                location: newEmployee.location || '',
-                avatar_url: newEmployee.avatar_url || '',
-                role: 1,
-                password: "password123"
+                password: newEmployee.password || ''
             };
 
             console.log('Adding employee with data:', employeeData);
 
-            const createdEmployee = await createEmployee(employeeData);
+            const createdResponse = await createEmployee(employeeData);
+            const createdData = createdResponse?.results || createdResponse || {};
 
-            if (createdEmployee) {
-                const newEmployeeData: EmployeeData = {
-                    employee_id: createdEmployee.employee_id || Date.now(),
-                    first_name: createdEmployee.first_name || employeeData.first_name,
-                    last_name: createdEmployee.last_name || employeeData.last_name,
-                    avatar_url: createdEmployee.avatar_url || newEmployee.avatar_url || '',
-                    location: createdEmployee.location || newEmployee.location || '',
-                    created_at: createdEmployee.created_at || new Date().toISOString(),
-                    phone: createdEmployee.phone || employeeData.phone,
-                    email: createdEmployee.email || employeeData.email,
-                    department: newEmployee.department || ''
-                };
+            const newEmployeeData: EmployeeData = {
+                employee_id: createdData.employee_id || Date.now(),
+                first_name: createdData.first_name || employeeData.first_name,
+                last_name: createdData.last_name || employeeData.last_name,
+                avatar_url: createdData.avatar_url || newEmployee.avatar_url || `https://i.pravatar.cc/150?u=${Math.random()}`,
+                location: createdData.location || newEmployee.location || 'Not specified',
+                created_at: createdData.created_at || new Date().toISOString(),
+                phone: createdData.phone || employeeData.phone,
+                email: createdData.email || employeeData.email,
+                department: newEmployee.department || '',
+                _react_key: createdData.employee_id || Date.now().toString()
+            };
 
-                setEmployees(prev => [newEmployeeData, ...prev]);
-                console.log('New employee added to list:', newEmployeeData);
-            } else {
-                await fetchEmployees();
-            }
+            setEmployees(prev => [newEmployeeData, ...prev]);
+            fetchEmployees();
+            setSortConfig({ key: 'id', direction: 'desc' });
+            setCurrentPage(1);
         } catch (err: any) {
             console.error("Error adding employee:", err);
             await fetchEmployees();
@@ -116,15 +121,18 @@ export const useEmployeesLogic = () => {
 
     const processedEmployees = useMemo(() => {
         const list = Array.isArray(employees) ? employees : [];
+        
         let result = list.filter(e => {
-            if (e.employee_id === 0) return false;
+            const search = searchTerm?.toLowerCase().trim();
+            
+            if (!search) return true;
 
-            const search = searchTerm.toLowerCase();
             return (
                 (e.first_name || "").toLowerCase().includes(search) ||
                 (e.last_name || "").toLowerCase().includes(search) ||
                 (e.location || "").toLowerCase().includes(search) ||
-                e.employee_id.toString().includes(search)
+                (e.employee_id ? e.employee_id.toString().includes(search) : false) ||
+                (e as any).id?.toString().includes(search)
             );
         });
 

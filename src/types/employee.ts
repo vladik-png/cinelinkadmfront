@@ -9,6 +9,8 @@ export interface EmployeeData {
     phone?: string;
     email?: string;
     department?: string;
+    password?: string;
+    _react_key?: string | number;
 }
 
 export type SortKey = 'id' | 'name' | 'location';

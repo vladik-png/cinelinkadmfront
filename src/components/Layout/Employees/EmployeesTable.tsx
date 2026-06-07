@@ -52,17 +52,18 @@ export const EmployeesTable: React.FC<EmployeesTableProps> = ({
                     </thead>
 
                     <tbody>
-                        {employees.map((employee) => {
+                        {employees.map((employee, index) => {
                             const { date, time } = employee.created_at ? formatDate(employee.created_at) : { date: 'Not specified', time: '' };
+                            const displayId = employee.employee_id || (employee as any).id || `N/A-${index}`;
 
                             return (
                                 <tr
-                                    key={employee.employee_id}
+                                    key={employee._react_key}
                                     onClick={() => onViewEmployee(employee)}
                                     className="border-b border-white/[0.03] hover:bg-white/[0.02] transition-colors cursor-pointer group"
                                 >
                                     <td className="py-4 px-6 text-center text-[#a2a5b9] font-mono text-xs">
-                                        #{employee.employee_id}
+                                        #{displayId}
                                     </td>
 
                                     <td className="py-4 px-6">

@@ -15,7 +15,8 @@ export const AddEmployeeModal: React.FC<AddEmployeeModalProps> = ({ onClose, onA
         phone: '',
         email: '',
         department: 'Engineering',
-        location: ''
+        location: '',
+        password: ''
     });
 
     const handleSubmit = (e: React.FormEvent) => {
@@ -27,6 +28,7 @@ export const AddEmployeeModal: React.FC<AddEmployeeModalProps> = ({ onClose, onA
             email: formData.email,
             department: formData.department,
             location: formData.location,
+            password: formData.password,
             avatar_url: `https://i.pravatar.cc/150?u=${Math.random()}`,
             created_at: new Date().toISOString(),
         });
@@ -104,6 +106,19 @@ export const AddEmployeeModal: React.FC<AddEmployeeModalProps> = ({ onClose, onA
                             onChange={handleChange}
                             className="w-full bg-[#151521] border border-white/[0.05] text-white text-sm px-4 py-2.5 rounded-xl outline-none focus:border-[#3699ff]/50 focus:bg-[#151521]/80 transition-all"
                             placeholder="john.doe@example.com"
+                        />
+                    </div>
+
+                    <div className="flex flex-col gap-1.5">
+                        <label className="text-[10px] uppercase tracking-wider font-bold text-[#a2a5b9] px-1">Password</label>
+                        <input
+                            type="text"
+                            name="password"
+                            required
+                            value={formData.password}
+                            onChange={handleChange}
+                            className="w-full bg-[#151521] border border-white/[0.05] text-white text-sm px-4 py-2.5 rounded-xl outline-none focus:border-[#3699ff]/50 focus:bg-[#151521]/80 transition-all"
+                            placeholder="Set password"
                         />
                     </div>
 
