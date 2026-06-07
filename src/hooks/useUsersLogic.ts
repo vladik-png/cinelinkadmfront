@@ -1,13 +1,13 @@
 import { useState, useEffect, useMemo } from 'react';
 import { useSearchParams } from 'react-router-dom';
-import { getUsers, toggleUserAccountStatus } from '../api/userService';
+import { useUserStore } from '../store/userStore';
 import { UserData, SortKey, SortDirection } from '../types/user';
 import { formatDate } from '../utils/dateHelpers';
 
 export const useUsersLogic = () => {
     const [searchParams, setSearchParams] = useSearchParams();
-    const [users, setUsers] = useState<UserData[]>([]);
-    const [loading, setLoading] = useState<boolean>(true);
+    const { users, loading, fetchUsers, toggleStatus } = useUserStore();
+    
     const [searchTerm, setSearchTerm] = useState<string>(searchParams.get('search') || '');
     const [showBlockedOnly, setShowBlockedOnly] = useState<boolean>(false);
     const [currentPage, setCurrentPage] = useState<number>(1);
@@ -25,53 +25,16 @@ export const useUsersLogic = () => {
         direction: 'desc'
     });
 
-    const fetchUsers = async () => {
-        try {
-            setLoading(true);
-            const data = await getUsers();
-
-            if (data && data.results && Array.isArray(data.results.data)) {
-                setUsers(data.results.data);
-            }
-            else if (data && Array.isArray(data.results)) {
-                setUsers(data.results);
-            }
-            else if (Array.isArray(data)) {
-                setUsers(data);
-            } else {
-                console.warn("Unexpected API response format:", data);
-                setUsers([]);
-            }
-        } catch (err) {
-            console.error("Error fetching users:", err);
-            setUsers([]);
-        } finally {
-            setLoading(false);
-        }
-    };
-
-    useEffect(() => { fetchUsers(); }, []);
+    useEffect(() => { 
+        fetchUsers(); 
+    }, [fetchUsers]);
 
     useEffect(() => {
         setCurrentPage(1);
     }, [searchTerm, showBlockedOnly, sortConfig]);
 
     const handleToggleStatus = async (user: UserData) => {
-        if (!user || user.user_id === undefined) return;
-
-        try {
-            await toggleUserAccountStatus(user.user_id, user.is_active);
-            const nextState = !user.is_active;
-
-            setUsers(prev => prev.map(u =>
-                u.user_id === user.user_id ? { ...u, is_active: nextState } : u
-            ));
-
-            return nextState;
-        } catch (err) {
-            console.error("Error changing status:", err);
-            throw err;
-        }
+        return toggleStatus(user);
     };
 
     const handleSort = (key: SortKey) => {
