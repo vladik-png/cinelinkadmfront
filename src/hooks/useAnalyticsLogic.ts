@@ -4,12 +4,25 @@ import { fetchNodeMetrics } from '../api/metricsService';
 import { SystemMetricData, ViewMode } from '../types/metrics';
 
 export const useAnalyticsLogic = () => {
-    const [nodesHistory, setNodesHistory] = useState<Record<string, SystemMetricData[]>>({});
+    // Initialize from localStorage if available
+    const [nodesHistory, setNodesHistory] = useState<Record<string, SystemMetricData[]>>(() => {
+        try {
+            const cached = localStorage.getItem('analytics-nodes-history');
+            return cached ? JSON.parse(cached) : {};
+        } catch {
+            return {};
+        }
+    });
     const [activeCount, setActiveCount] = useState(0);
     const [viewMode, setViewMode] = useState<ViewMode>('combined');
 
     const [searchParams, setSearchParams] = useSearchParams();
     const selectedNode = searchParams.get('node');
+
+    // Sync nodesHistory to localStorage whenever it updates
+    useEffect(() => {
+        localStorage.setItem('analytics-nodes-history', JSON.stringify(nodesHistory));
+    }, [nodesHistory]);
 
     const fetchAllMetrics = async () => {
         try {
@@ -34,6 +47,7 @@ export const useAnalyticsLogic = () => {
                             packet_loss: parseFloat(newNodeData.packet_loss) || 0,
                         }
                     ];
+                    // Keep the last 20 data points
                     newHistory[nodeId] = updatedNodeHistory.slice(-20);
                 });
                 return newHistory;

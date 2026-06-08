@@ -7,14 +7,45 @@ import { DashboardStats, SystemMetricsSummary, WeatherInfo, RecentUser } from '.
 
 export const useDashboardLogic = () => {
     const [employee, setEmployee] = useState<any>(null);
-    const [weather, setWeather] = useState<WeatherInfo | null>(null);
-    const [stats, setStats] = useState<DashboardStats>({ users: 0, activeNodes: 0 });
-    const [lastUsers, setLastUsers] = useState<RecentUser[]>([]);
+    
+    // Cached initial states
+    const [weather, setWeather] = useState<WeatherInfo | null>(() => {
+        try {
+            const cached = localStorage.getItem('dashboard-weather');
+            return cached ? JSON.parse(cached) : null;
+        } catch { return null; }
+    });
+    
+    const [stats, setStats] = useState<DashboardStats>(() => {
+        try {
+            const cached = localStorage.getItem('dashboard-stats');
+            return cached ? JSON.parse(cached) : { users: 0, activeNodes: 0 };
+        } catch { return { users: 0, activeNodes: 0 }; }
+    });
+    
+    const [lastUsers, setLastUsers] = useState<RecentUser[]>(() => {
+        try {
+            const cached = localStorage.getItem('dashboard-last-users');
+            return cached ? JSON.parse(cached) : [];
+        } catch { return []; }
+    });
+
+    const [systemMetrics, setSystemMetrics] = useState<SystemMetricsSummary>(() => {
+        try {
+            const cached = localStorage.getItem('dashboard-metrics');
+            return cached ? JSON.parse(cached) : { cpu: 0, ram: 0, disk: 0, ping: 0 };
+        } catch { return { cpu: 0, ram: 0, disk: 0, ping: 0 }; }
+    });
+
     const [time, setTime] = useState(new Date().toLocaleTimeString());
 
-    const [systemMetrics, setSystemMetrics] = useState<SystemMetricsSummary>({
-        cpu: 0, ram: 0, disk: 0, ping: 0
-    });
+    // Sync state changes to localStorage
+    useEffect(() => {
+        if (weather) localStorage.setItem('dashboard-weather', JSON.stringify(weather));
+        localStorage.setItem('dashboard-stats', JSON.stringify(stats));
+        localStorage.setItem('dashboard-last-users', JSON.stringify(lastUsers));
+        localStorage.setItem('dashboard-metrics', JSON.stringify(systemMetrics));
+    }, [weather, stats, lastUsers, systemMetrics]);
 
     const fetchWeather = async (location: string) => {
         if (!location) return;
