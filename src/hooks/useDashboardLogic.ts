@@ -66,16 +66,15 @@ export const useDashboardLogic = () => {
         if (!empId) return;
 
         getUsers().then(usersData => {
-            let extractedUsers: RecentUser[] = [];
-            if (usersData && usersData.results && Array.isArray(usersData.results.data)) {
-                extractedUsers = usersData.results.data;
-            } else if (usersData && Array.isArray(usersData.results)) {
-                extractedUsers = usersData.results;
-            } else if (Array.isArray(usersData)) {
-                extractedUsers = usersData;
-            }
+            const extractedUsers = Array.isArray(usersData?.results?.data) 
+                ? usersData.results.data 
+                : Array.isArray(usersData?.results) 
+                    ? usersData.results 
+                    : Array.isArray(usersData) 
+                        ? usersData 
+                        : [];
             
-            if (extractedUsers) {
+            if (extractedUsers.length > 0) {
                 setStats(prev => ({ ...prev, users: extractedUsers.length }));
                 setLastUsers(extractedUsers.slice(-4).reverse());
             }

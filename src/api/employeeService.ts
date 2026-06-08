@@ -1,4 +1,5 @@
 import api from './axios';
+import { EmployeeData } from '../types/employee';
 
 const ADMIN_BASE_URL = import.meta.env.VITE_ADMIN_API_URL || 'https://admin.cinelink.lol';
 
@@ -7,28 +8,21 @@ export const getEmployee = async (id: string | number) => {
     const response = await api.get(`${ADMIN_BASE_URL}/employee/${id}`);
     return response.data;
   } catch (error) {
-    console.error("Error fetching employee:", error);
+    console.error(`Error fetching employee with ID ${id}:`, error);
     throw error;
   }
 };
 
-export const createEmployee = async (employeeData: any) => {
+export const createEmployee = async (employeeData: Partial<EmployeeData>) => {
   try {
     const response = await api.post(`${ADMIN_BASE_URL}/employee`, employeeData, {
       headers: {
         "Content-Type": "application/json"
       }
     });
-
-    console.log("Employee created successfully:", response.data);
     return response.data;
   } catch (error: any) {
-    console.error("Error creating employee:", error);
-    if (error.response) {
-      console.error("Response status:", error.response.status);
-      console.error("Response data:", error.response.data);
-      console.error("Error message:", error.response.data?.error || error.response.data?.message);
-    }
+    console.error("Error creating employee:", error?.response?.data?.error || error.message);
     throw error;
   }
 };

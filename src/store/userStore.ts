@@ -11,6 +11,17 @@ interface UserStoreState {
     toggleStatus: (user: UserData) => Promise<boolean | undefined>;
 }
 
+const parseUserResponse = (data: any): UserData[] => {
+    if (data?.results?.data && Array.isArray(data.results.data)) {
+        return data.results.data;
+    } else if (data?.results && Array.isArray(data.results)) {
+        return data.results;
+    } else if (Array.isArray(data)) {
+        return data;
+    }
+    return [];
+};
+
 export const useUserStore = create<UserStoreState>()(
     persist(
         (set, get) => ({
@@ -24,13 +35,7 @@ export const useUserStore = create<UserStoreState>()(
                 if (isInitialized && !force) {
                     getUsers()
                         .then((data) => {
-                            if (data && data.results && Array.isArray(data.results.data)) {
-                                set({ users: data.results.data });
-                            } else if (data && Array.isArray(data.results)) {
-                                set({ users: data.results });
-                            } else if (Array.isArray(data)) {
-                                set({ users: data });
-                            }
+                            set({ users: parseUserResponse(data) });
                         })
                         .catch((err) => console.error("API Background Refetch Error:", err));
                     return;
@@ -39,15 +44,7 @@ export const useUserStore = create<UserStoreState>()(
                 set({ loading: true });
                 try {
                     const data = await getUsers();
-                    if (data && data.results && Array.isArray(data.results.data)) {
-                        set({ users: data.results.data, isInitialized: true });
-                    } else if (data && Array.isArray(data.results)) {
-                        set({ users: data.results, isInitialized: true });
-                    } else if (Array.isArray(data)) {
-                        set({ users: data, isInitialized: true });
-                    } else {
-                        set({ users: [], isInitialized: true });
-                    }
+                    set({ users: parseUserResponse(data), isInitialized: true });
                 } catch (err) {
                     console.error("Error fetching users:", err);
                     set({ users: [], isInitialized: true });

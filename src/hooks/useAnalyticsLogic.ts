@@ -26,8 +26,7 @@ export const useAnalyticsLogic = () => {
 
     const fetchAllMetrics = async () => {
         try {
-            const token = localStorage.getItem('admin_token');
-            const combinedData = await fetchNodeMetrics(token);
+            const combinedData = await fetchNodeMetrics();
 
             setNodesHistory(prevHistory => {
                 const newHistory = { ...prevHistory };

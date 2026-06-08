@@ -11,6 +11,23 @@ interface EmployeeStoreState {
     addEmployee: (newEmployee: Partial<EmployeeData>) => Promise<boolean>;
 }
 
+// Helper to normalize the API response
+const parseEmployeeResponse = (responseData: any): EmployeeData[] => {
+    let fetchedList: any[] = [];
+    if (responseData?.results && Array.isArray(responseData.results)) {
+        fetchedList = responseData.results;
+    } else if (Array.isArray(responseData)) {
+        fetchedList = responseData;
+    } else if (responseData?.data && Array.isArray(responseData.data)) {
+        fetchedList = responseData.data;
+    }
+    
+    return fetchedList.map((item, index) => ({
+        ...item,
+        _react_key: item.employee_id || item.id || `fallback-${index}-${Math.random()}`
+    }));
+};
+
 export const useEmployeeStore = create<EmployeeStoreState>()(
     persist(
         (set, get) => ({
@@ -24,20 +41,7 @@ export const useEmployeeStore = create<EmployeeStoreState>()(
                 if (isInitialized && !force) {
                     getEmployeesList()
                         .then((responseData) => {
-                            let fetchedList: any[] = [];
-                            if (responseData && responseData.results && Array.isArray(responseData.results)) {
-                                fetchedList = responseData.results;
-                            } else if (Array.isArray(responseData)) {
-                                fetchedList = responseData;
-                            } else if (responseData && Array.isArray(responseData.data)) {
-                                fetchedList = responseData.data;
-                            }
-                            
-                            const listWithKeys = fetchedList.map((item, index) => ({
-                                ...item,
-                                _react_key: item.employee_id || item.id || `fallback-${index}-${Math.random()}`
-                            }));
-                            set({ employees: listWithKeys });
+                            set({ employees: parseEmployeeResponse(responseData) });
                         })
                         .catch((err) => console.error("API Background Refetch Error:", err));
                     return;
@@ -46,22 +50,7 @@ export const useEmployeeStore = create<EmployeeStoreState>()(
                 set({ loading: true });
                 try {
                     const responseData = await getEmployeesList();
-
-                    let fetchedList: any[] = [];
-                    if (responseData && responseData.results && Array.isArray(responseData.results)) {
-                        fetchedList = responseData.results;
-                    } else if (Array.isArray(responseData)) {
-                        fetchedList = responseData;
-                    } else if (responseData && Array.isArray(responseData.data)) {
-                        fetchedList = responseData.data;
-                    }
-                    
-                    const listWithKeys = fetchedList.map((item, index) => ({
-                        ...item,
-                        _react_key: item.employee_id || item.id || `fallback-${index}-${Math.random()}`
-                    }));
-                    
-                    set({ employees: listWithKeys, isInitialized: true });
+                    set({ employees: parseEmployeeResponse(responseData), isInitialized: true });
                 } catch (err: any) {
                     console.error("API Error:", err);
                 } finally {
