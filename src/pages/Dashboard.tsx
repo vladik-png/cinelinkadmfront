@@ -54,7 +54,6 @@ const Dashboard: React.FC = () => {
         />
       </div>
 
-      {/* --- RECENT USERS ROW --- */}
       <div className="grid grid-cols-1 gap-6">
         <RecentUsersList
           users={lastUsers}

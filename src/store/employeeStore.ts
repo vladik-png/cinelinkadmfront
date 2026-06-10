@@ -11,7 +11,6 @@ interface EmployeeStoreState {
     addEmployee: (newEmployee: Partial<EmployeeData>) => Promise<boolean>;
 }
 
-// Helper to normalize the API response
 const parseEmployeeResponse = (responseData: any): EmployeeData[] => {
     let fetchedList: any[] = [];
     if (responseData?.results && Array.isArray(responseData.results)) {
@@ -24,7 +23,7 @@ const parseEmployeeResponse = (responseData: any): EmployeeData[] => {
     
     return fetchedList.map((item, index) => ({
         ...item,
-        _react_key: item.employee_id || item.id || `fallback-${index}-${Math.random()}`
+        _react_key: item.employee_id || item.id || `fallback-${index}`
     }));
 };
 
@@ -51,7 +50,7 @@ export const useEmployeeStore = create<EmployeeStoreState>()(
                 try {
                     const responseData = await getEmployeesList();
                     set({ employees: parseEmployeeResponse(responseData), isInitialized: true });
-                } catch (err: any) {
+                } catch (err: unknown) {
                     console.error("API Error:", err);
                 } finally {
                     set({ loading: false });
@@ -87,7 +86,7 @@ export const useEmployeeStore = create<EmployeeStoreState>()(
                         employee_id: createdData.employee_id || Date.now(),
                         first_name: createdData.first_name || employeeData.first_name,
                         last_name: createdData.last_name || employeeData.last_name,
-                        avatar_url: createdData.avatar_url || newEmployee.avatar_url || `https://i.pravatar.cc/150?u=${Math.random()}`,
+                        avatar_url: createdData.avatar_url || newEmployee.avatar_url || `https://i.pravatar.cc/150?u=${encodeURIComponent(employeeData.first_name || 'user')}`,
                         location: createdData.location || newEmployee.location || 'Not specified',
                         created_at: createdData.created_at || new Date().toISOString(),
                         phone: createdData.phone || employeeData.phone,
@@ -99,11 +98,11 @@ export const useEmployeeStore = create<EmployeeStoreState>()(
                     const currentEmployees = get().employees;
                     set({ employees: [newEmployeeData, ...currentEmployees] });
                     
-                    get().fetchEmployees(true);
+                    // Trigger a silent background refetch
+                    get().fetchEmployees();
                     return true;
-                } catch (err: any) {
+                } catch (err: unknown) {
                     console.error("Error adding employee:", err);
-                    get().fetchEmployees(true);
                     return false;
                 } finally {
                     set({ loading: false });
