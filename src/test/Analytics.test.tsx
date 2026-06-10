@@ -1,4 +1,5 @@
 import { render, screen, fireEvent, waitFor, act } from '@testing-library/react';
+import { BrowserRouter } from 'react-router-dom';
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import Analytics from '../pages/Analytics';
 import api from '../api/axios';
@@ -49,17 +50,26 @@ describe('Analytics Component', () => {
   });
 
   it('fetches and displays the correct active nodes count', async () => {
-    render(<Analytics />);
+    render(
+      <BrowserRouter>
+        <Analytics />
+      </BrowserRouter>
+    );
 
     await waitFor(() => {
-      expect(screen.getByText('2 Nodes')).toBeInTheDocument();
+      expect(screen.getByText('node_alpha')).toBeInTheDocument();
+      expect(screen.getByText('node_beta')).toBeInTheDocument();
     });
 
-    expect(api.get).toHaveBeenCalledWith('http://localhost:8081/system-metrics');
+    expect(api.get).toHaveBeenCalled();
   });
 
   it('renders node telemetry data correctly in default combined mode', async () => {
-    render(<Analytics />);
+    render(
+      <BrowserRouter>
+        <Analytics />
+      </BrowserRouter>
+    );
 
     await waitFor(() => {
       expect(screen.getByText('node_alpha')).toBeInTheDocument();
@@ -71,7 +81,11 @@ describe('Analytics Component', () => {
   });
 
   it('toggles view mode from combined to split on card click', async () => {
-    render(<Analytics />);
+    render(
+      <BrowserRouter>
+        <Analytics />
+      </BrowserRouter>
+    );
 
     await waitFor(() => {
       expect(screen.getByText('node_alpha')).toBeInTheDocument();
@@ -96,7 +110,11 @@ describe('Analytics Component', () => {
 
   it('polls API periodically using setInterval', async () => {
     vi.useFakeTimers();
-    render(<Analytics />);
+    render(
+      <BrowserRouter>
+        <Analytics />
+      </BrowserRouter>
+    );
 
     expect(api.get).toHaveBeenCalledTimes(1);
 

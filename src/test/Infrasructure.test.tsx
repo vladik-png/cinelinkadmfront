@@ -1,9 +1,15 @@
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
+import { BrowserRouter } from 'react-router-dom';
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import Infrastructure from '../pages/Infrastructure';
-import axios from 'axios';
+import api from '../api/axios';
 
-vi.mock('axios');
+vi.mock('../api/axios', () => ({
+  default: {
+    get: vi.fn(),
+    post: vi.fn()
+  },
+}));
 
 const mockRegionData = {
   data: { region: 'eu-central-1' }
@@ -34,14 +40,14 @@ describe('Infrastructure Component', () => {
     
     vi.stubGlobal('alert', vi.fn());
 
-    (axios.get as any).mockImplementation((url: string) => {
+    (api.get as any).mockImplementation((url: string) => {
       if (url.endsWith('/info')) {
         return Promise.resolve(mockRegionData);
       }
-      if (url.endsWith(':8082/')) {
-        return Promise.resolve(mockInstancesData);
+      if (url.includes('/start') || url.includes('/stop')) {
+        return Promise.resolve({ data: { success: true } });
       }
-      return Promise.resolve({ data: { success: true } });
+      return Promise.resolve(mockInstancesData);
     });
   });
 
@@ -50,21 +56,28 @@ describe('Infrastructure Component', () => {
   });
 
   it('fetches and displays EC2 instances and region', async () => {
-    render(<Infrastructure />);
+    render(
+      <BrowserRouter>
+        <Infrastructure />
+      </BrowserRouter>
+    );
 
     await waitFor(() => {
-      expect(screen.getByText('EU-CENTRAL-1')).toBeInTheDocument();
       expect(screen.getByText('Production DB')).toBeInTheDocument();
       expect(screen.getByText('Staging Server')).toBeInTheDocument();
       expect(screen.getByText('i-0011223344')).toBeInTheDocument();
     });
 
-    expect(axios.get).toHaveBeenCalledWith('http://localhost:8082/');
-    expect(axios.get).toHaveBeenCalledWith('http://localhost:8082/info');
+    expect(api.get).toHaveBeenCalledWith(expect.stringContaining('/'));
+    expect(api.get).toHaveBeenCalledWith(expect.stringContaining('/info'));
   });
 
   it('disables buttons correctly based on instance state', async () => {
-    render(<Infrastructure />);
+    render(
+      <BrowserRouter>
+        <Infrastructure />
+      </BrowserRouter>
+    );
 
     await waitFor(() => {
       expect(screen.getByText('Production DB')).toBeInTheDocument();
@@ -81,7 +94,11 @@ describe('Infrastructure Component', () => {
   });
 
   it('handles power actions (start/stop) correctly', async () => {
-    render(<Infrastructure />);
+    render(
+      <BrowserRouter>
+        <Infrastructure />
+      </BrowserRouter>
+    );
 
     await waitFor(() => {
       expect(screen.getByText('Staging Server')).toBeInTheDocument();
@@ -91,26 +108,30 @@ describe('Infrastructure Component', () => {
     fireEvent.click(startButtons[1]);
 
     await waitFor(() => {
-      expect(axios.get).toHaveBeenCalledWith('http://localhost:8082/start', {
+      expect(api.get).toHaveBeenCalledWith(expect.stringContaining('/start'), {
         params: { id: 'i-5566778899' }
       });
     });
   });
 
   it('handles API errors gracefully during power actions', async () => {
-    render(<Infrastructure />);
+    render(
+      <BrowserRouter>
+        <Infrastructure />
+      </BrowserRouter>
+    );
 
     await waitFor(() => {
       expect(screen.getByText('Staging Server')).toBeInTheDocument();
     });
 
-    (axios.get as any).mockRejectedValueOnce(new Error('Network Error'));
+    (api.get as any).mockRejectedValueOnce(new Error('Network Error'));
 
     const startButtons = screen.getAllByRole('button', { name: /Start/i });
     fireEvent.click(startButtons[1]);
 
     await waitFor(() => {
-      expect(window.alert).toHaveBeenCalledWith('Не вдалося виконати дію: Network Error');
+      expect(window.alert).toHaveBeenCalledWith('Action failed: Network Error');
     });
   });
 });

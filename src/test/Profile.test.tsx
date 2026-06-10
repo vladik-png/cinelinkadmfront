@@ -38,7 +38,7 @@ describe('Profile Component', () => {
 
     render(<Profile />);
     
-    expect(screen.getByText(/Loading Configuration/i)).toBeInTheDocument();
+    expect(screen.getByText(/Loading Profile.../i)).toBeInTheDocument();
   });
 
   it('fetches and displays employee profile correctly', async () => {
@@ -57,7 +57,7 @@ describe('Profile Component', () => {
       expect(screen.getByText('Department #3')).toBeInTheDocument();
     });
 
-    expect(api.get).toHaveBeenCalledWith('http://localhost:8080/employee/42');
+    expect(api.get).toHaveBeenCalledWith('https://admin.cinelink.lol/employee/42');
   });
 
   it('shows error message when employee is not found or API fails', async () => {
@@ -87,12 +87,12 @@ describe('Profile Component', () => {
     
     (api.delete as any).mockResolvedValueOnce({ status: 200 });
 
-    const deactivateButton = screen.getByText('Deactivate');
+    const deactivateButton = screen.getByText('Deactivate Account');
     fireEvent.click(deactivateButton);
 
     await waitFor(() => {
       expect(window.confirm).toHaveBeenCalledWith('Make this employee inactive?');
-      expect(api.delete).toHaveBeenCalledWith('http://localhost:8080/employee/42');
+      expect(api.delete).toHaveBeenCalledWith('https://admin.cinelink.lol/employee/42');
       expect(window.alert).toHaveBeenCalledWith('Status updated to inactive');
     });
   });
@@ -111,7 +111,7 @@ describe('Profile Component', () => {
 
     vi.mocked(window.confirm).mockReturnValueOnce(false);
 
-    const deactivateButton = screen.getByText('Deactivate');
+    const deactivateButton = screen.getByText('Deactivate Account');
     fireEvent.click(deactivateButton);
 
     expect(window.confirm).toHaveBeenCalled();

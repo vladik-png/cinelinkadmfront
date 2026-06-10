@@ -32,8 +32,8 @@ describe('Login Component', () => {
       </BrowserRouter>
     );
 
-    expect(screen.getByText(/Terminal Access/i)).toBeInTheDocument();
-    expect(screen.getByPlaceholderText('XXXX')).toBeInTheDocument();
+    expect(screen.getByText(/Cinelink Admin/i)).toBeInTheDocument();
+    expect(screen.getByPlaceholderText('e.g. 0000')).toBeInTheDocument();
     expect(screen.getByPlaceholderText('••••••••')).toBeInTheDocument();
     expect(screen.getByRole('button', { name: /Authorize Entry/i })).toBeInTheDocument();
   });
@@ -45,7 +45,7 @@ describe('Login Component', () => {
       </BrowserRouter>
     );
 
-    const loginInput = screen.getByPlaceholderText('XXXX') as HTMLInputElement;
+    const loginInput = screen.getByPlaceholderText('e.g. 0000') as HTMLInputElement;
     const passwordInput = screen.getByPlaceholderText('••••••••') as HTMLInputElement;
 
     fireEvent.change(loginInput, { target: { value: 'admin' } });
@@ -59,7 +59,7 @@ describe('Login Component', () => {
     (api.post as any).mockResolvedValueOnce({
       status: 200,
       data: {
-        results: { user_id: 123 }
+        results: { employee_id: 123, jwt: 'mock_token' }
       }
     });
 
@@ -69,13 +69,13 @@ describe('Login Component', () => {
       </BrowserRouter>
     );
 
-    fireEvent.change(screen.getByPlaceholderText('XXXX'), { target: { value: 'admin' } });
+    fireEvent.change(screen.getByPlaceholderText('e.g. 0000'), { target: { value: 'admin' } });
     fireEvent.change(screen.getByPlaceholderText('••••••••'), { target: { value: 'password' } });
 
     fireEvent.click(screen.getByRole('button', { name: /Authorize Entry/i }));
 
     await waitFor(() => {
-      expect(localStorage.getItem('admin_token')).toBe('true');
+      expect(localStorage.getItem('admin_token')).toBe('mock_token');
       expect(localStorage.getItem('employee_id')).toBe('123');
       expect(mockNavigate).toHaveBeenCalledWith('/dashboard');
     });
@@ -92,12 +92,12 @@ describe('Login Component', () => {
       </BrowserRouter>
     );
 
-    fireEvent.change(screen.getByPlaceholderText('XXXX'), { target: { value: 'wrong_user' } });
+    fireEvent.change(screen.getByPlaceholderText('e.g. 0000'), { target: { value: 'wrong_user' } });
     fireEvent.change(screen.getByPlaceholderText('••••••••'), { target: { value: 'wrong_pass' } });
     fireEvent.click(screen.getByRole('button', { name: /Authorize Entry/i }));
 
     await waitFor(() => {
-      expect(screen.getByText('Користувача не знайдено')).toBeInTheDocument();
+      expect(screen.getByText('User not found')).toBeInTheDocument();
     });
     
     expect(mockNavigate).not.toHaveBeenCalled();

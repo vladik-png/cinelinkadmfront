@@ -48,7 +48,7 @@ describe('Users Component', () => {
     (globalThis.fetch as any).mockResolvedValue({
       ok: true,
       json: async () => ({
-        results: { bio: 'Тестова біографія', followers: 100, followings: 50 }
+        results: { bio: 'Test bio', followers: 100, followings: 50 }
       })
     });
   });
@@ -65,7 +65,7 @@ describe('Users Component', () => {
       expect(screen.getByText('Bad Guy')).toBeInTheDocument();
     });
     
-    expect(api.get).toHaveBeenCalledWith('/users');
+    expect(api.get).toHaveBeenCalledWith(expect.stringContaining('/users'));
   });
 
   it('filters users by search term', async () => {
@@ -79,7 +79,7 @@ describe('Users Component', () => {
       expect(screen.getByText('Taras Shevchenko')).toBeInTheDocument();
     });
 
-    const searchInput = screen.getByPlaceholderText('Search...');
+    const searchInput = screen.getByPlaceholderText('Search by name, username or email...');
     fireEvent.change(searchInput, { target: { value: 'Taras' } });
 
     expect(screen.getByText('Taras Shevchenko')).toBeInTheDocument();
@@ -98,13 +98,13 @@ describe('Users Component', () => {
     });
 
     const blockedText = screen.getByText('Blocked Only');
-    fireEvent.click(blockedText.previousSibling as Element);
+    fireEvent.click(blockedText.closest('button') as Element);
 
     expect(screen.getByText('Bad Guy')).toBeInTheDocument();
     expect(screen.queryByText('Taras Shevchenko')).not.toBeInTheDocument();
   });
 
-  it('opens profile modal and fetches details on "Inspect Profile" click', async () => {
+  it('opens profile modal and fetches details on row click', async () => {
     render(
       <BrowserRouter>
         <Users />
@@ -115,15 +115,15 @@ describe('Users Component', () => {
       expect(screen.getByText('Taras Shevchenko')).toBeInTheDocument();
     });
 
-    const inspectButtons = screen.getAllByText('Inspect Profile');
-    fireEvent.click(inspectButtons[0]);
+    const userRow = screen.getByText('Taras Shevchenko').closest('tr');
+    fireEvent.click(userRow!);
 
     await waitFor(() => {
       expect(globalThis.fetch).toHaveBeenCalledWith(
-        'http://localhost:8080/users/2',
+        'https://admin.cinelink.lol/users/1',
         expect.objectContaining({ method: 'GET' })
       );
-      expect(screen.getByText(/"Тестова біографія"/i)).toBeInTheDocument();
+      expect(screen.getByText(/"Test bio"/i)).toBeInTheDocument();
       expect(screen.getByText('100')).toBeInTheDocument();
     });
   });

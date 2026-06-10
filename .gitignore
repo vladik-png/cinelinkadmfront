@@ -10,8 +10,9 @@ lerna-debug.log*
 node_modules
 dist
 dist-ssr
-src/test
 *.local
+patch-tests.cjs
+patch-tests-2.cjs
 
 # Editor directories and files
 .vscode/*
