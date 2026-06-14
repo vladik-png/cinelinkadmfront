@@ -1,3 +1,53 @@
+export interface ChatMember {
+    member_index: number;
+    user_id: number;
+    username?: string;
+    full_name?: string;
+    avatar_url?: string;
+    role?: string;
+    is_online?: boolean;
+    last_seen: string;
+}
+
+export interface LastMessage {
+    message_id?: number;
+    message_type?: string;
+    message?: any;
+    timestamp?: string;
+    user_id?: number;
+}
+
+export interface ChatMessage {
+    message_id: number;
+    chat_id: number;
+    message_type: string;
+    message: any;
+    timestamp: string;
+    user_id: number;
+}
+
+export interface Chat {
+    chat_id: number;
+    name: string;
+    img_url?: string;
+    creator_id?: number;
+    chat_type?: string;
+    peer_id?: number;
+    participants_ids?: number[];
+    last_message?: LastMessage;
+}
+
+export interface GroupChat {
+    info: Chat;
+    members?: ChatMember[];
+}
+
+export interface DirectChat {
+    info: Chat;
+    peer: ChatMember;
+    last_message?: LastMessage;
+}
+
 export interface ChatUser {
     id: string;
     name: string;
@@ -20,20 +70,3 @@ export interface Conversation {
     unreadCount: number;
     timestamp: string;
 }
-
-export const MOCK_USERS: Record<string, ChatUser> = {
-    '1': { id: '1', name: 'Vladislav', username: 'vlad', avatar: 'https://ui-avatars.com/api/?name=V+S&background=3699ff&color=fff', isOnline: true },
-    '2': { id: '2', name: 'Andriy', username: 'taras', avatar: 'https://ui-avatars.com/api/?name=A+D&background=1e1e2d&color=a2a5b9', isOnline: false },
-    '3': { id: '3', name: 'Maria', username: 'marko', avatar: 'https://ui-avatars.com/api/?name=M+R&background=f64e60&color=fff', isOnline: true },
-};
-
-export const MOCK_CONVERSATIONS: Conversation[] = [
-    { id: 'c1', user: MOCK_USERS['2'], lastMessage: 'Скинув лог помилки на AWS.', unreadCount: 2, timestamp: '10:42' },
-    { id: 'c2', user: MOCK_USERS['3'], lastMessage: 'Дякую, все працює!', unreadCount: 0, timestamp: 'Вчора' },
-];
-
-export const MOCK_MESSAGES: Message[] = [
-    { id: 'm1', text: 'Привіт. Глянь що там по серверах.', senderId: '2', timestamp: '10:40' },
-    { id: 'm2', text: 'Зараз перевірю, хвилинку.', senderId: '1', timestamp: '10:41' },
-    { id: 'm3', text: 'Скинув лог помилки на AWS.', senderId: '2', timestamp: '10:42' },
-];
