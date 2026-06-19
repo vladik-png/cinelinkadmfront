@@ -87,7 +87,7 @@ describe('Employees Component', () => {
     expect(names[0]).toBe('Anton Boyko');
     expect(names[2]).toBe('Maria Koval');
     
-    const nameHeader = screen.getByText('User Profile').closest('th');
+    const nameHeader = screen.getByText(/Staff Profile/i).closest('th');
     fireEvent.click(nameHeader!);
     
     await waitFor(() => {

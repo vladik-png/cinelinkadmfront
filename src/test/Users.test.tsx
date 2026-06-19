@@ -41,15 +41,17 @@ describe('Users Component', () => {
   beforeEach(() => {
     vi.clearAllMocks();
     
-    (api.get as any).mockResolvedValue({
-      data: { results: mockUsersList }
-    });
-
-    (globalThis.fetch as any).mockResolvedValue({
-      ok: true,
-      json: async () => ({
-        results: { bio: 'Test bio', followers: 100, followings: 50 }
-      })
+    (api.get as any).mockImplementation((url: string) => {
+      if (url.includes('/users/1/followers')) {
+        return Promise.resolve({ data: { results: new Array(100).fill({}) } });
+      }
+      if (url.includes('/users/1/followings')) {
+        return Promise.resolve({ data: { results: new Array(50).fill({}) } });
+      }
+      if (url.includes('/users/1') && !url.includes('limit')) {
+        return Promise.resolve({ data: { results: { bio: 'Test bio' } } });
+      }
+      return Promise.resolve({ data: { results: mockUsersList } });
     });
   });
 
@@ -119,10 +121,7 @@ describe('Users Component', () => {
     fireEvent.click(userRow!);
 
     await waitFor(() => {
-      expect(globalThis.fetch).toHaveBeenCalledWith(
-        'https://admin.cinelink.lol/users/1',
-        expect.objectContaining({ method: 'GET' })
-      );
+      expect(api.get).toHaveBeenCalledWith(expect.stringContaining('/users/1'));
       expect(screen.getByText(/"Test bio"/i)).toBeInTheDocument();
       expect(screen.getByText('100')).toBeInTheDocument();
     });
