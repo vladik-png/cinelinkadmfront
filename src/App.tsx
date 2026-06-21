@@ -10,6 +10,7 @@ import Users from './pages/Users';
 import Dashboard from './pages/Dashboard';
 import Employees from './pages/Employees';
 import Moderation from './pages/Moderation';
+import ServerProblems from './pages/ServerProblems';
 import TerminalPage from './pages/Terminal';
 import Messages from './pages/Messages';
 
@@ -25,6 +26,7 @@ const App: React.FC = () => {
           <Route path="/analytics" element={<Analytics />} />
           <Route path="/profile" element={<Profile />} />
           <Route path="/moderation" element={<Moderation />} />
+          <Route path="/server-problems" element={<ServerProblems />} />
           <Route path="/users" element={<Users />} />
           <Route path="/employees" element={<Employees />} />
           <Route path="/terminal" element={<TerminalPage />} />

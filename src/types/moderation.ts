@@ -16,3 +16,12 @@ export interface ServerLog {
     status: string;
     details: string;
 }
+
+export interface UserReport {
+    report_id: number;
+    user_id: number;
+    from_user_id: number;
+    topic: string;
+    status: string;
+    created_at: string;
+}

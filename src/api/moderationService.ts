@@ -45,3 +45,13 @@ export const deleteLogRequest = async (id: number, token: string | null) => {
   const headers = { Authorization: `Bearer ${token}` };
   return api.delete(`${API_BASE_URL}/logs/${id}`, { headers });
 };
+
+export const fetchUserReportsRequest = async (token: string | null, cursor: number = 0, sort: string = '') => {
+  const headers = { Authorization: `Bearer ${token}` };
+  let url = `${API_BASE_URL}/user_reports?cursor=${cursor}`;
+  if (sort) {
+    url += `&sort=${encodeURIComponent(sort)}`;
+  }
+  const response = await api.get(url, { headers });
+  return response.data.results || response.data || [];
+};
