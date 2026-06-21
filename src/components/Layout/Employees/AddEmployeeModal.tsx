@@ -130,6 +130,7 @@ export const AddEmployeeModal: React.FC<AddEmployeeModalProps> = ({ onClose, onA
                             onChange={handleChange}
                             className="w-full bg-[#151521] border border-white/[0.05] text-white text-sm px-4 py-2.5 rounded-xl outline-none focus:border-[#3699ff]/50 focus:bg-[#151521]/80 transition-all appearance-none"
                         >
+                            <option value="Administration">Administration</option>
                             <option value="Engineering">Engineering</option>
                             <option value="Marketing">Marketing</option>
                             <option value="Sales">Sales</option>

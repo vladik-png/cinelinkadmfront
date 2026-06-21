@@ -76,7 +76,10 @@ export const useEmployeeStore = create<EmployeeStoreState>()(
                         phone: newEmployee.phone || '',
                         email: newEmployee.email || '',
                         department_id: departmentMap[newEmployee.department as string] || 1,
-                        password: newEmployee.password || ''
+                        password: newEmployee.password || '',
+                        avatar_url: newEmployee.avatar_url || `https://i.pravatar.cc/150?u=${Math.random()}`,
+                        location: newEmployee.location || 'Unknown',
+                        role: newEmployee.department === 'Administration' ? 1 : 2
                     };
 
                     const createdResponse = await createEmployeeApi(employeeData);
