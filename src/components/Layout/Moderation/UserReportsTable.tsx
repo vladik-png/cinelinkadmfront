@@ -5,6 +5,7 @@ import { formatDate } from '../../../utils/dateHelpers';
 
 interface UserReportsTableProps {
   reports: UserReport[];
+  usersMap?: Record<number, any>;
   loading: boolean;
   sort: { key: keyof UserReport | ''; direction: 'asc' | 'desc' };
   onSortChange: (key: keyof UserReport) => void;
@@ -13,6 +14,7 @@ interface UserReportsTableProps {
 
 export const UserReportsTable: React.FC<UserReportsTableProps> = ({
   reports,
+  usersMap = {},
   loading,
   sort,
   onSortChange,
@@ -38,6 +40,32 @@ export const UserReportsTable: React.FC<UserReportsTableProps> = ({
     </th>
   );
 
+  const renderUserCell = (userId: number) => {
+    const user = usersMap[userId];
+    return (
+      <div 
+        className="flex items-center gap-4 cursor-pointer group/user"
+        onClick={() => onViewProfile(userId)}
+      >
+        <div className="relative flex-shrink-0">
+            {user && user.avatar_url ? (
+                <img src={user.avatar_url} className={`w-10 h-10 rounded-lg object-cover border border-white/[0.1]`} alt="avatar" />
+            ) : (
+                <div className={`w-10 h-10 rounded-lg flex items-center justify-center font-bold border bg-white/[0.05] border-white/[0.1] text-white`}>
+                    {user?.first_name?.[0] || <UserCircle size={16} />}
+                </div>
+            )}
+        </div>
+        <div className="min-w-0">
+            <h3 className={`text-sm font-bold tracking-wide truncate transition-colors text-white group-hover/user:text-[#3699ff]`}>
+                {user ? `${user.first_name || ''} ${user.last_name || ''}`.trim() || user.username : `User ${userId}`}
+            </h3>
+            {user && <p className="text-[10px] text-[#3699ff] font-semibold mt-0.5 tracking-wider">@{user.username}</p>}
+        </div>
+      </div>
+    );
+  };
+
   return (
     <div className="bg-[#1e1e2d] rounded-2xl border border-white/[0.05] flex-1 overflow-hidden flex flex-col shadow-lg">
       <div className="overflow-x-auto flex-1">
@@ -62,23 +90,11 @@ export const UserReportsTable: React.FC<UserReportsTableProps> = ({
                   </td>
                   
                   <td className="py-4 px-6">
-                    <div 
-                      className="flex items-center gap-2 cursor-pointer group/user"
-                      onClick={() => onViewProfile(report.user_id)}
-                    >
-                      <UserCircle size={16} className="text-[#a2a5b9] group-hover/user:text-[#3699ff] transition-colors" />
-                      <span className="text-sm font-bold text-white group-hover/user:text-[#3699ff] transition-colors">User {report.user_id}</span>
-                    </div>
+                    {renderUserCell(report.user_id)}
                   </td>
 
                   <td className="py-4 px-6">
-                    <div 
-                      className="flex items-center gap-2 cursor-pointer group/user"
-                      onClick={() => onViewProfile(report.from_user_id)}
-                    >
-                      <UserCircle size={16} className="text-[#a2a5b9] group-hover/user:text-[#3699ff] transition-colors" />
-                      <span className="text-sm font-bold text-white group-hover/user:text-[#3699ff] transition-colors">User {report.from_user_id}</span>
-                    </div>
+                    {renderUserCell(report.from_user_id)}
                   </td>
 
                   <td className="py-4 px-6">

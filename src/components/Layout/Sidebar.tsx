@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { LayoutDashboard, Users, ShieldAlert, Server, BarChart3, Contact2, Hexagon, SquareTerminal, ChevronLeft, ChevronRight, Activity } from 'lucide-react';
+import { LayoutDashboard, Users, ShieldAlert, Server, BarChart3, Contact2, Hexagon, SquareTerminal, ChevronLeft, ChevronRight, Activity, MessageCircle } from 'lucide-react';
 
 interface SidebarProps {
   isCollapsed: boolean;
@@ -19,6 +19,7 @@ const Sidebar: React.FC<SidebarProps> = ({ isCollapsed, toggleSidebar }) => {
     { name: 'Instances', path: '/infrastructure', icon: <Server size={20} /> },
     { name: 'Analytics', path: '/analytics', icon: <BarChart3 size={20} /> },
     { name: 'Terminal', path: '/terminal', icon: <SquareTerminal size={20} /> },
+    { name: 'Messages', path: '/messages', icon: <MessageCircle size={20} /> },
   ];
 
   return (

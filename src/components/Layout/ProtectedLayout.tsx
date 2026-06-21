@@ -2,7 +2,6 @@ import * as React from 'react';
 import { Navigate, Outlet } from 'react-router-dom';
 import Sidebar from './Sidebar';
 import Header from './Header';
-import { FloatingChatWidget } from './Chat/FloatingChatWidget';
 
 export const ProtectedLayout: React.FC = () => {
     const isAuth = localStorage.getItem('admin_token') !== null;
@@ -24,7 +23,6 @@ export const ProtectedLayout: React.FC = () => {
                     <Outlet />
                 </main>
             </div>
-            <FloatingChatWidget />
         </div>
     );
 };

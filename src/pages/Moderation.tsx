@@ -9,7 +9,7 @@ import { UserData } from '../types/user';
 import { getUserDetailedProfile, toggleUserAccountStatus } from '../api/userService';
 
 const Moderation: React.FC = () => {
-  const {
+    const {
     userReports,
     totalReports,
     reportsLoading,
@@ -20,7 +20,8 @@ const Moderation: React.FC = () => {
     totalPages,
     exportToCSV,
     searchTerm,
-    setSearchTerm
+    setSearchTerm,
+    usersMap
   } = useModerationLogic();
 
   const [selectedUser, setSelectedUser] = useState<UserData | null>(null);
@@ -68,6 +69,7 @@ const Moderation: React.FC = () => {
 
         <UserReportsTable
           reports={userReports}
+          usersMap={usersMap}
           loading={reportsLoading}
           sort={reportSort}
           onSortChange={handleSortChange}

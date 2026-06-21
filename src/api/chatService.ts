@@ -24,9 +24,13 @@ export const getUserChats = async (): Promise<Chat[]> => {
     }
 };
 
-export const getChatDetails = async (chatId: number): Promise<DirectChat | GroupChat> => {
+export const getChatDetails = async (chatId: number): Promise<DirectChat | GroupChat | null> => {
     const response = await api.get(`/chats/${chatId}`);
-    return response.data?.data || response.data;
+    const data = response.data?.data || response.data;
+    if (data && typeof data === 'object' && 'results' in data) {
+        return data.results;
+    }
+    return data;
 };
 
 export const getOrCreateChat = async (friendId: number | string): Promise<number> => {
@@ -40,7 +44,7 @@ export const getOrCreateChat = async (friendId: number | string): Promise<number
     return data;
 };
 export const removeUserChat = async (userId: number, chatId: number): Promise<void> => {
-    await api.post(`/chats/${chatId}/members/me`);
+    await api.delete(`/chats/${chatId}/members/${userId}`);
 };
 
 export const getChatMembers = async (chatId: number): Promise<ChatMember[]> => {
@@ -54,41 +58,61 @@ export const createChatMember = async (chatId: number, userId: number): Promise<
 
 export const getChatMessages = async (chatId: number): Promise<ChatMessage[]> => {
     try {
-        const response = await api.get(`/chats/${chatId}/messages`);
+        const response = await api.get(`/chats/${chatId}/messages?cursor=1`);
         const data = response.data?.data || response.data;
 
-        if (data && typeof data === 'object' && Array.isArray(data.results)) {
-            return data.results;
-        }
-
+        let messagesArray: any[] = [];
         if (Array.isArray(data)) {
-            return data;
-        }
-
-        if (data && typeof data === 'object' && typeof data.results === 'object' && data.results !== null) {
-            const possibleArray = Object.values(data.results).find(val => Array.isArray(val));
-            if (possibleArray) {
-                 return possibleArray as ChatMessage[];
+            messagesArray = data;
+        } else if (data && typeof data === 'object') {
+            if (Array.isArray(data.results)) {
+                messagesArray = data.results;
+            } else if (data.results && Array.isArray(data.results.data)) {
+                messagesArray = data.results.data;
+            } else if (Array.isArray(data.data)) {
+                messagesArray = data.data;
+            } else if (data.results && typeof data.results === 'object') {
+                const possibleArray = Object.values(data.results).find(val => Array.isArray(val));
+                if (possibleArray) messagesArray = possibleArray as any[];
             }
         }
 
-        console.warn("Повідомлення не знайдені або прийшов не масив:", data);
-        return [];
+        // Map Content objects to ChatMessage interface if necessary
+        return messagesArray.map((msg: any) => {
+            if (msg && msg.type && msg.content) {
+                return msg.content;
+            }
+            return msg;
+        }) as ChatMessage[];
     } catch (error) {
         console.error("Помилка під час отримання повідомлень:", error);
         return [];
     }
 };
 
-export const sendMessage = async (chatId: number, message: string, type: string = 'text'): Promise<ChatMessage> => {
+export const sendMessage = async (chatId: number, message: string, type: string = 'text', userId: number): Promise<ChatMessage> => {
     const response = await api.post(`/chats/${chatId}/messages`, { 
-        message: message, 
-        type: type 
+        type: "new_message",
+        content: {
+            chat_id: chatId,
+            user_id: userId,
+            message: message, 
+            message_type: type 
+        }
     });
     
     const data = response.data?.data || response.data;
-    if (data && typeof data === 'object' && 'results' in data) {
-        return data.results;
+    let result = data;
+    
+    if (data && typeof data === 'object') {
+        if (data.results) {
+            result = data.results;
+        }
     }
-    return data;
+    
+    if (result && result.content) {
+        return result.content as ChatMessage;
+    }
+    
+    return result as ChatMessage;
 };

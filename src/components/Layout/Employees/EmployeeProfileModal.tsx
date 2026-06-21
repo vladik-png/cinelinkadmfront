@@ -15,14 +15,15 @@ export const EmployeeProfileModal: React.FC<EmployeeProfileModalProps> = ({ empl
 
     const handleMessageClick = async () => {
         const anyEmp = employee as any;
-        if (!employee.employee_id && !anyEmp.id) return;
-        const targetId = employee.employee_id || anyEmp.id;
+        // API expects the user_id for chat operations, but might only have employee_id depending on the response
+        const targetId = anyEmp.user_id || employee.employee_id || anyEmp.id;
+        if (!targetId) return;
         
         try {
             setLoadingChat(true);
             const chatId = await getOrCreateChat(targetId as number);
             onClose();
-            navigate(`/messages?chatId=${chatId}`);
+            navigate(`/messages?chatId=${chatId}&peerId=${targetId}`);
         } catch (error) {
             console.error('Failed to create/get chat', error);
             onClose();

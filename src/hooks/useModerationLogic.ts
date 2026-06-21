@@ -11,15 +11,33 @@ export const useModerationLogic = () => {
 
     const token = localStorage.getItem('admin_token');
 
-    const fetchAllReports = useCallback(async () => {
+    const [usersMap, setUsersMap] = useState<Record<number, any>>({});
+
+    const fetchAllReportsAndUsers = useCallback(async () => {
         try {
             setReportsLoading(true);
+            
+            // Fetch users map first to display avatars/names
+            try {
+                const { getUsers } = await import('../api/userService');
+                const usersResponse = await getUsers(5000);
+                const usersData = usersResponse?.results || usersResponse;
+                if (Array.isArray(usersData)) {
+                    const map: Record<number, any> = {};
+                    usersData.forEach(u => {
+                        map[u.user_id || u.id] = u;
+                    });
+                    setUsersMap(map);
+                }
+            } catch (userErr) {
+                console.error("Error fetching users for map:", userErr);
+            }
+
             let cursor = 0;
             let more = true;
             let accumulated: UserReport[] = [];
 
             while (more) {
-                // Fetch using default sort to safely paginate through all records using id > cursor
                 const data = await fetchUserReportsRequest(token, cursor, '');
                 accumulated = [...accumulated, ...data];
                 if (data.length < 50) {
@@ -39,8 +57,8 @@ export const useModerationLogic = () => {
     const [searchTerm, setSearchTerm] = useState('');
 
     useEffect(() => {
-        fetchAllReports();
-    }, [fetchAllReports]);
+        fetchAllReportsAndUsers();
+    }, [fetchAllReportsAndUsers]);
 
     const handleSortChange = (key: keyof UserReport) => {
         setReportSort(prev => ({
@@ -114,6 +132,7 @@ export const useModerationLogic = () => {
         totalPages,
         exportToCSV,
         searchTerm,
-        setSearchTerm
+        setSearchTerm,
+        usersMap
     };
 };
