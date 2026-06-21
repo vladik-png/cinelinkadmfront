@@ -1,5 +1,6 @@
 export interface EmployeeData {
     employee_id: number;
+    user_id?: number;
     first_name: string;
     last_name: string;
     avatar_url: string;

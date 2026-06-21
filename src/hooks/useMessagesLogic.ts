@@ -21,7 +21,9 @@ export const useMessagesLogic = () => {
 
     const { employees, fetchEmployees } = useEmployeeStore();
 
-    const currentUserIdStr = localStorage.getItem('employee_id');
+    const currentEmployeeIdStr = localStorage.getItem('employee_id');
+    // user_id is the actual ID used in chat participants and for sending messages.
+    const currentUserIdStr = localStorage.getItem('user_id') || currentEmployeeIdStr;
     const MY_ID = currentUserIdStr ? parseInt(currentUserIdStr, 10) : 1; 
 
     useEffect(() => {
@@ -98,9 +100,11 @@ export const useMessagesLogic = () => {
             if (chat.chat_id === activeChatId) {
                 keep = true;
             } else if (peerId) {
-                keep = employees.some(e => ((e as any).user_id || e.employee_id || (e as any).id) == peerId);
+                // peerId is a user_id — compare only against e.user_id
+                keep = employees.some(e => e.user_id == peerId);
             } else if (participants && participants.length > 0) {
-                keep = participants.some(id => id != MY_ID && employees.some(e => ((e as any).user_id || e.employee_id || (e as any).id) == id));
+                // participants are user_ids — compare against e.user_id
+                keep = participants.some(id => id != MY_ID && employees.some(e => e.user_id == id));
             }
             
             if (!keep && (peerId || participants)) {
@@ -209,21 +213,21 @@ export const useMessagesLogic = () => {
     const getChatName = (chat: Chat) => {
         const peerId = extractPeerId(chat.peer_id);
         if (peerId) {
-            const emp = employees.find(e => ((e as any).user_id || e.employee_id || (e as any).id) == peerId);
+            const emp = employees.find(e => e.user_id == peerId);
             if (emp) {
                 return peerId == MY_ID ? `${emp.first_name} ${emp.last_name} (Збережені)` : `${emp.first_name} ${emp.last_name}`;
             }
         } else if (chat.participants_ids) {
             const participants = extractParticipants(chat.participants_ids);
             if (participants && participants.every(id => id == MY_ID)) {
-                const me = employees.find(e => ((e as any).user_id || e.employee_id || (e as any).id) == MY_ID);
+                const me = employees.find(e => e.user_id == MY_ID);
                 if (me) return `${me.first_name} ${me.last_name} (You)`;
                 return 'Saved Messages';
             }
             
             const otherId = participants.find(id => id != MY_ID);
             if (otherId) {
-                const emp = employees.find(e => ((e as any).user_id || e.employee_id || (e as any).id) == otherId);
+                const emp = employees.find(e => e.user_id == otherId);
                 if (emp) return `${emp.first_name} ${emp.last_name}`;
             }
         }
@@ -233,16 +237,14 @@ export const useMessagesLogic = () => {
     const getChatAvatar = (chat: Chat) => {
         const peerId = extractPeerId(chat.peer_id);
         if (peerId) {
-            const emp = employees.find(e => ((e as any).user_id || e.employee_id || (e as any).id) == peerId);
+            const emp = employees.find(e => e.user_id == peerId);
             if (emp && emp.avatar_url) return emp.avatar_url;
-            if (emp && (emp as any).avatar) return (emp as any).avatar;
         } else if (chat.participants_ids) {
             const participants = extractParticipants(chat.participants_ids);
             const otherId = participants.find(id => id != MY_ID);
             if (otherId) {
-                const emp = employees.find(e => ((e as any).user_id || e.employee_id || (e as any).id) == otherId);
+                const emp = employees.find(e => e.user_id == otherId);
                 if (emp && emp.avatar_url) return emp.avatar_url;
-                if (emp && (emp as any).avatar) return (emp as any).avatar;
             }
         }
         return chat.img_url || `https://ui-avatars.com/api/?name=${encodeURIComponent(getChatName(chat))}&background=1e1e2d&color=fff`;
@@ -250,11 +252,11 @@ export const useMessagesLogic = () => {
 
     const getActiveChatName = () => {
         if (activeChatInfo && 'peer' in activeChatInfo && activeChatInfo.peer) {
-            const emp = employees.find(e => ((e as any).user_id || e.employee_id || (e as any).id) == activeChatInfo.peer.user_id);
+            const emp = employees.find(e => e.user_id == activeChatInfo.peer.user_id);
             if (emp) return `${emp.first_name} ${emp.last_name}`;
         }
         if (activeChatInfo?.info?.participants_ids?.every(id => id == MY_ID)) {
-            const me = employees.find(e => ((e as any).user_id || e.employee_id || (e as any).id) == MY_ID);
+            const me = employees.find(e => e.user_id == MY_ID);
             if (me) return `${me.first_name} ${me.last_name} (You)`;
             return 'Saved Messages';
         }
@@ -263,13 +265,13 @@ export const useMessagesLogic = () => {
             const participants = extractParticipants(activeChatInfo.info.participants_ids);
             const otherId = participants.find(id => id != MY_ID);
             if (otherId) {
-                const emp = employees.find(e => ((e as any).user_id || e.employee_id || (e as any).id) == otherId);
+                const emp = employees.find(e => e.user_id == otherId);
                 if (emp) return `${emp.first_name} ${emp.last_name}`;
             }
         }
 
         if (urlPeerId) {
-            const emp = employees.find(e => ((e as any).user_id || e.employee_id || (e as any).id) == urlPeerId);
+            const emp = employees.find(e => e.user_id == Number(urlPeerId));
             if (emp) return `${emp.first_name} ${emp.last_name}`;
         }
         const chatFromList = chats.find(c => c.chat_id === activeChatId);
@@ -280,9 +282,8 @@ export const useMessagesLogic = () => {
 
     const getActiveChatAvatar = () => {
         if (activeChatInfo && 'peer' in activeChatInfo && activeChatInfo.peer) {
-            const emp = employees.find(e => ((e as any).user_id || e.employee_id || (e as any).id) == activeChatInfo.peer.user_id);
+            const emp = employees.find(e => e.user_id == activeChatInfo.peer.user_id);
             if (emp && emp.avatar_url) return emp.avatar_url;
-            if (emp && (emp as any).avatar) return (emp as any).avatar;
             return activeChatInfo.peer.avatar_url || `https://ui-avatars.com/api/?name=${encodeURIComponent(getActiveChatName())}&background=1e1e2d&color=fff`;
         }
         
@@ -290,16 +291,14 @@ export const useMessagesLogic = () => {
             const participants = extractParticipants(activeChatInfo.info.participants_ids);
             const otherId = participants.find(id => id != MY_ID);
             if (otherId) {
-                const emp = employees.find(e => ((e as any).user_id || e.employee_id || (e as any).id) == otherId);
+                const emp = employees.find(e => e.user_id == otherId);
                 if (emp && emp.avatar_url) return emp.avatar_url;
-                if (emp && (emp as any).avatar) return (emp as any).avatar;
             }
         }
 
         if (urlPeerId) {
-            const emp = employees.find(e => ((e as any).user_id || e.employee_id || (e as any).id) == urlPeerId);
+            const emp = employees.find(e => e.user_id == Number(urlPeerId));
             if (emp && emp.avatar_url) return emp.avatar_url;
-            if (emp && (emp as any).avatar) return (emp as any).avatar;
         }
         const chatFromList = chats.find(c => c.chat_id === activeChatId);
         if (chatFromList && chatFromList.img_url) return getChatAvatar(chatFromList);

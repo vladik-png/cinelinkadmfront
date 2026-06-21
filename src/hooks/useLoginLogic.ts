@@ -22,9 +22,13 @@ export const useLoginLogic = () => {
                 const data = response.data.results;
                 const realToken = data.jwt;
                 const realId = data.employee_id;
+                const realUserId = data.user_id;
                 if (realId && realToken) {
                     localStorage.setItem('admin_token', realToken);
                     localStorage.setItem('employee_id', realId.toString());
+                    if (realUserId) {
+                        localStorage.setItem('user_id', realUserId.toString());
+                    }
                     navigate('/dashboard');
                 } else {
                     console.warn("Missing ID in response:", response.data);

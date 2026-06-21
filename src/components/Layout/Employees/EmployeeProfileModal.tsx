@@ -15,9 +15,11 @@ export const EmployeeProfileModal: React.FC<EmployeeProfileModalProps> = ({ empl
 
     const handleMessageClick = async () => {
         const anyEmp = employee as any;
-        // API expects the user_id for chat operations, but might only have employee_id depending on the response
-        const targetId = anyEmp.user_id || employee.employee_id || anyEmp.id;
-        if (!targetId) return;
+        const targetId = anyEmp.user_id;
+        if (!targetId) {
+            console.warn('Employee has no user_id, cannot open chat. employee:', employee);
+            return;
+        }
         
         try {
             setLoadingChat(true);
