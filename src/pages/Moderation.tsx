@@ -1,37 +1,49 @@
 import * as React from 'react';
 import { useModerationLogic } from '../hooks/useModerationLogic';
 import { UserReportsTable } from '../components/Layout/Moderation/UserReportsTable';
+import { UserReportsToolbar } from '../components/Layout/Moderation/UserReportsToolbar';
+import { UsersPagination } from '../components/Layout/Users/UsersPagination';
 
 const Moderation: React.FC = () => {
   const {
     userReports,
+    totalReports,
     reportsLoading,
     reportSort,
     handleSortChange,
-    loadMoreReports,
-    hasMoreReports
+    currentPage,
+    setCurrentPage,
+    totalPages,
+    exportToCSV,
+    searchTerm,
+    setSearchTerm
   } = useModerationLogic();
 
   return (
-    <div className="w-full min-h-screen bg-[#151521] text-[#a2a5b9] font-sans p-6 lg:p-8">
+    <div className="w-full min-h-screen bg-[#151521] text-[#a2a5b9] font-sans p-6 lg:p-8 flex flex-col relative z-0">
         
-        <div className="flex justify-between items-end border-b border-white/[0.05] pb-6 mb-6">
-            <div>
-                <h1 className="text-3xl text-white tracking-wide uppercase font-bold leading-none">Moderation Center</h1>
-                <p className="text-[10px] text-[#a2a5b9] tracking-widest uppercase font-semibold mt-2">Manage and review user reports</p>
-            </div>
-        </div>
+        <UserReportsToolbar
+          total={totalReports}
+          showing={userReports.length}
+          searchTerm={searchTerm}
+          setSearchTerm={setSearchTerm}
+          onExport={exportToCSV}
+        />
 
-        <div className="mb-6">
-          <UserReportsTable
-            reports={userReports}
-            loading={reportsLoading}
-            sort={reportSort}
-            onSortChange={handleSortChange}
-            onLoadMore={loadMoreReports}
-            hasMore={hasMoreReports}
+        <UserReportsTable
+          reports={userReports}
+          loading={reportsLoading}
+          sort={reportSort}
+          onSortChange={handleSortChange}
+        />
+
+        {!reportsLoading && (
+          <UsersPagination
+            currentPage={currentPage}
+            totalPages={totalPages}
+            onPageChange={setCurrentPage}
           />
-        </div>
+        )}
     </div>
   );
 };
