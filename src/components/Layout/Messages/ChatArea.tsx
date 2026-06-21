@@ -1,5 +1,5 @@
 import React, { RefObject } from 'react';
-import { Send, Image as ImageIcon, Paperclip, MoreVertical, CheckCheck } from 'lucide-react';
+import { Send, Image as ImageIcon, Paperclip, MoreVertical, Check } from 'lucide-react';
 import { ChatMessage } from '../../../types/chat';
 
 interface ChatAreaProps {
@@ -72,7 +72,7 @@ export const ChatArea: React.FC<ChatAreaProps> = ({
                                     </div>
                                     <div className="flex items-center gap-1.5 mt-1.5 px-1">
                                         {timeStr && <span className="text-[10px] font-medium text-[#a2a5b9]/70">{timeStr}</span>}
-                                        {isMe && <CheckCheck size={14} className="text-[#3699ff]" />}
+                                        {isMe && <Check size={14} className="text-[#3699ff]" />}
                                     </div>
                                 </div>
                             </div>
