@@ -16,16 +16,15 @@ const Sidebar: React.FC<SidebarProps> = ({ isCollapsed, toggleSidebar }) => {
     { name: 'Employees', path: '/employees', icon: <Contact2 size={20} /> },
     { name: 'Moderation', path: '/moderation', icon: <ShieldAlert size={20} /> },
     { name: 'Server Problems', path: '/server-problems', icon: <Activity size={20} /> },
-    { name: 'AWS Server', path: '/infrastructure', icon: <Server size={20} /> },
+    { name: 'Instances', path: '/infrastructure', icon: <Server size={20} /> },
     { name: 'Analytics', path: '/analytics', icon: <BarChart3 size={20} /> },
     { name: 'Terminal', path: '/terminal', icon: <SquareTerminal size={20} /> },
   ];
 
   return (
     <div className={`bg-[#1e1e2d] text-[#a2a5b9] flex flex-col min-h-screen fixed left-0 top-0 border-r border-white/[0.05] font-sans z-50 shadow-xl transition-all duration-300 ${isCollapsed ? 'w-[80px]' : 'w-64'}`}>
-      
-      {/* Toggle Button */}
-      <button 
+
+      <button
         onClick={toggleSidebar}
         className="absolute -right-3 top-6 bg-[#3699ff] text-white rounded-full p-1 z-50 shadow-lg hover:bg-blue-500 transition-colors cursor-pointer"
       >
@@ -46,9 +45,9 @@ const Sidebar: React.FC<SidebarProps> = ({ isCollapsed, toggleSidebar }) => {
 
       <nav className={`flex-1 overflow-y-auto py-6 ${isCollapsed ? 'px-2' : 'px-4'}`}>
         {!isCollapsed ? (
-             <p className="text-xs font-bold text-white/[0.3] mb-4 px-2 uppercase tracking-wider whitespace-nowrap">Main Menu</p>
+          <p className="text-xs font-bold text-white/[0.3] mb-4 px-2 uppercase tracking-wider whitespace-nowrap">Main Menu</p>
         ) : (
-            <div className="mb-4"></div>
+          <div className="mb-4"></div>
         )}
         <div className="space-y-1">
           {menuItems.map((item) => {
@@ -60,8 +59,8 @@ const Sidebar: React.FC<SidebarProps> = ({ isCollapsed, toggleSidebar }) => {
                 to={item.path}
                 title={isCollapsed ? item.name : undefined}
                 className={`flex items-center ${isCollapsed ? 'justify-center px-0' : 'gap-3 px-4'} py-3 rounded-lg transition-all duration-200 group cursor-pointer ${isActive
-                    ? 'bg-[#3699ff]/10 text-[#3699ff]'
-                    : 'hover:bg-white/[0.03] hover:text-white text-[#a2a5b9]'
+                  ? 'bg-[#3699ff]/10 text-[#3699ff]'
+                  : 'hover:bg-white/[0.03] hover:text-white text-[#a2a5b9]'
                   }`}
               >
                 <div className={`transition-colors duration-200 flex shrink-0 cursor-pointer ${isActive ? 'text-[#3699ff]' : 'text-[#a2a5b9] group-hover:text-white'}`}>

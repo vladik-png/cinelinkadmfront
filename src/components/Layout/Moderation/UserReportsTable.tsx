@@ -8,13 +8,15 @@ interface UserReportsTableProps {
   loading: boolean;
   sort: { key: keyof UserReport | ''; direction: 'asc' | 'desc' };
   onSortChange: (key: keyof UserReport) => void;
+  onViewProfile: (userId: number) => void;
 }
 
 export const UserReportsTable: React.FC<UserReportsTableProps> = ({
   reports,
   loading,
   sort,
-  onSortChange
+  onSortChange,
+  onViewProfile
 }) => {
   const SortIcon = ({ columnKey }: { columnKey: keyof UserReport }) => {
     if (sort.key !== columnKey) {
@@ -60,14 +62,23 @@ export const UserReportsTable: React.FC<UserReportsTableProps> = ({
                   </td>
                   
                   <td className="py-4 px-6">
-                    <div className="flex items-center gap-2">
-                      <UserCircle size={16} className="text-[#a2a5b9] group-hover:text-[#3699ff] transition-colors" />
-                      <span className="text-sm font-bold text-white group-hover:text-[#3699ff] transition-colors">User {report.user_id}</span>
+                    <div 
+                      className="flex items-center gap-2 cursor-pointer group/user"
+                      onClick={() => onViewProfile(report.user_id)}
+                    >
+                      <UserCircle size={16} className="text-[#a2a5b9] group-hover/user:text-[#3699ff] transition-colors" />
+                      <span className="text-sm font-bold text-white group-hover/user:text-[#3699ff] transition-colors">User {report.user_id}</span>
                     </div>
                   </td>
 
                   <td className="py-4 px-6">
-                    <span className="text-sm font-medium text-[#a2a5b9] group-hover:text-white transition-colors">User {report.from_user_id}</span>
+                    <div 
+                      className="flex items-center gap-2 cursor-pointer group/user"
+                      onClick={() => onViewProfile(report.from_user_id)}
+                    >
+                      <UserCircle size={16} className="text-[#a2a5b9] group-hover/user:text-[#3699ff] transition-colors" />
+                      <span className="text-sm font-bold text-white group-hover/user:text-[#3699ff] transition-colors">User {report.from_user_id}</span>
+                    </div>
                   </td>
 
                   <td className="py-4 px-6">
