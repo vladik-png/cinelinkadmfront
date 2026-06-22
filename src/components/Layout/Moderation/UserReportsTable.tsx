@@ -10,6 +10,7 @@ interface UserReportsTableProps {
   sort: { key: keyof UserReport | ''; direction: 'asc' | 'desc' };
   onSortChange: (key: keyof UserReport) => void;
   onViewProfile: (userId: number) => void;
+  onReportClick: (report: UserReport) => void;
 }
 
 export const UserReportsTable: React.FC<UserReportsTableProps> = ({
@@ -18,7 +19,8 @@ export const UserReportsTable: React.FC<UserReportsTableProps> = ({
   loading,
   sort,
   onSortChange,
-  onViewProfile
+  onViewProfile,
+  onReportClick
 }) => {
   const SortIcon = ({ columnKey }: { columnKey: keyof UserReport }) => {
     if (sort.key !== columnKey) {
@@ -45,7 +47,10 @@ export const UserReportsTable: React.FC<UserReportsTableProps> = ({
     return (
       <div 
         className="flex items-center gap-4 cursor-pointer group/user"
-        onClick={() => onViewProfile(userId)}
+        onClick={(e) => {
+          e.stopPropagation();
+          onViewProfile(userId);
+        }}
       >
         <div className="relative flex-shrink-0">
             {user && user.avatar_url ? (
@@ -84,7 +89,11 @@ export const UserReportsTable: React.FC<UserReportsTableProps> = ({
             {reports.map((report) => {
               const { date, time } = formatDate(report.created_at);
               return (
-                <tr key={report.report_id} className="border-b border-white/[0.03] hover:bg-white/[0.02] transition-colors group">
+                <tr 
+                  key={report.report_id} 
+                  className="border-b border-white/[0.03] hover:bg-white/[0.02] transition-colors group cursor-pointer"
+                  onClick={() => onReportClick(report)}
+                >
                   <td className="py-4 px-6 text-center text-[#a2a5b9] font-mono text-xs">
                     #{report.report_id}
                   </td>

@@ -1,6 +1,6 @@
 import { useState, useEffect, useMemo, useCallback } from 'react';
 import { UserReport } from '../types/moderation';
-import { fetchUserReportsRequest } from '../api/moderationService';
+import { fetchUserReportsRequest, updateUserReportStatusRequest } from '../api/moderationService';
 
 export const useModerationLogic = () => {
     const [allReports, setAllReports] = useState<UserReport[]>([]);
@@ -121,6 +121,16 @@ export const useModerationLogic = () => {
         link.click();
     };
 
+    const handleStatusChange = async (reportId: number, newStatus: string) => {
+        try {
+            await updateUserReportStatusRequest(token, reportId, newStatus);
+            setAllReports(prev => prev.map(r => r.report_id === reportId ? { ...r, status: newStatus } : r));
+        } catch (err) {
+            console.error("Failed to update status", err);
+            alert("Failed to update report status");
+        }
+    };
+
     return {
         userReports: paginatedReports,
         totalReports: processedReports.length,
@@ -133,6 +143,7 @@ export const useModerationLogic = () => {
         exportToCSV,
         searchTerm,
         setSearchTerm,
-        usersMap
+        usersMap,
+        handleStatusChange
     };
 };

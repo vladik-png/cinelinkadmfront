@@ -19,7 +19,7 @@ const Sidebar: React.FC<SidebarProps> = ({ isCollapsed, toggleSidebar }) => {
     { name: 'Instances', path: '/infrastructure', icon: <Server size={20} /> },
     { name: 'Analytics', path: '/analytics', icon: <BarChart3 size={20} /> },
     { name: 'Terminal', path: '/terminal', icon: <SquareTerminal size={20} /> },
-    { name: 'Messages', path: '/messages', icon: <MessageCircle size={20} /> },
+    // { name: 'Messages', path: '/messages', icon: <MessageCircle size={20} /> },
   ];
 
   return (

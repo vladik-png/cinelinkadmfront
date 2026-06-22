@@ -5,7 +5,9 @@ import { UserReportsTable } from '../components/Layout/Moderation/UserReportsTab
 import { UserReportsToolbar } from '../components/Layout/Moderation/UserReportsToolbar';
 import { UsersPagination } from '../components/Layout/Users/UsersPagination';
 import { UserProfileModal } from '../components/Layout/Users/UserProfileModal';
+import { UserReportModal } from '../components/Layout/Moderation/UserReportModal';
 import { UserData } from '../types/user';
+import { UserReport } from '../types/moderation';
 import { getUserDetailedProfile, toggleUserAccountStatus } from '../api/userService';
 
 const Moderation: React.FC = () => {
@@ -21,10 +23,12 @@ const Moderation: React.FC = () => {
     exportToCSV,
     searchTerm,
     setSearchTerm,
-    usersMap
+    usersMap,
+    handleStatusChange
   } = useModerationLogic();
 
   const [selectedUser, setSelectedUser] = useState<UserData | null>(null);
+  const [selectedReport, setSelectedReport] = useState<UserReport | null>(null);
 
   const handleViewProfile = async (userId: number) => {
     try {
@@ -74,6 +78,7 @@ const Moderation: React.FC = () => {
           sort={reportSort}
           onSortChange={handleSortChange}
           onViewProfile={handleViewProfile}
+          onReportClick={(report) => setSelectedReport(report)}
         />
 
         {!reportsLoading && (
@@ -89,6 +94,16 @@ const Moderation: React.FC = () => {
             user={selectedUser}
             onClose={() => setSelectedUser(null)}
             onToggleStatus={handleToggleUserStatus}
+          />
+        )}
+
+        {selectedReport && (
+          <UserReportModal
+            report={selectedReport}
+            targetUser={usersMap[selectedReport.user_id]}
+            reporterUser={usersMap[selectedReport.from_user_id]}
+            onClose={() => setSelectedReport(null)}
+            onStatusChange={handleStatusChange}
           />
         )}
     </div>

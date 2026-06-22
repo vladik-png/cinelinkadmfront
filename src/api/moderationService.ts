@@ -55,3 +55,8 @@ export const fetchUserReportsRequest = async (token: string | null, cursor: numb
   const response = await api.get(url, { headers });
   return response.data.results || response.data || [];
 };
+
+export const updateUserReportStatusRequest = async (token: string | null, report_id: number, status: string) => {
+  const headers = { Authorization: `Bearer ${token}` };
+  return api.put(`${API_BASE_URL}/user_reports`, { report_id, id: report_id, status }, { headers });
+};

@@ -43,5 +43,27 @@ export const getKamateraMetrics = async () => {
 };
 
 export const getDigitalOceanMetrics = async () => {
-  return api.get(`${DIGITAL_OCEAN_API}/system-metrics`);
+  if (!DIGITAL_OCEAN_API) return { data: {} };
+  
+  const urls = DIGITAL_OCEAN_API.split(',').map(url => url.trim()).filter(Boolean);
+  
+  if (urls.length === 0) return { data: {} };
+  if (urls.length === 1) return api.get(`${urls[0]}/system-metrics`);
+
+  const responses = await Promise.allSettled(
+    urls.map(url => api.get(`${url}/system-metrics`))
+  );
+
+  const combinedData: any = {};
+  
+  responses.forEach((res, index) => {
+    if (res.status === 'fulfilled' && res.value.data) {
+      // If it's an array or object, merge it in
+      Object.assign(combinedData, res.value.data);
+    } else {
+      console.warn(`Failed to fetch DO metrics from ${urls[index]}`, res);
+    }
+  });
+
+  return { data: combinedData };
 };
