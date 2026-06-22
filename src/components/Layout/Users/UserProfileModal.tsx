@@ -87,7 +87,7 @@ export const UserProfileModal: React.FC<UserProfileModalProps> = ({ user, onClos
 
     return (
         <div className="fixed inset-0 z-[150] flex items-center justify-center p-4 sm:p-6 bg-[#151521]/80 backdrop-blur-sm" onClick={onClose}>
-            <div className="bg-[#1e1e2d] w-full max-w-2xl rounded-[2rem] shadow-2xl border border-white/[0.05] overflow-hidden relative" onClick={(e) => e.stopPropagation()}>
+            <div className="bg-[#1e1e2d] w-full max-w-2xl max-h-[90vh] overflow-y-auto rounded-[2rem] shadow-2xl border border-white/[0.05] relative" onClick={(e) => e.stopPropagation()}>
                 <div
                     className="h-32 bg-[#151521] relative bg-cover bg-center border-b border-white/[0.05]"
                     style={{ backgroundImage: user.bg_img_url ? `url(${user.bg_img_url})` : 'none' }}
@@ -100,8 +100,8 @@ export const UserProfileModal: React.FC<UserProfileModalProps> = ({ user, onClos
                     </button>
                 </div>
 
-                <div className="px-8 pb-8">
-                    <div className="relative -mt-12 mb-8 flex items-end gap-6">
+                <div className="px-4 sm:px-8 pb-4 sm:pb-8">
+                    <div className="relative -mt-12 mb-8 flex flex-col sm:flex-row items-center sm:items-end gap-4 sm:gap-6 text-center sm:text-left">
                         <div className="relative">
                             <img src={user.avatar_url || 'https://via.placeholder.com/150'} className="w-24 h-24 rounded-2xl border-4 border-[#1e1e2d] shadow-xl object-cover bg-[#151521]" alt="profile" />
                             <div className={`absolute -bottom-1 -right-1 w-5 h-5 rounded-full border-4 border-[#1e1e2d] ${user.is_active ? 'bg-[#1bc5bd]' : 'bg-[#f64e60]'}`}></div>
@@ -112,7 +112,7 @@ export const UserProfileModal: React.FC<UserProfileModalProps> = ({ user, onClos
                         </div>
                     </div>
 
-                    <div className="grid grid-cols-2 gap-4 mb-6">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-6">
                         <div className="bg-[#151521] p-4 rounded-xl border border-white/[0.02] flex items-center justify-between group">
                             <div className="flex items-center gap-4">
                                 <div className="w-10 h-10 rounded-lg bg-[#3699ff]/10 flex items-center justify-center text-[#3699ff]">
@@ -160,7 +160,7 @@ export const UserProfileModal: React.FC<UserProfileModalProps> = ({ user, onClos
                         </div>
                     )}
 
-                    <div className="grid grid-cols-2 gap-6 mb-8">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 mb-8">
                         <div className="bg-[#151521] p-5 rounded-xl border border-white/[0.02]">
                             <p className="text-[10px] text-[#a2a5b9] uppercase font-bold tracking-widest mb-2">Email Address</p>
                             <p className="text-white font-bold truncate text-sm">

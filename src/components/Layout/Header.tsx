@@ -1,27 +1,39 @@
 import * as React from 'react';
 import { Link } from 'react-router-dom';
-import { Bell, LogOut } from 'lucide-react';
+import { Bell, LogOut, Menu } from 'lucide-react';
 import { useHeaderLogic } from '../../hooks/useHeaderLogic';
 import { GlobalSearch } from './GlobalSearch';
 
-const Header: React.FC = () => {
+interface HeaderProps {
+  onMenuToggle?: () => void;
+}
+
+const Header: React.FC<HeaderProps> = ({ onMenuToggle }) => {
   const { employee, handleLogout } = useHeaderLogic();
 
   return (
-    <header className="h-20 bg-[#1e1e2d] border-b border-white/[0.05] flex items-center justify-between px-8 w-full shadow-sm relative z-10">
+    <header className="h-20 bg-[#1e1e2d] border-b border-white/[0.05] flex items-center justify-between px-4 md:px-8 w-full shadow-sm relative z-10 gap-4">
 
-      <div className="flex items-center w-[500px]">
-        <GlobalSearch />
+      <div className="flex items-center gap-4 flex-1">
+        <button 
+          onClick={onMenuToggle}
+          className="md:hidden text-[#a2a5b9] hover:text-white transition-colors cursor-pointer"
+        >
+          <Menu size={24} />
+        </button>
+        <div className="flex items-center w-full max-w-[500px]">
+          <GlobalSearch />
+        </div>
       </div>
 
       <div className="flex items-center gap-5">
 
-        <button className="relative text-[#a2a5b9] hover:text-[#3699ff] transition-colors cursor-pointer">
+        <button className="relative text-[#a2a5b9] hover:text-[#3699ff] transition-colors cursor-pointer hidden sm:block">
           <Bell size={20} />
           <span className="absolute -top-1 -right-1 w-2.5 h-2.5 bg-[#f64e60] rounded-full border-2 border-[#1e1e2d]"></span>
         </button>
 
-        <div className="w-px h-6 bg-white/[0.05]"></div>
+        <div className="hidden sm:block w-px h-6 bg-white/[0.05]"></div>
 
         <div className="flex items-center gap-3">
           <Link to="/profile" className="text-right hidden sm:block group mr-2 cursor-pointer">

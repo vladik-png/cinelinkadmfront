@@ -27,31 +27,38 @@ const Messages: React.FC = () => {
 
     return (
         <div className="w-full flex bg-[#151521] text-[#a2a5b9] font-sans h-[calc(100vh-80px)] overflow-hidden">
-            <ChatSidebar 
-                chats={chats}
-                activeChatId={activeChatId}
-                loading={loading}
-                onChatClick={handleChatClick}
-                getChatName={getChatName}
-                getChatAvatar={getChatAvatar}
-            />
+            <div className={`w-full md:max-w-sm border-r border-white/[0.05] bg-[#1e1e2d] ${activeChatId ? 'hidden md:flex flex-col' : 'flex flex-col'}`}>
+                <ChatSidebar 
+                    chats={chats}
+                    activeChatId={activeChatId}
+                    loading={loading}
+                    onChatClick={handleChatClick}
+                    getChatName={getChatName}
+                    getChatAvatar={getChatAvatar}
+                />
+            </div>
 
             {activeChatId ? (
-                <ChatArea 
-                    messages={messages}
-                    messageInput={messageInput}
-                    onMessageInputChange={setMessageInput}
-                    onSendMessage={handleSendMessage}
-                    onKeyDown={handleKeyDown}
-                    sending={sending}
-                    myId={MY_ID}
-                    activeChatName={getActiveChatName()}
-                    activeChatAvatar={getActiveChatAvatar()}
-                    isOnline={getActiveChatOnline()}
-                    messagesEndRef={messagesEndRef}
-                />
+                <div className="flex-1 flex flex-col bg-[#151521] min-w-0">
+                    <ChatArea 
+                        messages={messages}
+                        messageInput={messageInput}
+                        onMessageInputChange={setMessageInput}
+                        onSendMessage={handleSendMessage}
+                        onKeyDown={handleKeyDown}
+                        sending={sending}
+                        myId={MY_ID}
+                        activeChatName={getActiveChatName()}
+                        activeChatAvatar={getActiveChatAvatar()}
+                        isOnline={getActiveChatOnline()}
+                        messagesEndRef={messagesEndRef}
+                        onBack={() => handleChatClick(0)} // Pass 0 or null to clear active chat
+                    />
+                </div>
             ) : (
-                <ChatEmptyState />
+                <div className="hidden md:flex flex-1 flex-col bg-[#151521]">
+                    <ChatEmptyState />
+                </div>
             )}
         </div>
     );

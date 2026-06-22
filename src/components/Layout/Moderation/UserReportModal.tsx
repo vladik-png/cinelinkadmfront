@@ -48,8 +48,8 @@ export const UserReportModal: React.FC<UserReportModalProps> = ({ report, target
     );
 
     return (
-        <div className="fixed inset-0 z-[100] flex items-center justify-center p-6 bg-[#151521]/80 backdrop-blur-sm" onClick={onClose}>
-            <div className="bg-[#1e1e2d] border border-white/[0.05] w-full max-w-lg rounded-[2rem] shadow-2xl overflow-hidden relative" onClick={(e) => e.stopPropagation()}>
+        <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 sm:p-6 bg-[#151521]/80 backdrop-blur-sm" onClick={onClose}>
+            <div className="bg-[#1e1e2d] border border-white/[0.05] w-full max-w-lg max-h-[90vh] overflow-y-auto rounded-[2rem] shadow-2xl relative" onClick={(e) => e.stopPropagation()}>
                 
                 <div className="p-6 border-b border-white/[0.05] flex items-center justify-between bg-[#151521]/50">
                     <div className="flex items-center gap-3">
@@ -69,8 +69,8 @@ export const UserReportModal: React.FC<UserReportModalProps> = ({ report, target
                     </button>
                 </div>
 
-                <div className="p-6 space-y-6">
-                    <div className="grid grid-cols-2 gap-4">
+                <div className="p-4 sm:p-6 space-y-6">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                         {renderUser(reporterUser, report.from_user_id, 'Reported By')}
                         {renderUser(targetUser, report.user_id, 'Target User')}
                     </div>
@@ -104,20 +104,20 @@ export const UserReportModal: React.FC<UserReportModalProps> = ({ report, target
                     </div>
                 </div>
 
-                <div className="p-6 border-t border-white/[0.05] bg-[#151521]/30 flex items-center justify-between gap-3">
-                    <p className="text-xs font-semibold text-[#a2a5b9]">Update Status:</p>
-                    <div className="flex gap-2">
+                <div className="p-4 sm:p-6 border-t border-white/[0.05] bg-[#151521]/30 flex flex-col sm:flex-row items-center justify-between gap-4 sm:gap-3">
+                    <p className="text-xs font-semibold text-[#a2a5b9] w-full sm:w-auto text-center sm:text-left">Update Status:</p>
+                    <div className="flex gap-2 w-full sm:w-auto">
                         <button
                             disabled={loading || report.status?.toLowerCase() === 'rejected'}
                             onClick={() => handleStatusUpdate('Rejected')}
-                            className="px-4 py-2 rounded-lg text-xs font-bold uppercase tracking-widest transition-colors bg-[#f1416c]/10 text-[#f1416c] hover:bg-[#f1416c]/20 border border-[#f1416c]/20 disabled:opacity-50 cursor-pointer"
+                            className="flex-1 sm:flex-none px-4 py-2 rounded-lg text-xs font-bold uppercase tracking-widest transition-colors bg-[#f1416c]/10 text-[#f1416c] hover:bg-[#f1416c]/20 border border-[#f1416c]/20 disabled:opacity-50 cursor-pointer"
                         >
                             Reject
                         </button>
                         <button
                             disabled={loading || report.status?.toLowerCase() === 'approved'}
                             onClick={() => handleStatusUpdate('Approved')}
-                            className="px-4 py-2 rounded-lg text-xs font-bold uppercase tracking-widest transition-colors bg-[#50cd89]/10 text-[#50cd89] hover:bg-[#50cd89]/20 border border-[#50cd89]/20 disabled:opacity-50 cursor-pointer"
+                            className="flex-1 sm:flex-none px-4 py-2 rounded-lg text-xs font-bold uppercase tracking-widest transition-colors bg-[#50cd89]/10 text-[#50cd89] hover:bg-[#50cd89]/20 border border-[#50cd89]/20 disabled:opacity-50 cursor-pointer"
                         >
                             Approve
                         </button>

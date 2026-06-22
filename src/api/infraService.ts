@@ -45,13 +45,13 @@ export const getKamateraMetrics = async () => {
 export const getDigitalOceanMetrics = async () => {
   if (!DIGITAL_OCEAN_API) return { data: {} };
   
-  const urls = DIGITAL_OCEAN_API.split(',').map(url => url.trim()).filter(Boolean);
+  const urls = DIGITAL_OCEAN_API.split(',').map((url: string) => url.trim()).filter(Boolean);
   
   if (urls.length === 0) return { data: {} };
   if (urls.length === 1) return api.get(`${urls[0]}/system-metrics`);
 
   const responses = await Promise.allSettled(
-    urls.map(url => api.get(`${url}/system-metrics`))
+    urls.map((url: string) => api.get(`${url}/system-metrics`))
   );
 
   const combinedData: any = {};

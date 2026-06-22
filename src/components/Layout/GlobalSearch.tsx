@@ -152,7 +152,7 @@ export const GlobalSearch: React.FC = () => {
       )}
 
       {isOpen && (query || loading) && (
-        <div className="absolute top-full left-0 w-[500px] mt-2 bg-[#1e1e2d] border border-white/[0.05] rounded-lg shadow-xl z-[100] max-h-[70vh] overflow-y-auto">
+        <div className="absolute top-full left-0 w-full sm:w-[500px] mt-2 bg-[#1e1e2d] border border-white/[0.05] rounded-lg shadow-xl z-[100] max-h-[70vh] overflow-y-auto">
           {loading && !dataFetched ? (
             <div className="py-2">
               <div className="px-4 py-1 text-[11px] font-bold text-[#a2a5b9] uppercase tracking-wider">Searching...</div>

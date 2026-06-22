@@ -5,9 +5,11 @@ import { LayoutDashboard, Users, ShieldAlert, Server, BarChart3, Contact2, Hexag
 interface SidebarProps {
   isCollapsed: boolean;
   toggleSidebar: () => void;
+  isMobileMenuOpen?: boolean;
+  closeMobileMenu?: () => void;
 }
 
-const Sidebar: React.FC<SidebarProps> = ({ isCollapsed, toggleSidebar }) => {
+const Sidebar: React.FC<SidebarProps> = ({ isCollapsed, toggleSidebar, isMobileMenuOpen, closeMobileMenu }) => {
   const location = useLocation();
 
   const menuItems = [
@@ -23,11 +25,11 @@ const Sidebar: React.FC<SidebarProps> = ({ isCollapsed, toggleSidebar }) => {
   ];
 
   return (
-    <div className={`bg-[#1e1e2d] text-[#a2a5b9] flex flex-col min-h-screen fixed left-0 top-0 border-r border-white/[0.05] font-sans z-50 shadow-xl transition-all duration-300 ${isCollapsed ? 'w-[80px]' : 'w-64'}`}>
+    <div className={`bg-[#1e1e2d] text-[#a2a5b9] flex flex-col min-h-screen fixed left-0 top-0 border-r border-white/[0.05] font-sans z-50 shadow-xl transition-transform duration-300 ${isCollapsed ? 'md:w-[80px]' : 'md:w-64'} w-64 ${isMobileMenuOpen ? 'translate-x-0' : '-translate-x-full md:translate-x-0'}`}>
 
       <button
         onClick={toggleSidebar}
-        className="absolute -right-3 top-6 bg-[#3699ff] text-white rounded-full p-1 z-50 shadow-lg hover:bg-blue-500 transition-colors cursor-pointer"
+        className="hidden md:block absolute -right-3 top-6 bg-[#3699ff] text-white rounded-full p-1 z-50 shadow-lg hover:bg-blue-500 transition-colors cursor-pointer"
       >
         {isCollapsed ? <ChevronRight size={16} /> : <ChevronLeft size={16} />}
       </button>
@@ -58,8 +60,9 @@ const Sidebar: React.FC<SidebarProps> = ({ isCollapsed, toggleSidebar }) => {
               <Link
                 key={item.path}
                 to={item.path}
+                onClick={() => { if (closeMobileMenu) closeMobileMenu(); }}
                 title={isCollapsed ? item.name : undefined}
-                className={`flex items-center ${isCollapsed ? 'justify-center px-0' : 'gap-3 px-4'} py-3 rounded-lg transition-all duration-200 group cursor-pointer ${isActive
+                className={`flex items-center ${isCollapsed ? 'md:justify-center px-4 md:px-0' : 'gap-3 px-4'} py-3 rounded-lg transition-all duration-200 group cursor-pointer ${isActive
                   ? 'bg-[#3699ff]/10 text-[#3699ff]'
                   : 'hover:bg-white/[0.03] hover:text-white text-[#a2a5b9]'
                   }`}
@@ -67,9 +70,9 @@ const Sidebar: React.FC<SidebarProps> = ({ isCollapsed, toggleSidebar }) => {
                 <div className={`transition-colors duration-200 flex shrink-0 cursor-pointer ${isActive ? 'text-[#3699ff]' : 'text-[#a2a5b9] group-hover:text-white'}`}>
                   {item.icon}
                 </div>
-                {!isCollapsed && (
-                  <span className="text-sm font-medium whitespace-nowrap overflow-hidden cursor-pointer">{item.name}</span>
-                )}
+                <span className={`text-sm font-medium whitespace-nowrap overflow-hidden cursor-pointer ${isCollapsed ? 'block md:hidden ml-3' : 'block'}`}>
+                  {item.name}
+                </span>
               </Link>
             );
           })}

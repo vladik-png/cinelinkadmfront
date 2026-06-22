@@ -1,5 +1,5 @@
 import React, { RefObject } from 'react';
-import { Send, Image as ImageIcon, Paperclip, MoreVertical, Check } from 'lucide-react';
+import { Send, Image as ImageIcon, Paperclip, MoreVertical, Check, ArrowLeft } from 'lucide-react';
 import { ChatMessage } from '../../../types/chat';
 
 interface ChatAreaProps {
@@ -14,6 +14,7 @@ interface ChatAreaProps {
     activeChatAvatar: string;
     isOnline: boolean;
     messagesEndRef: RefObject<HTMLDivElement | null>;
+    onBack?: () => void;
 }
 
 export const ChatArea: React.FC<ChatAreaProps> = ({
@@ -27,12 +28,21 @@ export const ChatArea: React.FC<ChatAreaProps> = ({
     activeChatName,
     activeChatAvatar,
     isOnline,
-    messagesEndRef
+    messagesEndRef,
+    onBack
 }) => {
     return (
         <div className="flex-1 flex flex-col bg-[#151521] relative">
-            <div className="h-20 px-8 border-b border-white/[0.05] bg-[#1e1e2d]/50 flex items-center justify-between backdrop-blur-sm sticky top-0 z-10">
-                <div className="flex items-center gap-4">
+            <div className="h-20 px-4 md:px-8 border-b border-white/[0.05] bg-[#1e1e2d]/50 flex items-center justify-between backdrop-blur-sm sticky top-0 z-10">
+                <div className="flex items-center gap-3 md:gap-4">
+                    {onBack && (
+                        <button 
+                            onClick={onBack}
+                            className="md:hidden p-2 -ml-2 text-[#a2a5b9] hover:text-white hover:bg-white/[0.05] rounded-xl transition-colors"
+                        >
+                            <ArrowLeft size={20} />
+                        </button>
+                    )}
                     <img src={activeChatAvatar} className="w-10 h-10 rounded-full object-cover" alt="avatar" />
                     <div>
                         <h2 className="text-white font-bold text-sm leading-tight">{activeChatName}</h2>
