@@ -154,7 +154,18 @@ export const GlobalSearch: React.FC = () => {
       {isOpen && (query || loading) && (
         <div className="absolute top-full left-0 w-[500px] mt-2 bg-[#1e1e2d] border border-white/[0.05] rounded-lg shadow-xl z-[100] max-h-[70vh] overflow-y-auto">
           {loading && !dataFetched ? (
-            <div className="p-4 text-center text-[#a2a5b9] text-sm">Loading search data...</div>
+            <div className="py-2">
+              <div className="px-4 py-1 text-[11px] font-bold text-[#a2a5b9] uppercase tracking-wider">Searching...</div>
+              {Array.from({ length: 4 }).map((_, idx) => (
+                <div key={`search-skel-${idx}`} className="px-4 py-3 flex flex-col gap-2">
+                  <div className="flex items-center gap-2">
+                    <div className="w-4 h-4 rounded-full bg-white/[0.05] animate-pulse flex-shrink-0"></div>
+                    <div className="h-3 w-40 bg-white/[0.05] animate-pulse rounded"></div>
+                  </div>
+                  <div className="h-2 w-24 bg-white/[0.05] animate-pulse rounded ml-6"></div>
+                </div>
+              ))}
+            </div>
           ) : !hasResults && query ? (
             <div className="p-4 text-center text-[#a2a5b9] text-sm">No results found for "{query}"</div>
           ) : (

@@ -52,68 +52,103 @@ export const EmployeesTable: React.FC<EmployeesTableProps> = ({
                     </thead>
 
                     <tbody>
-                        {employees.map((employee, index) => {
-                            const { date, time } = employee.created_at ? formatDate(employee.created_at) : { date: 'Not specified', time: '' };
-                            const displayId = employee.employee_id || (employee as any).id || `N/A-${index}`;
-
-                            return (
-                                <tr
-                                    key={employee._react_key}
-                                    onClick={() => onViewEmployee(employee)}
-                                    className="border-b border-white/[0.03] hover:bg-white/[0.02] transition-colors cursor-pointer group"
-                                >
-                                    <td className="py-4 px-6 text-center text-[#a2a5b9] font-mono text-xs">
-                                        #{displayId}
-                                    </td>
-
+                        {loading && employees.length === 0 ? (
+                            Array.from({ length: 5 }).map((_, idx) => (
+                                <tr key={`skeleton-${idx}`} className="border-b border-white/[0.03]">
+                                    <td className="py-4 px-6 text-center"><div className="h-4 w-8 bg-white/[0.05] animate-pulse rounded mx-auto"></div></td>
                                     <td className="py-4 px-6">
                                         <div className="flex items-center gap-4">
-                                            <div className="relative flex-shrink-0">
-                                                {employee.avatar_url ? (
-                                                    <img src={employee.avatar_url} className="w-10 h-10 rounded-lg object-cover border border-white/[0.1]" alt="avatar" />
-                                                ) : (
-                                                    <div className="w-10 h-10 rounded-lg flex items-center justify-center font-bold border bg-white/[0.05] border-white/[0.1] text-white">
-                                                        {employee.first_name?.[0] || 'E'}
-                                                    </div>
-                                                )}
-                                                <div className="absolute -top-1.5 -right-1.5 bg-[#1bc5bd] text-white p-0.5 rounded-full border-2 border-[#1e1e2d] w-3 h-3"></div>
-                                            </div>
-                                            <div className="min-w-0">
-                                                <h3 className="text-sm font-bold uppercase tracking-wide truncate transition-colors text-white group-hover:text-[#3699ff]">
-                                                    {employee.first_name} {employee.last_name}
-                                                </h3>
-                                                <p className="text-[10px] text-[#3699ff] font-semibold mt-0.5 tracking-wider">{employee.department || 'Administrator'}</p>
+                                            <div className="w-10 h-10 rounded-lg bg-white/[0.05] animate-pulse"></div>
+                                            <div className="flex flex-col gap-2">
+                                                <div className="h-4 w-32 bg-white/[0.05] animate-pulse rounded"></div>
+                                                <div className="h-3 w-20 bg-white/[0.05] animate-pulse rounded"></div>
                                             </div>
                                         </div>
                                     </td>
-
                                     <td className="py-4 px-6">
-                                        <div className="flex items-center gap-2 text-[#a2a5b9] group-hover:text-white transition-colors">
-                                            <MapPin size={14} className="text-[#a2a5b9]" />
-                                            <span className="text-xs font-medium truncate max-w-[200px]">{employee.location || 'Unknown'}</span>
+                                        <div className="flex items-center gap-2">
+                                            <div className="w-3.5 h-3.5 rounded-full bg-white/[0.05] animate-pulse"></div>
+                                            <div className="h-4 w-24 bg-white/[0.05] animate-pulse rounded"></div>
                                         </div>
                                     </td>
-
                                     <td className="py-4 px-6">
-                                        <div className="flex items-center gap-2 text-[#a2a5b9] group-hover:text-white transition-colors">
-                                            <Mail size={14} className="text-[#a2a5b9]" />
-                                            <span className="text-xs font-medium truncate max-w-[200px]">{employee.email || employee.phone || 'Not specified'}</span>
+                                        <div className="flex items-center gap-2">
+                                            <div className="w-3.5 h-3.5 rounded-full bg-white/[0.05] animate-pulse"></div>
+                                            <div className="h-4 w-32 bg-white/[0.05] animate-pulse rounded"></div>
                                         </div>
                                     </td>
-
                                     <td className="py-4 px-6">
-                                        <div className="flex flex-col">
-                                            <span className="text-xs font-bold text-white">{date}</span>
-                                            {time && (
-                                                <span className="text-[10px] font-semibold text-[#a2a5b9] mt-0.5 tracking-wider">
-                                                    {time}
-                                                </span>
-                                            )}
+                                        <div className="flex flex-col gap-2">
+                                            <div className="h-4 w-24 bg-white/[0.05] animate-pulse rounded"></div>
+                                            <div className="h-3 w-16 bg-white/[0.05] animate-pulse rounded"></div>
                                         </div>
                                     </td>
                                 </tr>
-                            )
-                        })}
+                            ))
+                        ) : (
+                            employees.map((employee, index) => {
+                                const { date, time } = employee.created_at ? formatDate(employee.created_at) : { date: 'Not specified', time: '' };
+                                const displayId = employee.employee_id || (employee as any).id || `N/A-${index}`;
+
+                                return (
+                                    <tr
+                                        key={employee._react_key}
+                                        onClick={() => onViewEmployee(employee)}
+                                        className="border-b border-white/[0.03] hover:bg-white/[0.02] transition-colors cursor-pointer group"
+                                    >
+                                        <td className="py-4 px-6 text-center text-[#a2a5b9] font-mono text-xs">
+                                            #{displayId}
+                                        </td>
+
+                                        <td className="py-4 px-6">
+                                            <div className="flex items-center gap-4">
+                                                <div className="relative flex-shrink-0">
+                                                    {employee.avatar_url ? (
+                                                        <img src={employee.avatar_url} className="w-10 h-10 rounded-lg object-cover border border-white/[0.1]" alt="avatar" />
+                                                    ) : (
+                                                        <div className="w-10 h-10 rounded-lg flex items-center justify-center font-bold border bg-white/[0.05] border-white/[0.1] text-white">
+                                                            {employee.first_name?.[0] || 'E'}
+                                                        </div>
+                                                    )}
+                                                    <div className="absolute -top-1.5 -right-1.5 bg-[#1bc5bd] text-white p-0.5 rounded-full border-2 border-[#1e1e2d] w-3 h-3"></div>
+                                                </div>
+                                                <div className="min-w-0">
+                                                    <h3 className="text-sm font-bold uppercase tracking-wide truncate transition-colors text-white group-hover:text-[#3699ff]">
+                                                        {employee.first_name} {employee.last_name}
+                                                    </h3>
+                                                    <p className="text-[10px] text-[#3699ff] font-semibold mt-0.5 tracking-wider">{employee.department || 'Administrator'}</p>
+                                                </div>
+                                            </div>
+                                        </td>
+
+                                        <td className="py-4 px-6">
+                                            <div className="flex items-center gap-2 text-[#a2a5b9] group-hover:text-white transition-colors">
+                                                <MapPin size={14} className="text-[#a2a5b9]" />
+                                                <span className="text-xs font-medium truncate max-w-[200px]">{employee.location || 'Unknown'}</span>
+                                            </div>
+                                        </td>
+
+                                        <td className="py-4 px-6">
+                                            <div className="flex items-center gap-2 text-[#a2a5b9] group-hover:text-white transition-colors">
+                                                <Mail size={14} className="text-[#a2a5b9]" />
+                                                <span className="text-xs font-medium truncate max-w-[200px]">{employee.email || employee.phone || 'Not specified'}</span>
+                                            </div>
+                                        </td>
+
+                                        <td className="py-4 px-6">
+                                            <div className="flex flex-col">
+                                                <span className="text-xs font-bold text-white">{date}</span>
+                                                {time && (
+                                                    <span className="text-[10px] font-semibold text-[#a2a5b9] mt-0.5 tracking-wider">
+                                                        {time}
+                                                    </span>
+                                                )}
+                                            </div>
+                                        </td>
+                                    </tr>
+                                )
+                            })
+                        )}
                     </tbody>
                 </table>
 

@@ -32,15 +32,40 @@ export const LogsTable: React.FC<LogsTableProps> = ({ logs, loading, onDeleteLog
                         </tr>
                     </thead>
                     <tbody className="text-sm">
-                        {logs.length === 0 ? (
+                        {loading && logs.length === 0 ? (
+                            Array.from({ length: 5 }).map((_, idx) => (
+                                <tr key={`skeleton-${idx}`} className="border-b border-white/[0.02]">
+                                    <td className="py-4 px-6">
+                                        <div className="flex flex-col gap-2">
+                                            <div className="h-4 w-20 bg-white/[0.05] animate-pulse rounded"></div>
+                                            <div className="h-3 w-12 bg-white/[0.05] animate-pulse rounded"></div>
+                                        </div>
+                                    </td>
+                                    <td className="py-4 px-6">
+                                        <div className="h-6 w-24 bg-white/[0.05] animate-pulse rounded"></div>
+                                    </td>
+                                    <td className="py-4 px-6">
+                                        <div className="flex flex-col gap-2">
+                                            <div className="h-3 w-16 bg-white/[0.05] animate-pulse rounded"></div>
+                                            <div className="h-4 w-32 bg-white/[0.05] animate-pulse rounded"></div>
+                                        </div>
+                                    </td>
+                                    <td className="py-4 px-6">
+                                        <div className="h-6 w-16 bg-white/[0.05] animate-pulse rounded"></div>
+                                    </td>
+                                    <td className="py-4 px-6">
+                                        <div className="flex items-center gap-2">
+                                            <div className="w-4 h-4 rounded bg-white/[0.05] animate-pulse"></div>
+                                            <div className="h-4 w-64 bg-white/[0.05] animate-pulse rounded"></div>
+                                        </div>
+                                    </td>
+                                    <td className="py-4 px-6"></td>
+                                </tr>
+                            ))
+                        ) : logs.length === 0 ? (
                             <tr>
                                 <td colSpan={6} className="py-20 text-center text-[#a2a5b9] uppercase text-xs font-bold tracking-widest">
-                                    {loading ? (
-                                        <div className="flex flex-col items-center justify-center">
-                                            <div className="w-6 h-6 border-2 border-[#3699ff]/30 border-t-[#3699ff] rounded-full animate-spin mb-4"></div>
-                                            <span>Syncing Logs...</span>
-                                        </div>
-                                    ) : 'No logs found in database'}
+                                    No logs found in database
                                 </td>
                             </tr>
                         ) : (

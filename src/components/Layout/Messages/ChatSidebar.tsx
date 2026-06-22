@@ -34,8 +34,19 @@ export const ChatSidebar: React.FC<ChatSidebarProps> = ({
             </div>
 
             <div className="flex-1 overflow-y-auto overflow-x-hidden p-3 space-y-1 custom-scrollbar">
-                {loading ? (
-                    <div className="p-4 text-center text-sm">Loading chats...</div>
+                {loading && chats.length === 0 ? (
+                    Array.from({ length: 6 }).map((_, idx) => (
+                        <div key={`skeleton-${idx}`} className="flex items-center gap-4 p-3 rounded-xl border border-transparent">
+                            <div className="w-12 h-12 rounded-full bg-white/[0.05] animate-pulse flex-shrink-0"></div>
+                            <div className="flex-1 flex flex-col gap-2">
+                                <div className="flex justify-between">
+                                    <div className="h-4 w-24 bg-white/[0.05] animate-pulse rounded"></div>
+                                    <div className="h-3 w-10 bg-white/[0.05] animate-pulse rounded"></div>
+                                </div>
+                                <div className="h-3 w-3/4 bg-white/[0.05] animate-pulse rounded"></div>
+                            </div>
+                        </div>
+                    ))
                 ) : chats.length === 0 ? (
                     <div className="p-4 text-center text-sm">No chats found.</div>
                 ) : (
