@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
-import { ProtectedLayout } from './components/Layout/ProtectedLayout';
+import { ProtectedLayout } from './components/Layout/Core/ProtectedLayout';
 
 import Infrastructure from './pages/Infrastructure';
 import Analytics from './pages/Analytics';

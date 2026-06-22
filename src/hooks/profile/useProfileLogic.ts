@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
-import { getEmployeeProfile, deactivateEmployee } from '../api/profileService';
-import { EmployeeData } from '../types/profile';
+import { getEmployeeProfile, deactivateEmployee } from '../../api/profileService';
+import { EmployeeData } from '../../types/profile';
 
 export const useProfileLogic = () => {
     const [emp, setEmp] = useState<EmployeeData | null>(null);

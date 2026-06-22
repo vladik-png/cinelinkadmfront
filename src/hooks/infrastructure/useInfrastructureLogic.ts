@@ -1,5 +1,5 @@
 import { useEffect } from 'react';
-import { useInfraStore } from '../store/infraStore';
+import { useInfraStore } from '../../store/infraStore';
 
 export const useInfrastructureLogic = () => {
     const { servers, loading, fetchData, handlePowerAction } = useInfraStore();

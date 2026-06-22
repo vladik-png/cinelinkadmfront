@@ -1,7 +1,7 @@
 import { useState, useEffect, useMemo } from 'react';
 import { useSearchParams } from 'react-router-dom';
-import { useEmployeeStore } from '../store/employeeStore';
-import { EmployeeData, SortKey, SortDirection } from '../types/employee';
+import { useEmployeeStore } from '../../store/employeeStore';
+import { EmployeeData, SortKey, SortDirection } from '../../types/employee';
 
 export const useEmployeesLogic = () => {
     const [searchParams, setSearchParams] = useSearchParams();

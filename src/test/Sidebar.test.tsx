@@ -1,7 +1,7 @@
 import { render, screen, fireEvent } from '@testing-library/react';
 import { MemoryRouter, BrowserRouter } from 'react-router-dom';
 import { describe, it, expect, vi, beforeEach } from 'vitest';
-import Sidebar from '../components/Layout/Sidebar';
+import Sidebar from '../components/Layout/Core/Sidebar';
 
 describe('Sidebar Component', () => {
   beforeEach(() => {

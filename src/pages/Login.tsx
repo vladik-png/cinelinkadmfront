@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { useLoginLogic } from '../hooks/useLoginLogic';
+import { useLoginLogic } from '../hooks/auth/useLoginLogic';
 import { LoginForm } from '../components/Layout/Login/LoginForm';
 
 const Login: React.FC = () => {

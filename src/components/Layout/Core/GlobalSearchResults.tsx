@@ -1,8 +1,8 @@
 import * as React from 'react';
 import { User, Briefcase, Server } from 'lucide-react';
-import { UserData } from '../../types/user';
-import { EmployeeData } from '../../types/employee';
-import { UnifiedServer } from '../../types/infrastructure';
+import { UserData } from '../../../types/user';
+import { EmployeeData } from '../../../types/employee';
+import { UnifiedServer } from '../../../types/infrastructure';
 
 interface Page {
     name: string;

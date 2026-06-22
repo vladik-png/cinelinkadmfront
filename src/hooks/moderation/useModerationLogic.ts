@@ -1,7 +1,7 @@
 import { useMemo, useEffect } from 'react';
-import { UserReport } from '../types/moderation';
-import { useUserStore } from '../store/userStore';
-import { useReportStore } from '../store/reportStore';
+import { UserReport } from '../../types/moderation';
+import { useUserStore } from '../../store/userStore';
+import { useReportStore } from '../../store/reportStore';
 
 export const useModerationLogic = () => {
     const { 

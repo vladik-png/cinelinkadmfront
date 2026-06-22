@@ -2,12 +2,12 @@ import * as React from 'react';
 import { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Search, User, Briefcase, Server, FileText, X } from 'lucide-react';
-import { getUsers } from '../../api/userService';
-import { getEmployeesList } from '../../api/employeeService';
-import { getInfrastructureData } from '../../api/infraService';
-import { UserData } from '../../types/user';
-import { EmployeeData } from '../../types/employee';
-import { UnifiedServer } from '../../types/infrastructure';
+import { getUsers } from '../../../api/userService';
+import { getEmployeesList } from '../../../api/employeeService';
+import { getInfrastructureData } from '../../../api/infraService';
+import { UserData } from '../../../types/user';
+import { EmployeeData } from '../../../types/employee';
+import { UnifiedServer } from '../../../types/infrastructure';
 import { GlobalSearchResults } from './GlobalSearchResults';
 
 const PAGES = [

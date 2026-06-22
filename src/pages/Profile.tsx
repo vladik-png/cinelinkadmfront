@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { Trash2 } from 'lucide-react';
-import { useProfileLogic } from '../hooks/useProfileLogic';
+import { useProfileLogic } from '../hooks/profile/useProfileLogic';
 import { ProfileCard } from '../components/Layout/Profile/ProfileCard';
 
 const Profile: React.FC = () => {

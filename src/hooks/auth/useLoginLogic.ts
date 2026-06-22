@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { loginEmployee } from '../api/authService';
+import { loginEmployee } from '../../api/authService';
 
 export const useLoginLogic = () => {
     const [employeeCode, setEmployeeCode] = useState('');

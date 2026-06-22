@@ -1,8 +1,8 @@
 import { useState, useEffect, useMemo } from 'react';
 import { useSearchParams } from 'react-router-dom';
-import { useUserStore } from '../store/userStore';
-import { UserData, SortKey, SortDirection } from '../types/user';
-import { formatDate } from '../utils/dateHelpers';
+import { useUserStore } from '../../store/userStore';
+import { UserData, SortKey, SortDirection } from '../../types/user';
+import { formatDate } from '../../utils/dateHelpers';
 
 export const useUsersLogic = () => {
     const [searchParams, setSearchParams] = useSearchParams();

@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { useAnalyticsLogic } from '../hooks/useAnalyticsLogic';
+import { useAnalyticsLogic } from '../hooks/analytics/useAnalyticsLogic';
 import { AnalyticsHeader } from '../components/Layout/Analytics/AnalyticsHeader';
 import { NodeCard } from '../components/Layout/Analytics/NodeCard';
 

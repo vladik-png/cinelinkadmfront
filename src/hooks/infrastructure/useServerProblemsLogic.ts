@@ -1,6 +1,6 @@
 import { useState, useEffect, useMemo } from 'react';
-import { ServerAlert, ServerLog } from '../types/moderation';
-import { fetchModerationData, resolveAlertRequest, deleteLogRequest } from '../api/moderationService';
+import { ServerAlert, ServerLog } from '../../types/moderation';
+import { fetchModerationData, resolveAlertRequest, deleteLogRequest } from '../../api/moderationService';
 
 export const useServerProblemsLogic = () => {
     const [alerts, setAlerts] = useState<ServerAlert[]>([]);

@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
-import { SavedNode, TerminalSession } from '../types/terminal';
-import { fetchSavedNodes, syncNodesToBackend } from '../api/terminalService';
+import { SavedNode, TerminalSession } from '../../types/terminal';
+import { fetchSavedNodes, syncNodesToBackend } from '../../api/terminalService';
 
 export const useTerminalLogic = () => {
     const [credentials, setCredentials] = useState<SavedNode>({ host: '', user: 'root', pass: '', remoteDir: '/root/' });

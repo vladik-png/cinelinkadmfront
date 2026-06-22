@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { Link } from 'react-router-dom';
 import { Bell, LogOut, Menu } from 'lucide-react';
-import { useHeaderLogic } from '../../hooks/useHeaderLogic';
+import { useHeaderLogic } from '../../../hooks/core/useHeaderLogic';
 import { GlobalSearch } from './GlobalSearch';
 
 interface HeaderProps {

@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { useState } from 'react';
-import { useModerationLogic } from '../hooks/useModerationLogic';
+import { useModerationLogic } from '../hooks/moderation/useModerationLogic';
 import { UserReportsTable } from '../components/Layout/Moderation/UserReportsTable';
 import { UserReportsToolbar } from '../components/Layout/Moderation/UserReportsToolbar';
 import { UsersPagination } from '../components/Layout/Users/UsersPagination';

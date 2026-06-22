@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useSearchParams } from 'react-router-dom';
-import { fetchNodeMetrics } from '../api/metricsService';
-import { SystemMetricData, ViewMode } from '../types/metrics';
+import { fetchNodeMetrics } from '../../api/metricsService';
+import { SystemMetricData, ViewMode } from '../../types/metrics';
 
 export const useAnalyticsLogic = () => {
     // Initialize from localStorage if available

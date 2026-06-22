@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { Terminal as TerminalIcon } from 'lucide-react';
-import { useTerminalLogic } from '../hooks/useTerminalLogic';
+import { useTerminalLogic } from '../hooks/terminal/useTerminalLogic';
 import { TerminalTabs } from '../components/Layout/Terminal/TerminalTabs';
 import { TerminalConnectionForm } from '../components/Layout/Terminal/TerminalConnectionForm';
 import { SavedNodesList } from '../components/Layout/Terminal/SavedNodesList';

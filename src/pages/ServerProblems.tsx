@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { useServerProblemsLogic } from '../hooks/useServerProblemsLogic';
+import { useServerProblemsLogic } from '../hooks/infrastructure/useServerProblemsLogic';
 import { AlertsSection } from '../components/Layout/Moderation/AlertsSection';
 import { LogsTable } from '../components/Layout/Moderation/LogsTable';
 

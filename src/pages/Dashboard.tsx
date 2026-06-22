@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Users as UsersIcon, Activity, Server, HardDrive } from 'lucide-react';
-import { useDashboardLogic } from '../hooks/useDashboardLogic';
+import { useDashboardLogic } from '../hooks/dashboard/useDashboardLogic';
 import { WelcomeBanner } from '../components/Layout/Dashboard/WelcomeBanner';
 import { TimeWeatherCard } from '../components/Layout/Dashboard/TimeWeatherCard';
 import { StatCard } from '../components/Layout/Dashboard/StatCard';

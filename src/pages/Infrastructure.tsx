@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useInfrastructureLogic } from '../hooks/useInfrastructureLogic';
+import { useInfrastructureLogic } from '../hooks/infrastructure/useInfrastructureLogic';
 import { InfrastructureHeader } from '../components/Layout/Infrastructure/InfrastructureHeader';
 import { ServerCard } from '../components/Layout/Infrastructure/ServerCard';
 

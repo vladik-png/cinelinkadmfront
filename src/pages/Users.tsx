@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { useState } from 'react';
-import { useUsersLogic } from '../hooks/useUsersLogic';
+import { useUsersLogic } from '../hooks/users/useUsersLogic';
 import { UserData } from '../types/user';
 import { getUserDetailedProfile } from '../api/userService';
 import { UsersToolbar } from '../components/Layout/Users/UsersToolbar';

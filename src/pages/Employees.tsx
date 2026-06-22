@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { useState } from 'react';
-import { useEmployeesLogic } from '../hooks/useEmployeesLogic';
+import { useEmployeesLogic } from '../hooks/employees/useEmployeesLogic';
 import { EmployeeData } from '../types/employee';
 
 import { EmployeesToolbar } from '../components/Layout/Employees/EmployeesToolbar';

@@ -1,9 +1,9 @@
 import { useEffect, useState } from 'react';
-import { getUsers } from '../api/userService';
-import { getEmployee } from '../api/employeeService';
-import { getSystemMetrics } from '../api/metricsService';
-import { getLocalWeather } from '../api/weatherService';
-import { DashboardStats, SystemMetricsSummary, WeatherInfo, RecentUser } from '../types/dashboard';
+import { getUsers } from '../../api/userService';
+import { getEmployee } from '../../api/employeeService';
+import { getSystemMetrics } from '../../api/metricsService';
+import { getLocalWeather } from '../../api/weatherService';
+import { DashboardStats, SystemMetricsSummary, WeatherInfo, RecentUser } from '../../types/dashboard';
 
 export const useDashboardLogic = () => {
     const [employee, setEmployee] = useState<any>(null);
