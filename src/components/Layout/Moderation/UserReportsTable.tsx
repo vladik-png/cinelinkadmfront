@@ -78,53 +78,87 @@ export const UserReportsTable: React.FC<UserReportsTableProps> = ({
             </tr>
           </thead>
           <tbody>
-            {reports.map((report) => {
-              const { date, time } = formatDate(report.created_at);
-              return (
-                <tr 
-                  key={report.report_id} 
-                  className="border-b border-white/[0.03] hover:bg-white/[0.02] transition-colors group cursor-pointer"
-                  onClick={() => onReportClick(report)}
-                >
-                  <td className="py-4 px-6 text-center text-[#a2a5b9] font-mono text-xs">
-                    #{report.report_id}
-                  </td>
-                  
-                  <td className="py-4 px-6">
-                    {renderUserCell(report.user_id)}
-                  </td>
+            {loading && reports.length === 0 ? (
+                Array.from({ length: 5 }).map((_, idx) => (
+                    <tr key={`skeleton-${idx}`} className="border-b border-white/[0.03]">
+                        <td className="py-4 px-6 text-center"><div className="h-4 w-8 bg-white/[0.05] animate-pulse rounded mx-auto"></div></td>
+                        <td className="py-4 px-6">
+                            <div className="flex items-center gap-4">
+                                <div className="w-10 h-10 rounded-lg bg-white/[0.05] animate-pulse"></div>
+                                <div className="flex flex-col gap-2">
+                                    <div className="h-4 w-24 bg-white/[0.05] animate-pulse rounded"></div>
+                                    <div className="h-3 w-16 bg-white/[0.05] animate-pulse rounded"></div>
+                                </div>
+                            </div>
+                        </td>
+                        <td className="py-4 px-6">
+                            <div className="flex items-center gap-4">
+                                <div className="w-10 h-10 rounded-lg bg-white/[0.05] animate-pulse"></div>
+                                <div className="flex flex-col gap-2">
+                                    <div className="h-4 w-24 bg-white/[0.05] animate-pulse rounded"></div>
+                                    <div className="h-3 w-16 bg-white/[0.05] animate-pulse rounded"></div>
+                                </div>
+                            </div>
+                        </td>
+                        <td className="py-4 px-6"><div className="h-4 w-32 bg-white/[0.05] animate-pulse rounded"></div></td>
+                        <td className="py-4 px-6">
+                            <div className="flex flex-col gap-2">
+                                <div className="h-4 w-20 bg-white/[0.05] animate-pulse rounded"></div>
+                                <div className="h-3 w-12 bg-white/[0.05] animate-pulse rounded"></div>
+                            </div>
+                        </td>
+                        <td className="py-4 px-6 text-center"><div className="h-6 w-16 bg-white/[0.05] animate-pulse rounded mx-auto"></div></td>
+                    </tr>
+                ))
+            ) : (
+                reports.map((report) => {
+                  const { date, time } = formatDate(report.created_at);
+                  return (
+                    <tr 
+                      key={report.report_id} 
+                      className="border-b border-white/[0.03] hover:bg-white/[0.02] transition-colors group cursor-pointer"
+                      onClick={() => onReportClick(report)}
+                    >
+                      <td className="py-4 px-6 text-center text-[#a2a5b9] font-mono text-xs">
+                        #{report.report_id}
+                      </td>
+                      
+                      <td className="py-4 px-6">
+                        {renderUserCell(report.user_id)}
+                      </td>
 
-                  <td className="py-4 px-6">
-                    {renderUserCell(report.from_user_id)}
-                  </td>
+                      <td className="py-4 px-6">
+                        {renderUserCell(report.from_user_id)}
+                      </td>
 
-                  <td className="py-4 px-6">
-                    <span className="text-sm font-medium text-white">{report.topic}</span>
-                  </td>
+                      <td className="py-4 px-6">
+                        <span className="text-sm font-medium text-white">{report.topic}</span>
+                      </td>
 
-                  <td className="py-4 px-6">
-                    <div className="flex flex-col">
-                      <span className="text-xs font-bold text-white">{date}</span>
-                      {time && (
-                        <span className="text-[10px] font-semibold text-[#a2a5b9] mt-0.5 tracking-wider">
-                          {time}
+                      <td className="py-4 px-6">
+                        <div className="flex flex-col">
+                          <span className="text-xs font-bold text-white">{date}</span>
+                          {time && (
+                            <span className="text-[10px] font-semibold text-[#a2a5b9] mt-0.5 tracking-wider">
+                              {time}
+                            </span>
+                          )}
+                        </div>
+                      </td>
+
+                      <td className="py-4 px-6 text-center">
+                        <span className={`inline-flex items-center justify-center px-2.5 py-1.5 rounded text-[9px] font-black uppercase tracking-widest border ${
+                          report.status?.toLowerCase() === 'approved' ? 'bg-[#50cd89]/10 text-[#50cd89] border-[#50cd89]/20' :
+                          report.status?.toLowerCase() === 'pending' ? 'bg-[#ffc700]/10 text-[#ffc700] border-[#ffc700]/20' :
+                          'bg-[#f1416c]/10 text-[#f1416c] border-[#f1416c]/20'
+                        }`}>
+                          {report.status || 'Pending'}
                         </span>
-                      )}
-                    </div>
-                  </td>
-
-                  <td className="py-4 px-6 text-center">
-                    <span className={`inline-flex items-center justify-center px-2.5 py-1.5 rounded text-[9px] font-black uppercase tracking-widest border ${
-                      report.status?.toLowerCase() === 'approved' ? 'bg-[#50cd89]/10 text-[#50cd89] border-[#50cd89]/20' :
-                      report.status?.toLowerCase() === 'pending' ? 'bg-[#ffc700]/10 text-[#ffc700] border-[#ffc700]/20' :
-                      'bg-[#f1416c]/10 text-[#f1416c] border-[#f1416c]/20'
-                    }`}>
-                      {report.status || 'Pending'}
-                    </span>
-                  </td>
-                </tr>
-              )
-            })}
+                      </td>
+                    </tr>
+                  )
+                })
+            )}
           </tbody>
         </table>
 
