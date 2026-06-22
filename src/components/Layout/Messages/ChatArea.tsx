@@ -1,6 +1,8 @@
 import React, { RefObject } from 'react';
-import { Send, Image as ImageIcon, Paperclip, MoreVertical, Check, ArrowLeft } from 'lucide-react';
+import { Check } from 'lucide-react';
 import { ChatMessage } from '../../../types/chat';
+import { ChatAreaHeader } from './ChatAreaHeader';
+import { ChatAreaInput } from './ChatAreaInput';
 
 interface ChatAreaProps {
     messages: ChatMessage[];
@@ -33,28 +35,12 @@ export const ChatArea: React.FC<ChatAreaProps> = ({
 }) => {
     return (
         <div className="flex-1 flex flex-col bg-[#151521] relative">
-            <div className="h-20 px-4 md:px-8 border-b border-white/[0.05] bg-[#1e1e2d]/50 flex items-center justify-between backdrop-blur-sm sticky top-0 z-10">
-                <div className="flex items-center gap-3 md:gap-4">
-                    {onBack && (
-                        <button 
-                            onClick={onBack}
-                            className="md:hidden p-2 -ml-2 text-[#a2a5b9] hover:text-white hover:bg-white/[0.05] rounded-xl transition-colors"
-                        >
-                            <ArrowLeft size={20} />
-                        </button>
-                    )}
-                    <img src={activeChatAvatar} className="w-10 h-10 rounded-full object-cover" alt="avatar" />
-                    <div>
-                        <h2 className="text-white font-bold text-sm leading-tight">{activeChatName}</h2>
-                        <p className="text-xs text-[#1bc5bd] font-medium mt-0.5">
-                            {isOnline ? 'Online' : 'Offline'}
-                        </p>
-                    </div>
-                </div>
-                <button className="p-2 hover:bg-white/[0.05] rounded-lg transition-colors text-[#a2a5b9]">
-                    <MoreVertical size={20} />
-                </button>
-            </div>
+            <ChatAreaHeader 
+                activeChatName={activeChatName}
+                activeChatAvatar={activeChatAvatar}
+                isOnline={isOnline}
+                onBack={onBack}
+            />
 
             <div className="flex-1 overflow-y-auto p-8 space-y-6">
                 {messages.length === 0 ? (
@@ -92,35 +78,13 @@ export const ChatArea: React.FC<ChatAreaProps> = ({
                 <div ref={messagesEndRef} />
             </div>
 
-            <div className="p-6 bg-[#1e1e2d] border-t border-white/[0.05]">
-                <div className="flex items-center gap-4 bg-[#151521] border border-white/[0.05] p-2 rounded-2xl focus-within:border-[#3699ff]/50 transition-colors">
-                    <button className="p-2.5 text-[#a2a5b9] hover:text-white hover:bg-white/[0.05] rounded-xl transition-colors">
-                        <Paperclip size={20} />
-                    </button>
-                    <button className="p-2.5 text-[#a2a5b9] hover:text-white hover:bg-white/[0.05] rounded-xl transition-colors hidden sm:block">
-                        <ImageIcon size={20} />
-                    </button>
-
-                    <input
-                        type="text"
-                        value={messageInput}
-                        onChange={(e) => onMessageInputChange(e.target.value)}
-                        onKeyDown={onKeyDown}
-                        placeholder="Write a message..."
-                        className="flex-1 bg-transparent border-none outline-none text-white text-sm placeholder:text-[#a2a5b9]/50 px-2"
-                        disabled={sending}
-                    />
-
-                    <button
-                        onClick={onSendMessage}
-                        disabled={!messageInput.trim() || sending}
-                        className={`p-3 rounded-xl flex items-center justify-center transition-all ${messageInput.trim() ? 'bg-[#3699ff] text-white shadow-lg shadow-[#3699ff]/20' : 'bg-white/[0.05] text-[#a2a5b9] cursor-not-allowed'
-                            }`}
-                    >
-                        <Send size={18} className={messageInput.trim() ? 'ml-1' : ''} />
-                    </button>
-                </div>
-            </div>
+            <ChatAreaInput 
+                messageInput={messageInput}
+                onMessageInputChange={onMessageInputChange}
+                onSendMessage={onSendMessage}
+                onKeyDown={onKeyDown}
+                sending={sending}
+            />
         </div>
     );
 };

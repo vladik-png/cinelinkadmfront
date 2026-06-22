@@ -1,11 +1,11 @@
 import * as React from 'react';
 import { useEffect, useRef, useState } from 'react';
-import { Terminal as XTerm } from 'xterm';
-import { FitAddon } from 'xterm-addon-fit';
 import { useDropzone } from 'react-dropzone';
-import { Server, Wifi, WifiOff, UploadCloud, X, Maximize, Minimize } from 'lucide-react';
+import { UploadCloud } from 'lucide-react';
 import { SavedNode } from '../../../types/terminal';
-import { uploadFileViaTerminal, getTerminalWsUrl } from '../../../api/terminalService';
+import { uploadFileViaTerminal } from '../../../api/terminalService';
+import { useTerminalSession } from '../../../hooks/terminal/useTerminalSession';
+import { TerminalHeader } from './TerminalHeader';
 import 'xterm/css/xterm.css';
 
 interface TerminalInstanceProps {
@@ -17,12 +17,10 @@ interface TerminalInstanceProps {
 export const TerminalInstance: React.FC<TerminalInstanceProps> = ({ node, isActive, onClose }) => {
     const containerRef = useRef<HTMLDivElement>(null);
     const terminalRef = useRef<HTMLDivElement>(null);
-    const xtermRef = useRef<XTerm | null>(null);
-    const fitAddonRef = useRef<FitAddon | null>(null);
-    const socketRef = useRef<WebSocket | null>(null);
 
-    const [isConnected, setIsConnected] = useState<boolean>(false);
     const [isFullscreen, setIsFullscreen] = useState<boolean>(false);
+
+    const { isConnected, xtermRef, refit } = useTerminalSession(terminalRef, node, isActive);
 
     const onDrop = async (acceptedFiles: File[]) => {
         const file = acceptedFiles[0];
@@ -39,82 +37,14 @@ export const TerminalInstance: React.FC<TerminalInstanceProps> = ({ node, isActi
     const { getRootProps, getInputProps, isDragActive } = useDropzone({ onDrop, noClick: true, noKeyboard: true });
 
     useEffect(() => {
-        if (!terminalRef.current) return;
-        if (terminalRef.current.children.length > 0) terminalRef.current.innerHTML = '';
-
-        const term = new XTerm({
-            cursorBlink: true,
-            fontFamily: '"Fira Code", monospace',
-            fontSize: 14,
-            theme: { background: '#151521', foreground: '#a2a5b9', cursor: '#1bc5bd' }
-        });
-
-        const fitAddon = new FitAddon();
-        fitAddonRef.current = fitAddon;
-        term.loadAddon(fitAddon);
-        term.open(terminalRef.current);
-        
-        const ws = new WebSocket(`${getTerminalWsUrl()}/ssh`);
-        socketRef.current = ws;
-
-        ws.onopen = () => {
-            ws.send(JSON.stringify({ type: 'auth', host: node.host, user: node.user, pass: node.pass }));
-            setIsConnected(true);
-            setTimeout(() => fitAddonRef.current?.fit(), 100);
-        };
-
-        ws.onmessage = (event) => term.write(event.data);
-        ws.onclose = () => {
-            setIsConnected(false);
-            term.writeln('\r\n\x1b[31m[Disconnected]\x1b[0m Connection terminated.\r\n');
-        };
-
-        term.onData(data => {
-            if (ws.readyState === WebSocket.OPEN) ws.send(data);
-        });
-
-        term.onResize(({ cols, rows }) => {
-            if (ws.readyState === WebSocket.OPEN) {
-                ws.send(JSON.stringify({ type: 'resize', cols, rows }));
-            }
-        });
-
-        const resizeObserver = new ResizeObserver(() => {
-            requestAnimationFrame(() => {
-                if (fitAddonRef.current && terminalRef.current?.clientHeight) {
-                    try { fitAddonRef.current.fit(); } catch (e) {}
-                }
-            });
-        });
-        
-        resizeObserver.observe(terminalRef.current);
-        xtermRef.current = term;
-
-        return () => {
-            resizeObserver.disconnect();
-            ws.close();
-            term.dispose();
-        };
-    }, []);
-
-    useEffect(() => {
-        if (isActive) {
-            setTimeout(() => {
-                fitAddonRef.current?.fit();
-                xtermRef.current?.focus();
-            }, 50);
-        }
-    }, [isActive]);
-
-    useEffect(() => {
         const onFullscreenChange = () => {
             const isFS = document.fullscreenElement === containerRef.current;
             setIsFullscreen(isFS);
-            setTimeout(() => fitAddonRef.current?.fit(), 100);
+            refit();
         };
         document.addEventListener('fullscreenchange', onFullscreenChange);
         return () => document.removeEventListener('fullscreenchange', onFullscreenChange);
-    }, []);
+    }, [refit]);
 
     const toggleFullscreen = () => {
         if (!document.fullscreenElement) {
@@ -132,28 +62,14 @@ export const TerminalInstance: React.FC<TerminalInstanceProps> = ({ node, isActi
             <div {...getRootProps()} className="flex-1 flex flex-col relative min-h-0 min-w-0 w-full h-full overflow-hidden">
                 <input {...getInputProps()} />
 
-                <div className={`flex-none flex justify-between items-center px-4 py-3 bg-transparent border-b border-white/[0.05] w-full min-w-0 overflow-hidden ${isActive ? 'bg-white/[0.02]' : ''}`}>
-                    <div className="flex items-center gap-2 min-w-0 flex-1 pr-2">
-                        <Server size={12} className="shrink-0 text-[#a2a5b9]" /> 
-                        <span className="text-[10px] uppercase tracking-widest font-bold text-white truncate w-full">
-                            Host: {node.host}
-                        </span>
-                    </div>
-                    <div className="flex items-center gap-2 shrink-0">
-                        <div className={`hidden lg:flex items-center gap-1 font-bold text-[9px] uppercase tracking-widest ${isConnected ? 'text-[#1bc5bd]' : 'text-[#f64e60]'}`}>
-                            {isConnected ? <Wifi size={12} /> : <WifiOff size={12} />}
-                            <span className="hidden xl:inline">{isConnected ? 'Connected' : 'Disconnected'}</span>
-                        </div>
-                        <div className="flex items-center border-l border-white/[0.1] pl-2 ml-1">
-                            <button onClick={(e) => { e.stopPropagation(); toggleFullscreen(); }} className="p-1 hover:bg-white/[0.1] rounded-lg text-[#a2a5b9] hover:text-white transition-colors">
-                                {isFullscreen ? <Minimize size={14} /> : <Maximize size={14} />}
-                            </button>
-                            <button onClick={(e) => { e.stopPropagation(); onClose(); }} className="p-1 hover:bg-white/[0.1] rounded-lg text-[#a2a5b9] hover:text-[#f64e60] transition-colors ml-1">
-                                <X size={14} />
-                            </button>
-                        </div>
-                    </div>
-                </div>
+                <TerminalHeader 
+                    node={node}
+                    isActive={isActive}
+                    isConnected={isConnected}
+                    isFullscreen={isFullscreen}
+                    onToggleFullscreen={toggleFullscreen}
+                    onClose={onClose}
+                />
 
                 <div className="flex-1 relative min-h-0 min-w-0 w-full bg-[#151521] overflow-hidden">
                     {isDragActive && (
