@@ -2,6 +2,7 @@ import { useMemo, useEffect } from 'react';
 import { UserReport } from '../../types/moderation';
 import { useUserStore } from '../../store/userStore';
 import { useReportStore } from '../../store/reportStore';
+import { UserData } from '../../types/user';
 
 export const useModerationLogic = () => {
     const { 
@@ -19,9 +20,11 @@ export const useModerationLogic = () => {
     const { users, fetchUsers } = useUserStore();
 
     const usersMap = useMemo(() => {
-        const map: Record<number, any> = {};
-        users.forEach(u => {
-            map[u.user_id] = u;
+        const map: Record<number, UserData> = {};
+        users.forEach((u: UserData) => {
+            if (u.user_id !== undefined) {
+                map[u.user_id] = u;
+            }
         });
         return map;
     }, [users]);
@@ -42,7 +45,7 @@ export const useModerationLogic = () => {
     };
 
     const processedReports = useMemo(() => {
-        let result = allReports.filter(r => {
+        let result = allReports.filter((r: UserReport) => {
             const search = searchTerm.toLowerCase();
             const searchString = (
                 (r.report_id?.toString() || '') + ' ' +
@@ -55,9 +58,11 @@ export const useModerationLogic = () => {
         });
 
         if (reportSort.key) {
-            result.sort((a, b) => {
+            result.sort((a: UserReport, b: UserReport) => {
                 const aValue = a[reportSort.key as keyof UserReport];
                 const bValue = b[reportSort.key as keyof UserReport];
+
+                if (aValue === undefined || bValue === undefined) return 0;
 
                 if (aValue < bValue) return reportSort.direction === 'asc' ? -1 : 1;
                 if (aValue > bValue) return reportSort.direction === 'asc' ? 1 : -1;
@@ -77,7 +82,7 @@ export const useModerationLogic = () => {
     const exportToCSV = () => {
         const delimiter = ";";
         const headers = ["Report ID", "User ID", "From User ID", "Topic", "Status", "Created At"].join(delimiter);
-        const dataRows = processedReports.map(r => [
+        const dataRows = processedReports.map((r: UserReport) => [
             r.report_id,
             r.user_id,
             r.from_user_id,

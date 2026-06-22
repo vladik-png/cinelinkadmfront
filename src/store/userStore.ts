@@ -2,6 +2,7 @@ import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 import { getUsers, toggleUserAccountStatus } from '../api/userService';
 import { UserData } from '../types/user';
+import { parseUserResponse } from '../utils/dataAdapters';
 
 interface UserStoreState {
     users: UserData[];
@@ -10,17 +11,6 @@ interface UserStoreState {
     fetchUsers: (force?: boolean) => Promise<void>;
     toggleStatus: (user: UserData) => Promise<boolean | undefined>;
 }
-
-const parseUserResponse = (data: any): UserData[] => {
-    if (data?.results?.data && Array.isArray(data.results.data)) {
-        return data.results.data;
-    } else if (data?.results && Array.isArray(data.results)) {
-        return data.results;
-    } else if (Array.isArray(data)) {
-        return data;
-    }
-    return [];
-};
 
 export const useUserStore = create<UserStoreState>()(
     persist(

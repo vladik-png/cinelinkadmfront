@@ -4,9 +4,12 @@ import { getEmployee } from '../../api/employeeService';
 import { getSystemMetrics } from '../../api/metricsService';
 import { getLocalWeather } from '../../api/weatherService';
 import { DashboardStats, SystemMetricsSummary, WeatherInfo, RecentUser } from '../../types/dashboard';
+import { UserData } from '../../types/user';
+import { EmployeeData } from '../../types/employee';
+import { parseUserResponse } from '../../utils/dataAdapters';
 
 export const useDashboardLogic = () => {
-    const [employee, setEmployee] = useState<any>(null);
+    const [employee, setEmployee] = useState<EmployeeData | null>(null);
     
     // Cached initial states
     const [weather, setWeather] = useState<WeatherInfo | null>(() => {
@@ -65,22 +68,22 @@ export const useDashboardLogic = () => {
         const empId = localStorage.getItem('employee_id');
         if (!empId) return;
 
-        getUsers().then(usersData => {
-            const extractedUsers = Array.isArray(usersData?.results?.data) 
-                ? usersData.results.data 
-                : Array.isArray(usersData?.results) 
-                    ? usersData.results 
-                    : Array.isArray(usersData) 
-                        ? usersData 
-                        : [];
-            
+        getUsers().then((usersData: unknown) => {
+            const extractedUsers = parseUserResponse(usersData);
             if (extractedUsers.length > 0) {
                 setStats(prev => ({ ...prev, users: extractedUsers.length }));
-                setLastUsers(extractedUsers.slice(-4).reverse());
+                setLastUsers(extractedUsers.slice(-4).reverse().map((u: UserData) => ({
+                    user_id: u.user_id!,
+                    first_name: u.first_name,
+                    last_name: u.last_name,
+                    email: u.email,
+                    username: u.username || 'user',
+                    avatar_url: u.avatar_url || `https://i.pravatar.cc/150?u=${u.user_id}`
+                })));
             }
-        }).catch(err => console.error("Error loading users:", err));
+        }).catch((err: Error) => console.error("Error loading users:", err));
 
-        getSystemMetrics().then(allNodesData => {
+        getSystemMetrics().then((allNodesData: Record<string, any>) => {
             if (!allNodesData) return;
             const nodeIds = Object.keys(allNodesData);
 
@@ -101,14 +104,14 @@ export const useDashboardLogic = () => {
                     ping: allNodesData[nodeIds[0]].ping || 0
                 });
             }
-        }).catch(err => console.error("Error loading system metrics:", err));
+        }).catch((err: Error) => console.error("Error loading system metrics:", err));
 
-        getEmployee(empId).then(empData => {
+        getEmployee(empId).then((empData: any) => {
             if (empData?.results) {
                 setEmployee(empData.results);
                 fetchWeather(empData.results.location);
             }
-        }).catch(err => console.error("Error loading employee data:", err));
+        }).catch((err: Error) => console.error("Error loading employee data:", err));
     };
 
     useEffect(() => {

@@ -2,6 +2,7 @@ import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 import { getEmployeesList, createEmployee as createEmployeeApi } from '../api/employeeService';
 import { EmployeeData } from '../types/employee';
+import { parseEmployeeResponse } from '../utils/dataAdapters';
 
 interface EmployeeStoreState {
     employees: EmployeeData[];
@@ -10,22 +11,6 @@ interface EmployeeStoreState {
     fetchEmployees: (force?: boolean) => Promise<void>;
     addEmployee: (newEmployee: Partial<EmployeeData>) => Promise<boolean>;
 }
-
-const parseEmployeeResponse = (responseData: any): EmployeeData[] => {
-    let fetchedList: any[] = [];
-    if (responseData?.results && Array.isArray(responseData.results)) {
-        fetchedList = responseData.results;
-    } else if (Array.isArray(responseData)) {
-        fetchedList = responseData;
-    } else if (responseData?.data && Array.isArray(responseData.data)) {
-        fetchedList = responseData.data;
-    }
-    
-    return fetchedList.map((item, index) => ({
-        ...item,
-        _react_key: item.employee_id || item.id || `fallback-${index}`
-    }));
-};
 
 export const useEmployeeStore = create<EmployeeStoreState>()(
     persist(
@@ -83,7 +68,8 @@ export const useEmployeeStore = create<EmployeeStoreState>()(
                     };
 
                     const createdResponse = await createEmployeeApi(employeeData);
-                    const createdData = createdResponse?.results || createdResponse || {};
+                    // Handle various response wrappers
+                    const createdData = (createdResponse as any)?.results || createdResponse || {};
 
                     const newEmployeeData: EmployeeData = {
                         employee_id: createdData.employee_id || Date.now(),

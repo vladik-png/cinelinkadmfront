@@ -14,7 +14,7 @@ export const useServerProblemsLogic = () => {
         try {
             setLoading(true);
             const { mappedAlerts, mappedLogs } = await fetchModerationData(token);
-            setAlerts(mappedAlerts.filter(a => !a.resolved));
+            setAlerts(mappedAlerts.filter((a: ServerAlert) => !a.resolved));
             setLogs(mappedLogs);
         } catch (err) {
             console.error("Error loading server problems data:", err);

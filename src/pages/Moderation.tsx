@@ -41,7 +41,7 @@ const Moderation: React.FC = () => {
             first_name: "User",
             last_name: String(userId),
             is_active: true
-        };
+        } as UserData;
     }
     setSelectedUser({ ...user });
 

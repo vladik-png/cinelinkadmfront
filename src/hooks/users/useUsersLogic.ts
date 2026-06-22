@@ -45,7 +45,7 @@ export const useUsersLogic = () => {
     };
 
     const processedUsers = useMemo(() => {
-        let result = users.filter(u => {
+        let result = users.filter((u: UserData) => {
             const search = searchTerm.toLowerCase();
             const searchString = (
                 (u.user_id?.toString() || '') + ' ' +
@@ -59,7 +59,7 @@ export const useUsersLogic = () => {
             return showBlockedOnly ? (matchesSearch && !u.is_active) : matchesSearch;
         });
 
-        result.sort((a, b) => {
+        result.sort((a: UserData, b: UserData) => {
             let aValue: any, bValue: any;
 
             switch (sortConfig.key) {
