@@ -1,6 +1,7 @@
 import { useState, useEffect, useMemo, useCallback } from 'react';
 import { UserReport } from '../types/moderation';
 import { fetchUserReportsRequest, updateUserReportStatusRequest } from '../api/moderationService';
+import { useUserStore } from '../store/userStore';
 
 export const useModerationLogic = () => {
     const [allReports, setAllReports] = useState<UserReport[]>([]);
@@ -11,27 +12,26 @@ export const useModerationLogic = () => {
 
     const token = localStorage.getItem('admin_token');
 
-    const [usersMap, setUsersMap] = useState<Record<number, any>>({});
+    const { users, fetchUsers } = useUserStore();
+
+    const usersMap = useMemo(() => {
+        const map: Record<number, any> = {};
+        users.forEach(u => {
+            map[u.user_id || u.id] = u;
+        });
+        return map;
+    }, [users]);
+
+    // Ensure users are loaded
+    useEffect(() => {
+        if (users.length === 0) {
+            fetchUsers();
+        }
+    }, [users.length, fetchUsers]);
 
     const fetchAllReportsAndUsers = useCallback(async () => {
         try {
             setReportsLoading(true);
-            
-            // Fetch users map first to display avatars/names
-            try {
-                const { getUsers } = await import('../api/userService');
-                const usersResponse = await getUsers(5000);
-                const usersData = usersResponse?.results || usersResponse;
-                if (Array.isArray(usersData)) {
-                    const map: Record<number, any> = {};
-                    usersData.forEach(u => {
-                        map[u.user_id || u.id] = u;
-                    });
-                    setUsersMap(map);
-                }
-            } catch (userErr) {
-                console.error("Error fetching users for map:", userErr);
-            }
 
             let cursor = 0;
             let more = true;

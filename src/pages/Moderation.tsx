@@ -31,22 +31,33 @@ const Moderation: React.FC = () => {
   const [selectedReport, setSelectedReport] = useState<UserReport | null>(null);
 
   const handleViewProfile = async (userId: number) => {
+    let user = usersMap[userId];
+    
+    // Immediately open the profile modal with cached or stub data
+    if (!user) {
+        user = {
+            user_id: userId,
+            username: `User_${userId}`,
+            first_name: "User",
+            last_name: String(userId),
+            is_active: true
+        };
+    }
+    setSelectedUser({ ...user });
+
+    // Try to silently fetch the detailed profile from the backend
     try {
       const data = await getUserDetailedProfile(userId);
       const profileData = data?.results || data;
-      if (profileData) {
-        setSelectedUser({
-            user_id: userId,
-            ...profileData
-        });
+      if (profileData && Object.keys(profileData).length > 0) {
+        setSelectedUser(prev => prev ? {
+            ...prev,
+            ...profileData,
+            user_id: userId
+        } : { user_id: userId, ...profileData });
       }
     } catch (err: any) {
-      console.error(err);
-      if (err.response?.status === 404) {
-        alert(`User ${userId} not found or has been deleted from the database.`);
-      } else {
-        alert(`Failed to load profile for User ${userId}.`);
-      }
+      console.error("Background profile fetch failed:", err);
     }
   };
 
@@ -77,7 +88,6 @@ const Moderation: React.FC = () => {
           loading={reportsLoading}
           sort={reportSort}
           onSortChange={handleSortChange}
-          onViewProfile={handleViewProfile}
           onReportClick={(report) => setSelectedReport(report)}
         />
 
@@ -89,14 +99,6 @@ const Moderation: React.FC = () => {
           />
         )}
 
-        {selectedUser && (
-          <UserProfileModal
-            user={selectedUser}
-            onClose={() => setSelectedUser(null)}
-            onToggleStatus={handleToggleUserStatus}
-          />
-        )}
-
         {selectedReport && (
           <UserReportModal
             report={selectedReport}
@@ -104,6 +106,15 @@ const Moderation: React.FC = () => {
             reporterUser={usersMap[selectedReport.from_user_id]}
             onClose={() => setSelectedReport(null)}
             onStatusChange={handleStatusChange}
+            onViewProfile={handleViewProfile}
+          />
+        )}
+
+        {selectedUser && (
+          <UserProfileModal
+            user={selectedUser}
+            onClose={() => setSelectedUser(null)}
+            onToggleStatus={handleToggleUserStatus}
           />
         )}
     </div>

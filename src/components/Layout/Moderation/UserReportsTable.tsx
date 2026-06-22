@@ -9,7 +9,6 @@ interface UserReportsTableProps {
   loading: boolean;
   sort: { key: keyof UserReport | ''; direction: 'asc' | 'desc' };
   onSortChange: (key: keyof UserReport) => void;
-  onViewProfile: (userId: number) => void;
   onReportClick: (report: UserReport) => void;
 }
 
@@ -19,7 +18,6 @@ export const UserReportsTable: React.FC<UserReportsTableProps> = ({
   loading,
   sort,
   onSortChange,
-  onViewProfile,
   onReportClick
 }) => {
   const SortIcon = ({ columnKey }: { columnKey: keyof UserReport }) => {
@@ -45,13 +43,7 @@ export const UserReportsTable: React.FC<UserReportsTableProps> = ({
   const renderUserCell = (userId: number) => {
     const user = usersMap[userId];
     return (
-      <div 
-        className="flex items-center gap-4 cursor-pointer group/user"
-        onClick={(e) => {
-          e.stopPropagation();
-          onViewProfile(userId);
-        }}
-      >
+      <div className="flex items-center gap-4">
         <div className="relative flex-shrink-0">
             {user && user.avatar_url ? (
                 <img src={user.avatar_url} className={`w-10 h-10 rounded-lg object-cover border border-white/[0.1]`} alt="avatar" />
@@ -62,7 +54,7 @@ export const UserReportsTable: React.FC<UserReportsTableProps> = ({
             )}
         </div>
         <div className="min-w-0">
-            <h3 className={`text-sm font-bold tracking-wide truncate transition-colors text-white group-hover/user:text-[#3699ff]`}>
+            <h3 className={`text-sm font-bold tracking-wide truncate transition-colors text-white`}>
                 {user ? `${user.first_name || ''} ${user.last_name || ''}`.trim() || user.username : `User ${userId}`}
             </h3>
             {user && <p className="text-[10px] text-[#3699ff] font-semibold mt-0.5 tracking-wider">@{user.username}</p>}

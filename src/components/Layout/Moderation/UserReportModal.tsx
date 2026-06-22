@@ -9,9 +9,10 @@ interface UserReportModalProps {
     reporterUser?: any;
     onClose: () => void;
     onStatusChange: (reportId: number, status: string) => Promise<void>;
+    onViewProfile: (userId: number) => void;
 }
 
-export const UserReportModal: React.FC<UserReportModalProps> = ({ report, targetUser, reporterUser, onClose, onStatusChange }) => {
+export const UserReportModal: React.FC<UserReportModalProps> = ({ report, targetUser, reporterUser, onClose, onStatusChange, onViewProfile }) => {
     const [loading, setLoading] = React.useState(false);
     const { date, time } = formatDate(report.created_at);
 
@@ -23,7 +24,10 @@ export const UserReportModal: React.FC<UserReportModalProps> = ({ report, target
     };
 
     const renderUser = (user: any, fallbackId: number, label: string) => (
-        <div className="bg-[#151521] p-4 rounded-xl border border-white/[0.05] flex items-center gap-4">
+        <div 
+            className="bg-[#151521] p-4 rounded-xl border border-white/[0.05] flex items-center gap-4 cursor-pointer hover:bg-[#1e1e2d] transition-colors group"
+            onClick={() => onViewProfile(user?.user_id || fallbackId)}
+        >
             <div className="relative flex-shrink-0">
                 {user && user.avatar_url ? (
                     <img src={user.avatar_url} className="w-12 h-12 rounded-lg object-cover border border-white/[0.1]" alt="avatar" />
@@ -34,8 +38,8 @@ export const UserReportModal: React.FC<UserReportModalProps> = ({ report, target
                 )}
             </div>
             <div className="min-w-0 flex-1">
-                <p className="text-[10px] text-[#a2a5b9] uppercase font-bold tracking-widest mb-1">{label}</p>
-                <h3 className="text-sm font-bold tracking-wide truncate text-white">
+                <p className="text-[10px] text-[#a2a5b9] uppercase font-bold tracking-widest mb-1 group-hover:text-white transition-colors">{label}</p>
+                <h3 className="text-sm font-bold tracking-wide truncate text-white group-hover:text-[#3699ff] transition-colors">
                     {user ? `${user.first_name || ''} ${user.last_name || ''}`.trim() || user.username : `User ${fallbackId}`}
                 </h3>
                 {user && <p className="text-xs text-[#3699ff] font-semibold mt-0.5 tracking-wider">@{user.username}</p>}

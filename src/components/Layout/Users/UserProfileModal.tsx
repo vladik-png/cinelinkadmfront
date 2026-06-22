@@ -86,7 +86,7 @@ export const UserProfileModal: React.FC<UserProfileModalProps> = ({ user, onClos
     };
 
     return (
-        <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 sm:p-6 bg-[#151521]/80 backdrop-blur-sm" onClick={onClose}>
+        <div className="fixed inset-0 z-[150] flex items-center justify-center p-4 sm:p-6 bg-[#151521]/80 backdrop-blur-sm" onClick={onClose}>
             <div className="bg-[#1e1e2d] w-full max-w-2xl rounded-[2rem] shadow-2xl border border-white/[0.05] overflow-hidden relative" onClick={(e) => e.stopPropagation()}>
                 <div
                     className="h-32 bg-[#151521] relative bg-cover bg-center border-b border-white/[0.05]"
