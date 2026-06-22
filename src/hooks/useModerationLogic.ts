@@ -1,70 +1,43 @@
-import { useState, useEffect, useMemo, useCallback } from 'react';
+import { useMemo, useEffect } from 'react';
 import { UserReport } from '../types/moderation';
-import { fetchUserReportsRequest, updateUserReportStatusRequest } from '../api/moderationService';
 import { useUserStore } from '../store/userStore';
+import { useReportStore } from '../store/reportStore';
 
 export const useModerationLogic = () => {
-    const [allReports, setAllReports] = useState<UserReport[]>([]);
-    const [reportsLoading, setReportsLoading] = useState(false);
-    const [currentPage, setCurrentPage] = useState<number>(1);
-    const [reportSort, setReportSort] = useState<{ key: keyof UserReport | ''; direction: 'asc' | 'desc' }>({ key: '', direction: 'asc' });
-    const itemsPerPage = 20;
+    const { 
+        allReports, 
+        reportsLoading, 
+        currentPage, setCurrentPage, 
+        reportSort, setReportSort, 
+        searchTerm, setSearchTerm, 
+        fetchReports, 
+        updateReportStatus 
+    } = useReportStore();
 
-    const token = localStorage.getItem('admin_token');
+    const itemsPerPage = 20;
 
     const { users, fetchUsers } = useUserStore();
 
     const usersMap = useMemo(() => {
         const map: Record<number, any> = {};
         users.forEach(u => {
-            map[u.user_id || u.id] = u;
+            map[u.user_id] = u;
         });
         return map;
     }, [users]);
 
-    // Ensure users are loaded
     useEffect(() => {
         if (users.length === 0) {
             fetchUsers();
         }
-    }, [users.length, fetchUsers]);
-
-    const fetchAllReportsAndUsers = useCallback(async () => {
-        try {
-            setReportsLoading(true);
-
-            let cursor = 0;
-            let more = true;
-            let accumulated: UserReport[] = [];
-
-            while (more) {
-                const data = await fetchUserReportsRequest(token, cursor, '');
-                accumulated = [...accumulated, ...data];
-                if (data.length < 50) {
-                    more = false;
-                } else {
-                    cursor = data[data.length - 1].report_id;
-                }
-            }
-            setAllReports(accumulated);
-        } catch (err) {
-            console.error("Error fetching user reports:", err);
-        } finally {
-            setReportsLoading(false);
-        }
-    }, [token]);
-
-    const [searchTerm, setSearchTerm] = useState('');
-
-    useEffect(() => {
-        fetchAllReportsAndUsers();
-    }, [fetchAllReportsAndUsers]);
+        fetchReports();
+    }, [users.length, fetchUsers, fetchReports]);
 
     const handleSortChange = (key: keyof UserReport) => {
-        setReportSort(prev => ({
+        setReportSort({
             key,
-            direction: prev.key === key && prev.direction === 'asc' ? 'desc' : 'asc'
-        }));
+            direction: reportSort.key === key && reportSort.direction === 'asc' ? 'desc' : 'asc'
+        });
         setCurrentPage(1);
     };
 
@@ -123,8 +96,7 @@ export const useModerationLogic = () => {
 
     const handleStatusChange = async (reportId: number, newStatus: string) => {
         try {
-            await updateUserReportStatusRequest(token, reportId, newStatus);
-            setAllReports(prev => prev.map(r => r.report_id === reportId ? { ...r, status: newStatus } : r));
+            await updateReportStatus(reportId, newStatus);
         } catch (err) {
             console.error("Failed to update status", err);
             alert("Failed to update report status");
