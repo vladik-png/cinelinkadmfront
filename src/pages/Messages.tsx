@@ -1,5 +1,5 @@
 import React from 'react';
-import { useMessagesLogic } from '../hooks/useMessagesLogic';
+import { useMessages } from '../hooks/messages/useMessages';
 import { ChatSidebar } from '../components/Layout/Messages/ChatSidebar';
 import { ChatArea } from '../components/Layout/Messages/ChatArea';
 import { ChatEmptyState } from '../components/Layout/Messages/ChatEmptyState';
@@ -23,7 +23,7 @@ const Messages: React.FC = () => {
         getActiveChatName,
         getActiveChatAvatar,
         getActiveChatOnline
-    } = useMessagesLogic();
+    } = useMessages();
 
     return (
         <div className="w-full flex bg-[#151521] text-[#a2a5b9] font-sans h-[calc(100vh-80px)] overflow-hidden">
