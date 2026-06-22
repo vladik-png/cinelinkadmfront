@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef } from 'react';
 import { useSearchParams } from 'react-router-dom';
+import useSWR from 'swr';
 import { Chat, DirectChat, GroupChat, ChatMessage } from '../types/chat';
 import { getUserChats, getChatDetails, getChatMessages, sendMessage } from '../api/chatService';
 import { useEmployeeStore } from '../store/employeeStore';
@@ -9,12 +10,8 @@ export const useMessagesLogic = () => {
     const urlChatId = searchParams.get('chatId');
     const urlPeerId = searchParams.get('peerId');
 
-    const [chats, setChats] = useState<Chat[]>([]);
-    const [activeChatInfo, setActiveChatInfo] = useState<DirectChat | GroupChat | null>(null);
     const [activeChatId, setActiveChatId] = useState<number | null>(urlChatId ? parseInt(urlChatId, 10) : null);
-    const [messages, setMessages] = useState<ChatMessage[]>([]);
     const [messageInput, setMessageInput] = useState('');
-    const [loading, setLoading] = useState(true);
     const [sending, setSending] = useState(false);
     
     const messagesEndRef = useRef<HTMLDivElement>(null);
@@ -22,24 +19,38 @@ export const useMessagesLogic = () => {
     const { employees, fetchEmployees } = useEmployeeStore();
 
     const currentEmployeeIdStr = localStorage.getItem('employee_id');
-    // user_id is the actual ID used in chat participants and for sending messages.
     const currentUserIdStr = localStorage.getItem('user_id') || currentEmployeeIdStr;
     const MY_ID = currentUserIdStr ? parseInt(currentUserIdStr, 10) : 1; 
 
+    // SWR Cache hooks
+    const { data: rawChats, mutate: mutateChats, isLoading: chatsLoading } = useSWR('user-chats', getUserChats);
+    const chats = rawChats || [];
+
+    const { data: activeChatInfo } = useSWR(
+        activeChatId ? `chat-details-${activeChatId}` : null,
+        () => getChatDetails(activeChatId as number)
+    );
+
+    const { data: messages = [], mutate: mutateMessages } = useSWR(
+        activeChatId ? `chat-messages-${activeChatId}` : null,
+        () => getChatMessages(activeChatId as number).then(data => {
+            if (!data || data.length === 0) return [];
+            return [...data].sort((a, b) => new Date(a.timestamp || 0).getTime() - new Date(b.timestamp || 0).getTime());
+        }),
+        { refreshInterval: 3000 }
+    );
+    
+    const loading = chatsLoading;
+
     useEffect(() => {
         fetchEmployees();
-        fetchChats();
-    }, []);
+    }, [fetchEmployees]);
 
     useEffect(() => {
         if (urlChatId) {
             const parsed = parseInt(urlChatId, 10);
             if (!isNaN(parsed)) {
                 setActiveChatId(parsed);
-                fetchChatDetails(parsed);
-                fetchMessages(parsed);
-            } else {
-                console.warn('Invalid chatId in URL:', urlChatId);
             }
         }
     }, [urlChatId]);
@@ -50,17 +61,6 @@ export const useMessagesLogic = () => {
 
     const scrollToBottom = () => {
         messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
-    };
-
-    const fetchChats = async () => {
-        try {
-            const data = await getUserChats();
-            setChats(data || []);
-        } catch (error) {
-            console.error('Error fetching chats', error);
-        } finally {
-            setLoading(false);
-        }
     };
 
     const extractPeerId = (peer: any): number | null => {
@@ -123,39 +123,9 @@ export const useMessagesLogic = () => {
         if (!urlChatId && filteredChats.length > 0 && !activeChatId && !loading) {
             const firstChatId = filteredChats[0].chat_id;
             setActiveChatId(firstChatId);
-            fetchChatDetails(firstChatId);
-            fetchMessages(firstChatId);
             setSearchParams({ chatId: firstChatId.toString() });
         }
-    }, [filteredChats, urlChatId, activeChatId, loading]);
-
-    const fetchChatDetails = async (id: number) => {
-        try {
-            const data = await getChatDetails(id);
-            setActiveChatInfo(data);
-        } catch (error) {
-            console.error('Error fetching chat details', error);
-        }
-    };
-
-    const fetchMessages = async (id: number) => {
-        try {
-            const data = await getChatMessages(id);
-            if (data && data.length > 0) {
-                const sortedMessages = [...data].sort((a, b) => {
-                    const timeA = new Date(a.timestamp || 0).getTime();
-                    const timeB = new Date(b.timestamp || 0).getTime();
-                    return timeA - timeB;
-                });
-                setMessages(sortedMessages);
-            } else {
-                setMessages([]);
-            }
-        } catch (error) {
-            console.error('Error fetching messages', error);
-            setMessages([]);
-        }
-    };
+    }, [filteredChats.length, urlChatId, activeChatId, loading, setSearchParams]);
 
     const handleChatClick = (id: number) => {
         setActiveChatId(id);
@@ -176,27 +146,20 @@ export const useMessagesLogic = () => {
             timestamp: new Date().toISOString(),
             user_id: MY_ID,
         };
-        setMessages((prev) => [...prev, tempMsg]);
+        
+        // Optimistic update
+        mutateMessages((prev) => [...(prev || []), tempMsg], false);
 
         try {
             setSending(true);
-            const savedMsg = await sendMessage(activeChatId, textToSend, 'text', MY_ID);
-            if (savedMsg && savedMsg.message_id) {
-                 setMessages((prev) => prev.map(m => m.message_id === tempMsg.message_id ? savedMsg : m));
-            }
+            await sendMessage(activeChatId, textToSend, 'text', MY_ID);
             
-            setChats(prev => prev.map(c => 
-                c.chat_id === activeChatId 
-                    ? { ...c, last_message: { ...c.last_message, message: textToSend, timestamp: new Date().toISOString() } }
-                    : c
-            ));
-
-            if (!filteredChats.some(c => c.chat_id === activeChatId)) {
-                fetchChats();
-            }
+            // Revalidate data
+            mutateMessages();
+            mutateChats();
         } catch (error) {
             console.error('Failed to send message', error);
-            setMessages((prev) => prev.filter((m) => m.message_id !== tempMsg.message_id));
+            mutateMessages((prev) => (prev || []).filter((m) => m.message_id !== tempMsg.message_id), false);
             setMessageInput(textToSend);
         } finally {
             setSending(false);
