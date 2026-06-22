@@ -6,7 +6,7 @@ import { getUserDetailedProfile } from '../api/userService';
 import { UsersToolbar } from '../components/Layout/Users/UsersToolbar';
 import { UsersTable } from '../components/Layout/Users/UsersTable';
 import { UserProfileModal } from '../components/Layout/Users/UserProfileModal';
-import { UsersPagination } from '../components/Layout/Users/UsersPagination';
+import { Pagination } from '../components/UI/Pagination';
 
 const Users: React.FC = () => {
   const {
@@ -84,10 +84,11 @@ const Users: React.FC = () => {
       />
 
       {!loading && (
-        <UsersPagination
+        <Pagination
           currentPage={currentPage}
           totalPages={totalPages}
           onPageChange={setCurrentPage}
+          activeColor="purple"
         />
       )}
 

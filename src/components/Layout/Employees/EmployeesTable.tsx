@@ -4,6 +4,7 @@ import { UserCircle } from 'lucide-react';
 import { EmployeesTableHeader } from './EmployeesTableHeader';
 import { EmployeesTableRow } from './EmployeesTableRow';
 import { EmployeesTableSkeleton } from './EmployeesTableSkeleton';
+import { Card } from '../../UI/Card';
 
 interface EmployeesTableProps {
     employees: EmployeeData[];
@@ -21,7 +22,7 @@ export const EmployeesTable: React.FC<EmployeesTableProps> = ({
     onViewEmployee
 }) => {
     return (
-        <div className="bg-[#1e1e2d] rounded-2xl border border-white/[0.05] flex-1 overflow-hidden flex flex-col shadow-lg">
+        <Card className="flex-1">
             <div className="overflow-x-auto flex-1">
                 <table className="w-full text-left border-collapse whitespace-nowrap">
                     <EmployeesTableHeader sortConfig={sortConfig} onSort={onSort} />
@@ -49,6 +50,6 @@ export const EmployeesTable: React.FC<EmployeesTableProps> = ({
                     </div>
                 )}
             </div>
-        </div>
+        </Card>
     );
 };

@@ -3,7 +3,7 @@ import { useState } from 'react';
 import { useModerationLogic } from '../hooks/moderation/useModerationLogic';
 import { UserReportsTable } from '../components/Layout/Moderation/UserReportsTable';
 import { UserReportsToolbar } from '../components/Layout/Moderation/UserReportsToolbar';
-import { UsersPagination } from '../components/Layout/Users/UsersPagination';
+import { Pagination } from '../components/UI/Pagination';
 import { UserProfileModal } from '../components/Layout/Users/UserProfileModal';
 import { UserReportModal } from '../components/Layout/Moderation/UserReportModal';
 import { UserData } from '../types/user';
@@ -92,10 +92,11 @@ const Moderation: React.FC = () => {
         />
 
         {!reportsLoading && (
-          <UsersPagination
+          <Pagination
             currentPage={currentPage}
             totalPages={totalPages}
             onPageChange={setCurrentPage}
+            activeColor="primary"
           />
         )}
 

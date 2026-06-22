@@ -4,6 +4,7 @@ import { UserCircle } from 'lucide-react';
 import { UsersTableHeader } from './UsersTableHeader';
 import { UsersTableRow } from './UsersTableRow';
 import { UsersTableSkeleton } from './UsersTableSkeleton';
+import { Card } from '../../UI/Card';
 
 interface UsersTableProps {
     users: UserData[];
@@ -23,7 +24,7 @@ export const UsersTable: React.FC<UsersTableProps> = ({
     onToggleStatus
 }) => {
     return (
-        <div className="bg-[#1e1e2d] rounded-2xl border border-white/[0.05] flex-1 overflow-hidden flex flex-col shadow-lg">
+        <Card className="flex-1">
             <div className="overflow-x-auto flex-1">
                 <table className="w-full text-left border-collapse whitespace-nowrap">
                     <UsersTableHeader sortConfig={sortConfig} onSort={onSort} />
@@ -50,6 +51,6 @@ export const UsersTable: React.FC<UsersTableProps> = ({
                     </div>
                 )}
             </div>
-        </div>
+        </Card>
     );
 };

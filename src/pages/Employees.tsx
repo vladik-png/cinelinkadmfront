@@ -7,7 +7,7 @@ import { EmployeesToolbar } from '../components/Layout/Employees/EmployeesToolba
 import { EmployeesTable } from '../components/Layout/Employees/EmployeesTable';
 import { EmployeeProfileModal } from '../components/Layout/Employees/EmployeeProfileModal';
 import { AddEmployeeModal } from '../components/Layout/Employees/AddEmployeeModal';
-import { EmployeesPagination } from '../components/Layout/Employees/EmployeesPagination';
+import { Pagination } from '../components/UI/Pagination';
 
 const Employees: React.FC = () => {
   const {
@@ -54,10 +54,11 @@ const Employees: React.FC = () => {
       />
 
       {!loading && (
-        <EmployeesPagination
+        <Pagination
           currentPage={currentPage}
           totalPages={totalPages}
           onPageChange={setCurrentPage}
+          activeColor="primary"
         />
       )}
 

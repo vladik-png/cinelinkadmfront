@@ -1,6 +1,8 @@
 import * as React from 'react';
 import { Send, Image as ImageIcon, Paperclip } from 'lucide-react';
 
+import { IconButton } from '../../UI/IconButton';
+
 interface ChatAreaInputProps {
     messageInput: string;
     onMessageInputChange: (val: string) => void;
@@ -19,12 +21,12 @@ export const ChatAreaInput: React.FC<ChatAreaInputProps> = ({
     return (
         <div className="p-6 bg-[#1e1e2d] border-t border-white/[0.05]">
             <div className="flex items-center gap-4 bg-[#151521] border border-white/[0.05] p-2 rounded-2xl focus-within:border-[#3699ff]/50 transition-colors">
-                <button className="p-2.5 text-[#a2a5b9] hover:text-white hover:bg-white/[0.05] rounded-xl transition-colors">
+                <IconButton size="lg">
                     <Paperclip size={20} />
-                </button>
-                <button className="p-2.5 text-[#a2a5b9] hover:text-white hover:bg-white/[0.05] rounded-xl transition-colors hidden sm:block">
+                </IconButton>
+                <IconButton size="lg" className="hidden sm:block">
                     <ImageIcon size={20} />
-                </button>
+                </IconButton>
 
                 <input
                     type="text"

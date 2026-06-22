@@ -1,14 +1,21 @@
 import * as React from 'react';
 import { useState, useRef, useEffect } from 'react';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
+import { IconButton } from './IconButton';
 
-interface UsersPaginationProps {
+interface PaginationProps {
     currentPage: number;
     totalPages: number;
     onPageChange: (page: number) => void;
+    activeColor?: 'primary' | 'purple';
 }
 
-export const UsersPagination: React.FC<UsersPaginationProps> = ({ currentPage, totalPages, onPageChange }) => {
+export const Pagination: React.FC<PaginationProps> = ({ 
+    currentPage, 
+    totalPages, 
+    onPageChange,
+    activeColor = 'primary'
+}) => {
     const [showInputKey, setShowInputKey] = useState<string | null>(null);
     const [inputValue, setInputValue] = useState('');
     const inputRef = useRef<HTMLInputElement>(null);
@@ -40,14 +47,14 @@ export const UsersPagination: React.FC<UsersPaginationProps> = ({ currentPage, t
         const neighbors = 1;
 
         const renderEllipsis = (key: string) => (
-            <div key={key} className="flex items-center justify-center w-8 h-8 text-[#a2a5b9] ">
+            <div key={key} className="flex items-center justify-center w-8 h-8 text-[#a2a5b9]">
                 {showInputKey === key ? (
                     <input
                         ref={inputRef}
                         type="number"
                         min="1"
                         max={totalPages}
-                        className="w-12 text-center bg-[#151521] border border-white/[0.1] rounded-md text-white focus:outline-none focus:border-[#8950fc] py-1 text-sm "
+                        className={`w-12 text-center bg-[#151521] border border-white/[0.1] rounded-md text-white focus:outline-none py-1 text-sm ${activeColor === 'primary' ? 'focus:border-[#3699ff]' : 'focus:border-[#8950fc]'}`}
                         value={inputValue}
                         onChange={(e) => setInputValue(e.target.value)}
                         onKeyDown={handlePageInput}
@@ -62,18 +69,25 @@ export const UsersPagination: React.FC<UsersPaginationProps> = ({ currentPage, t
             </div>
         );
 
-        const renderPageButton = (page: number) => (
-            <button
-                key={page}
-                onClick={() => onPageChange(page)}
-                className={`w-8 h-8 rounded-lg text-sm font-bold transition-all cursor-pointer ${currentPage === page
-                    ? 'bg-[#8950fc] text-white shadow-lg shadow-[#8950fc]/20'
-                    : 'bg-[#1e1e2d] border border-white/[0.05] text-[#a2a5b9] hover:text-white hover:bg-white/[0.05]'
-                    }`}
-            >
-                {page}
-            </button>
-        );
+        const renderPageButton = (page: number) => {
+            const isActive = currentPage === page;
+            const activeClass = activeColor === 'primary' 
+                ? 'bg-[#3699ff] text-white shadow-lg shadow-[#3699ff]/20' 
+                : 'bg-[#8950fc] text-white shadow-lg shadow-[#8950fc]/20';
+            
+            return (
+                <button
+                    key={page}
+                    onClick={() => onPageChange(page)}
+                    className={`w-8 h-8 rounded-lg text-sm font-bold transition-all cursor-pointer ${isActive
+                        ? activeClass
+                        : 'bg-[#1e1e2d] border border-white/[0.05] text-[#a2a5b9] hover:text-white hover:bg-white/[0.05]'
+                        }`}
+                >
+                    {page}
+                </button>
+            );
+        };
 
         if (totalPages <= 5) {
             for (let i = 1; i <= totalPages; i++) {

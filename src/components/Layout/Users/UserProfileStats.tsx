@@ -2,6 +2,7 @@ import * as React from 'react';
 import { UserData } from '../../../types/user';
 import { Users as UsersIcon, UserPlus, Download } from 'lucide-react';
 import { getUserFollowers, getUserFollowing } from '../../../api/userService';
+import { IconButton } from '../../UI/IconButton';
 
 interface UserProfileStatsProps {
     user: UserData;
@@ -94,13 +95,13 @@ export const UserProfileStats: React.FC<UserProfileStatsProps> = ({ user }) => {
                         <p className="text-[10px] text-[#a2a5b9] font-bold uppercase tracking-widest">Followers</p>
                     </div>
                 </div>
-                <button 
+                <IconButton 
                     onClick={handleExportFollowers}
-                    className="p-2 text-[#a2a5b9] hover:text-[#3699ff] hover:bg-[#3699ff]/10 rounded-lg transition-colors cursor-pointer"
+                    variant="primary"
                     title="Export Followers to CSV"
                 >
                     <Download size={16} />
-                </button>
+                </IconButton>
             </div>
             <div className="bg-[#151521] p-4 rounded-xl border border-white/[0.02] flex items-center justify-between group">
                 <div className="flex items-center gap-4">
@@ -112,13 +113,13 @@ export const UserProfileStats: React.FC<UserProfileStatsProps> = ({ user }) => {
                         <p className="text-[10px] text-[#a2a5b9] font-bold uppercase tracking-widest">Following</p>
                     </div>
                 </div>
-                <button 
+                <IconButton 
                     onClick={handleExportFollowing}
-                    className="p-2 text-[#a2a5b9] hover:text-[#3699ff] hover:bg-[#3699ff]/10 rounded-lg transition-colors cursor-pointer"
+                    variant="primary"
                     title="Export Following to CSV"
                 >
                     <Download size={16} />
-                </button>
+                </IconButton>
             </div>
         </div>
     );

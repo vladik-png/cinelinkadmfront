@@ -1,5 +1,7 @@
 import * as React from 'react';
 import { MoreVertical, ArrowLeft } from 'lucide-react';
+import { IconButton } from '../../UI/IconButton';
+import { Avatar } from '../../UI/Avatar';
 
 interface ChatAreaHeaderProps {
     activeChatName: string;
@@ -18,14 +20,19 @@ export const ChatAreaHeader: React.FC<ChatAreaHeaderProps> = ({
         <div className="h-20 px-4 md:px-8 border-b border-white/[0.05] bg-[#1e1e2d]/50 flex items-center justify-between backdrop-blur-sm sticky top-0 z-10">
             <div className="flex items-center gap-3 md:gap-4">
                 {onBack && (
-                    <button 
+                    <IconButton 
                         onClick={onBack}
-                        className="md:hidden p-2 -ml-2 text-[#a2a5b9] hover:text-white hover:bg-white/[0.05] rounded-xl transition-colors"
+                        className="md:hidden -ml-2"
+                        size="md"
                     >
                         <ArrowLeft size={20} />
-                    </button>
+                    </IconButton>
                 )}
-                <img src={activeChatAvatar} className="w-10 h-10 rounded-full object-cover" alt="avatar" />
+                <Avatar 
+                    src={activeChatAvatar} 
+                    fallbackInitials={activeChatName?.[0]}
+                    size="md"
+                />
                 <div>
                     <h2 className="text-white font-bold text-sm leading-tight">{activeChatName}</h2>
                     <p className="text-xs text-[#1bc5bd] font-medium mt-0.5">
@@ -33,9 +40,9 @@ export const ChatAreaHeader: React.FC<ChatAreaHeaderProps> = ({
                     </p>
                 </div>
             </div>
-            <button className="p-2 hover:bg-white/[0.05] rounded-lg transition-colors text-[#a2a5b9]">
+            <IconButton size="md">
                 <MoreVertical size={20} />
-            </button>
+            </IconButton>
         </div>
     );
 };

@@ -1,6 +1,8 @@
 import * as React from 'react';
 import { EmployeeData } from '../../../types/employee';
 import { X, Hexagon } from 'lucide-react';
+import { Avatar } from '../../UI/Avatar';
+import { IconButton } from '../../UI/IconButton';
 
 interface EmployeeProfileHeaderProps {
     employee: EmployeeData;
@@ -11,7 +13,7 @@ export const EmployeeProfileHeader: React.FC<EmployeeProfileHeaderProps> = ({ em
     return (
         <>
             <div
-                className="h-32 bg-[#151521] relative bg-cover bg-center border-b border-white/[0.05]"
+                className="h-32 bg-[#151521] relative bg-cover bg-center border-b border-white/[0.05] rounded-t-[2rem]"
                 style={{ backgroundImage: employee.bg_img_url ? `url(${employee.bg_img_url})` : 'none' }}
             >
                 {!employee.bg_img_url && (
@@ -19,19 +21,20 @@ export const EmployeeProfileHeader: React.FC<EmployeeProfileHeaderProps> = ({ em
                         <Hexagon size={80} className="text-[#3699ff] fill-[#3699ff]" />
                     </div>
                 )}
-                <button
+                <IconButton
                     onClick={onClose}
-                    className="absolute top-4 right-4 p-2 text-[#a2a5b9] hover:text-white bg-[#151521]/50 border border-white/[0.05] rounded-full backdrop-blur-md transition-colors cursor-pointer"
+                    variant="ghost"
+                    className="absolute top-4 right-4 !bg-[#151521]/50 border border-white/[0.05] !rounded-full backdrop-blur-md"
                 >
                     <X size={18} />
-                </button>
+                </IconButton>
             </div>
 
-            <div className="relative -mt-12 mb-8 flex flex-col sm:flex-row items-center sm:items-end gap-4 sm:gap-5 text-center sm:text-left">
-                <img
+            <div className="relative -mt-12 mb-8 flex flex-col sm:flex-row items-center sm:items-end gap-4 sm:gap-5 text-center sm:text-left px-4 sm:px-10">
+                <Avatar 
                     src={employee.avatar_url || 'https://via.placeholder.com/150'}
-                    className="w-24 h-24 sm:w-28 sm:h-28 rounded-full border-[6px] border-[#1e1e2d] shadow-xl object-cover bg-[#151521]"
-                    alt="profile"
+                    fallbackInitials={employee.first_name?.[0]}
+                    size="xl"
                 />
                 <div className="pb-1">
                     <h2 className="text-2xl font-bold text-white uppercase tracking-wide leading-tight">

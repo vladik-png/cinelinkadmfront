@@ -3,6 +3,7 @@ import { Database } from 'lucide-react';
 import { ServerLog } from '../../../types/moderation';
 import { LogsTableRow } from './LogsTableRow';
 import { LogsTableSkeleton } from './LogsTableSkeleton';
+import { Card, CardHeader } from '../../UI/Card';
 
 interface LogsTableProps {
     logs: ServerLog[];
@@ -12,13 +13,13 @@ interface LogsTableProps {
 
 export const LogsTable: React.FC<LogsTableProps> = ({ logs, loading, onDeleteLog }) => {
     return (
-        <section className="bg-[#1e1e2d] border border-white/[0.05] rounded-2xl shadow-lg flex-1 overflow-hidden flex flex-col">
-            <div className="p-6 border-b border-white/[0.05] bg-[#151521]/50 flex justify-between items-center">
+        <Card className="flex-1 overflow-hidden flex flex-col">
+            <CardHeader>
                 <div className="flex items-center gap-3">
                     <Database size={20} className="text-[#3699ff]" />
                     <h3 className="text-base font-bold text-white uppercase tracking-wide">Global Event Registry</h3>
                 </div>
-            </div>
+            </CardHeader>
 
             <div className="overflow-x-auto">
                 <table className="w-full text-left border-collapse whitespace-nowrap">
@@ -49,6 +50,6 @@ export const LogsTable: React.FC<LogsTableProps> = ({ logs, loading, onDeleteLog
                     </tbody>
                 </table>
             </div>
-        </section>
+        </Card>
     );
 };

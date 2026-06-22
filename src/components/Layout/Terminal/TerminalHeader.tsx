@@ -1,6 +1,7 @@
 import * as React from 'react';
 import { Server, Wifi, WifiOff, X, Maximize, Minimize } from 'lucide-react';
 import { SavedNode } from '../../../types/terminal';
+import { IconButton } from '../../UI/IconButton';
 
 interface TerminalHeaderProps {
     node: SavedNode;
@@ -33,12 +34,21 @@ export const TerminalHeader: React.FC<TerminalHeaderProps> = ({
                     <span className="hidden xl:inline">{isConnected ? 'Connected' : 'Disconnected'}</span>
                 </div>
                 <div className="flex items-center border-l border-white/[0.1] pl-2 ml-1">
-                    <button onClick={(e) => { e.stopPropagation(); onToggleFullscreen(); }} className="p-1 hover:bg-white/[0.1] rounded-lg text-[#a2a5b9] hover:text-white transition-colors">
+                    <IconButton 
+                        onClick={(e) => { e.stopPropagation(); onToggleFullscreen(); }} 
+                        size="sm"
+                        variant="ghost"
+                    >
                         {isFullscreen ? <Minimize size={14} /> : <Maximize size={14} />}
-                    </button>
-                    <button onClick={(e) => { e.stopPropagation(); onClose(); }} className="p-1 hover:bg-white/[0.1] rounded-lg text-[#a2a5b9] hover:text-[#f64e60] transition-colors ml-1">
+                    </IconButton>
+                    <IconButton 
+                        onClick={(e) => { e.stopPropagation(); onClose(); }} 
+                        size="sm"
+                        variant="danger"
+                        className="ml-1"
+                    >
                         <X size={14} />
-                    </button>
+                    </IconButton>
                 </div>
             </div>
         </div>
