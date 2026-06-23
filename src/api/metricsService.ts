@@ -6,36 +6,53 @@ const KAMATERA_API = import.meta.env.VITE_KAMATERA_API_URL;
 const DIGITAL_OCEAN_API = import.meta.env.VITE_DIGITAL_OCEAN_API_URL;
 
 export const getSystemMetrics = async () => {
-  try {
-    const INFRA_API = import.meta.env.VITE_INFRA_API_URL;
-    const response = await api.get(`${INFRA_API}/system-metrics`);
-    return response.data;
-  } catch (error) {
-    console.error("Error fetching generic system metrics:", error);
-    throw error;
-  }
-};
-
-export const fetchNodeMetrics = async () => {
   let combinedData: Record<string, any> = {};
 
   try {
-    const kamRes = await api.get(`${KAMATERA_API}/system-metrics`);
-    if (kamRes.data && typeof kamRes.data === 'object') {
-      combinedData = { ...combinedData, ...kamRes.data };
+    const INFRA_API = import.meta.env.VITE_INFRA_API_URL;
+    if (INFRA_API) {
+      const res = await api.get(`${INFRA_API}/system-metrics`);
+      if (res.data && typeof res.data === 'object') {
+        Object.entries(res.data).forEach(([key, value]) => {
+            combinedData[`do-${key}`] = { ...value, id: `do-${key}` };
+        });
+      }
     }
-  } catch (e) {
-    // console.error("Error fetching Kamatera metrics:", e);
+  } catch (error) {
+    console.warn("INFRA_API system-metrics failed");
   }
 
   try {
-    const winRes = await api.get(`${WINDOWS_API}/system-metrics`);
-    if (winRes.data && typeof winRes.data === 'object') {
-      combinedData = { ...combinedData, ...winRes.data };
+    const WINDOWS_API = import.meta.env.VITE_WINDOWS_API_URL;
+    if (WINDOWS_API) {
+      const res = await api.get(`${WINDOWS_API}/system-metrics`);
+      if (res.data && typeof res.data === 'object') {
+        Object.entries(res.data).forEach(([key, value]) => {
+            combinedData[`win-${key}`] = { ...value, id: `win-${key}` };
+        });
+      }
     }
-  } catch (e) {
-    // console.error("Error fetching Windows metrics:", e);
+  } catch (error) {
+    console.warn("WINDOWS_API system-metrics failed");
+  }
+
+  try {
+    const KAMATERA_API = import.meta.env.VITE_KAMATERA_API_URL;
+    if (KAMATERA_API) {
+      const res = await api.get(`${KAMATERA_API}/system-metrics`);
+      if (res.data && typeof res.data === 'object') {
+        Object.entries(res.data).forEach(([key, value]) => {
+            combinedData[`kam-${key}`] = { ...value, id: `kam-${key}` };
+        });
+      }
+    }
+  } catch (error) {
+    console.warn("KAMATERA_API system-metrics failed");
   }
 
   return combinedData;
+};
+
+export const fetchNodeMetrics = async () => {
+  return await getSystemMetrics();
 };

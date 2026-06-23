@@ -30,6 +30,14 @@ export const useAnalyticsLogic = () => {
 
             setNodesHistory(prevHistory => {
                 const newHistory = { ...prevHistory };
+                
+                // Cleanup old un-prefixed keys (migration from old version)
+                Object.keys(newHistory).forEach(key => {
+                    if (!key.startsWith('do-') && !key.startsWith('win-') && !key.startsWith('kam-')) {
+                        delete newHistory[key];
+                    }
+                });
+
                 Object.keys(combinedData).forEach(nodeId => {
                     const newNodeData = combinedData[nodeId];
                     const currentData = newHistory[nodeId] || [];
