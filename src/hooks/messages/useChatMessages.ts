@@ -1,11 +1,14 @@
-import { useState } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import useSWR from 'swr';
 import { ChatMessage } from '../../types/chat';
 import { getChatDetails, getChatMessages, sendMessage } from '../../api/chatService';
+import { liveWs } from '../../api/wsService';
 
 export const useChatMessages = (activeChatId: number | null, MY_ID: number, mutateChats: () => void) => {
     const [messageInput, setMessageInput] = useState('');
     const [sending, setSending] = useState(false);
+    const [typingUsers, setTypingUsers] = useState<number[]>([]);
+    const typingTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
     const { data: activeChatInfo } = useSWR(
         activeChatId ? `chat-details-${activeChatId}` : null,
@@ -20,6 +23,56 @@ export const useChatMessages = (activeChatId: number | null, MY_ID: number, muta
         }),
         { refreshInterval: 3000 }
     );
+
+    useEffect(() => {
+        liveWs.connect();
+
+        const handleTyping = (data: any) => {
+            if (data.chat_id === activeChatId && data.is_typing) {
+                setTypingUsers(prev => prev.includes(data.employee_id) ? prev : [...prev, data.employee_id]);
+                setTimeout(() => {
+                    setTypingUsers(prev => prev.filter(id => id !== data.employee_id));
+                }, 3000);
+            } else if (data.chat_id === activeChatId && !data.is_typing) {
+                setTypingUsers(prev => prev.filter(id => id !== data.employee_id));
+            }
+        };
+
+        const handleSeenUpdate = (data: any) => {
+            if (data.chat_id === activeChatId) {
+                mutateMessages();
+                mutateChats();
+            }
+        };
+
+        liveWs.on('typing', handleTyping);
+        liveWs.on('seen_update', handleSeenUpdate);
+
+        return () => {
+            liveWs.off('typing', handleTyping);
+            liveWs.off('seen_update', handleSeenUpdate);
+        };
+    }, [activeChatId, mutateMessages, mutateChats]);
+
+    useEffect(() => {
+        if (messages.length > 0 && activeChatId) {
+            const lastMsg = messages[messages.length - 1];
+            if (lastMsg.user_id !== MY_ID) {
+                liveWs.send('seen', { chat_id: activeChatId, message_id: lastMsg.message_id });
+            }
+        }
+    }, [messages, activeChatId, MY_ID]);
+
+    const handleMessageInputChange = (val: string) => {
+        setMessageInput(val);
+        if (activeChatId) {
+            liveWs.send('typing', { chat_id: activeChatId, is_typing: true });
+            if (typingTimeoutRef.current) clearTimeout(typingTimeoutRef.current);
+            typingTimeoutRef.current = setTimeout(() => {
+                liveWs.send('typing', { chat_id: activeChatId, is_typing: false });
+            }, 2000);
+        }
+    };
 
     const handleSendMessage = async () => {
         if (!messageInput.trim() || !activeChatId || sending) return;
@@ -64,9 +117,10 @@ export const useChatMessages = (activeChatId: number | null, MY_ID: number, muta
         activeChatInfo,
         messages,
         messageInput,
-        setMessageInput,
+        setMessageInput: handleMessageInputChange,
         sending,
         handleSendMessage,
-        handleKeyDown
+        handleKeyDown,
+        typingUsers
     };
 };

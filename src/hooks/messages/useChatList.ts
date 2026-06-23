@@ -23,9 +23,9 @@ export const useChatList = (employees: EmployeeData[], MY_ID: number, activeChat
             if (chat.chat_id === activeChatId) {
                 keep = true;
             } else if (peerId) {
-                keep = employees.some(e => e.user_id == peerId);
+                keep = employees.some(e => e.employee_id == peerId);
             } else if (participants && participants.length > 0) {
-                keep = participants.some(id => id != MY_ID && employees.some(e => e.user_id == id));
+                keep = participants.some(id => id != MY_ID && employees.some(e => e.employee_id == id));
             }
             
             return keep;

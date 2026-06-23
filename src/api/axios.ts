@@ -7,8 +7,12 @@ const api = axios.create({
 api.interceptors.request.use(
   (config) => {
     const token = localStorage.getItem('admin_token');
+    const employeeId = localStorage.getItem('employee_id');
     if (token) {
       config.headers.Authorization = `Bearer ${token}`;
+    }
+    if (employeeId && !config.url?.startsWith('http')) {
+      config.headers['X-Employee-ID'] = employeeId;
     }
     return config;
   },

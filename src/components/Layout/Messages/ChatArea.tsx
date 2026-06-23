@@ -1,5 +1,5 @@
 import React, { RefObject } from 'react';
-import { Check } from 'lucide-react';
+import { Check, CheckCheck } from 'lucide-react';
 import { ChatMessage } from '../../../types/chat';
 import { ChatAreaHeader } from './ChatAreaHeader';
 import { ChatAreaInput } from './ChatAreaInput';
@@ -15,6 +15,9 @@ interface ChatAreaProps {
     activeChatName: string;
     activeChatAvatar: string;
     isOnline: boolean;
+    lastSeen: string | null;
+    isAdmin: boolean;
+    typingUsers?: number[];
     messagesEndRef: RefObject<HTMLDivElement | null>;
     onBack?: () => void;
 }
@@ -30,6 +33,9 @@ export const ChatArea: React.FC<ChatAreaProps> = ({
     activeChatName,
     activeChatAvatar,
     isOnline,
+    lastSeen,
+    isAdmin,
+    typingUsers = [],
     messagesEndRef,
     onBack
 }) => {
@@ -39,6 +45,8 @@ export const ChatArea: React.FC<ChatAreaProps> = ({
                 activeChatName={activeChatName}
                 activeChatAvatar={activeChatAvatar}
                 isOnline={isOnline}
+                lastSeen={lastSeen}
+                isAdmin={isAdmin}
                 onBack={onBack}
             />
 
@@ -68,12 +76,26 @@ export const ChatArea: React.FC<ChatAreaProps> = ({
                                     </div>
                                     <div className="flex items-center gap-1.5 mt-1.5 px-1">
                                         {timeStr && <span className="text-[10px] font-medium text-[#a2a5b9]/70">{timeStr}</span>}
-                                        {isMe && <Check size={14} className="text-[#3699ff]" />}
+                                        {isMe && (
+                                            msg.status === 'seen' ? <CheckCheck size={14} className="text-[#3699ff]" /> :
+                                            msg.status === 'delivered' ? <CheckCheck size={14} className="text-[#a2a5b9]" /> :
+                                            <Check size={14} className="text-[#a2a5b9]" />
+                                        )}
                                     </div>
                                 </div>
                             </div>
                         );
                     })
+                )}
+                {typingUsers.length > 0 && (
+                    <div className="flex justify-start items-end mb-4 animate-fade-in">
+                        <img src={activeChatAvatar} className="w-8 h-8 rounded-full mr-3 mb-1" alt="avatar" />
+                        <div className="bg-[#1e1e2d] px-4 py-3 border border-white/[0.05] rounded-2xl rounded-bl-sm">
+                            <p className="text-sm text-[#a2a5b9] italic flex items-center gap-1">
+                                Друкує<span className="animate-bounce">.</span><span className="animate-bounce" style={{ animationDelay: '0.2s' }}>.</span><span className="animate-bounce" style={{ animationDelay: '0.4s' }}>.</span>
+                            </p>
+                        </div>
+                    </div>
                 )}
                 <div ref={messagesEndRef} />
             </div>

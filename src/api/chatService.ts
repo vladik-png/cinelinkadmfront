@@ -63,6 +63,11 @@ export const deleteChat = async (chatId: number): Promise<void> => {
     await api.delete(`/chats/${chatId}`);
 };
 
+export const getEmployeeStatus = async (employeeId: number): Promise<{ is_online: boolean; last_seen: string }> => {
+    const response = await api.get(`/employee-status/${employeeId}`);
+    return response.data?.data || response.data || { is_online: false, last_seen: '' };
+};
+
 export const removeUserChat = async (userId: number, chatId: number): Promise<void> => {
     await api.delete(`/chats/${chatId}/members/${userId}`);
 };

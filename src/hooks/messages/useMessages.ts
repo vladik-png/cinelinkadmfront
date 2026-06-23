@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef } from 'react';
 import { useSearchParams } from 'react-router-dom';
+import useSWR from 'swr';
 import { useEmployeeStore } from '../../store/employeeStore';
 import { useChatList } from './useChatList';
 import { useChatMessages } from './useChatMessages';
@@ -41,7 +42,8 @@ export const useMessages = () => {
         setMessageInput, 
         sending, 
         handleSendMessage, 
-        handleKeyDown 
+        handleKeyDown,
+        typingUsers
     } = useChatMessages(activeChatId, MY_ID, mutateChats);
 
     useEffect(() => {
@@ -80,15 +82,65 @@ export const useMessages = () => {
         }
     };
 
-    const getActiveChatOnline = () => {
-        if (!activeChatInfo) return false;
-        if ('peer' in activeChatInfo && activeChatInfo.peer) {
-            return activeChatInfo.peer.is_online || false;
+    const activeChatNameStr = getActiveChatName(activeChatInfo, activeChatId, urlPeerId, chats, employees, MY_ID);
+
+    const getActivePeerId = (): number | null => {
+        if (!activeChatInfo) return null;
+        if ('participants_ids' in activeChatInfo) {
+            const id = activeChatInfo.participants_ids.find((id: number) => id !== MY_ID);
+            return id || null;
         }
+        return null;
+    };
+
+    const peerId = getActivePeerId();
+
+    const [liveStatus, setLiveStatus] = useState<{ is_online: boolean; last_seen?: string } | null>(null);
+
+    useEffect(() => {
+        const handleUserStatus = (data: any) => {
+            if (peerId && data.employee_id === peerId) {
+                setLiveStatus({
+                    is_online: data.is_online,
+                    last_seen: data.last_seen
+                });
+            }
+        };
+
+        import('../../api/wsService').then(({ liveWs }) => {
+            liveWs.on('user_status', handleUserStatus);
+        });
+
+        return () => {
+            import('../../api/wsService').then(({ liveWs }) => {
+                liveWs.off('user_status', handleUserStatus);
+            });
+        };
+    }, [peerId]);
+
+    const { data: initialStatus } = useSWR(
+        peerId ? `employee-status-${peerId}` : null,
+        () => import('../../api/chatService').then(m => m.getEmployeeStatus(peerId as number)),
+        { refreshInterval: 0, revalidateOnFocus: false }
+    );
+
+    const getActiveChatOnline = () => {
+        if (liveStatus !== null) return liveStatus.is_online;
+        if (initialStatus) return initialStatus.is_online;
         return false;
     };
-    
-    const activeChatNameStr = getActiveChatName(activeChatInfo, activeChatId, urlPeerId, chats, employees, MY_ID);
+
+    const getActiveChatLastSeen = () => {
+        if (liveStatus !== null) return liveStatus.last_seen || null;
+        if (initialStatus) return initialStatus.last_seen || null;
+        return null;
+    };
+
+    const getActiveChatIsAdmin = () => {
+        if (!peerId) return false;
+        const emp = employees.find(e => e.employee_id === peerId);
+        return emp ? emp.role === 1 || emp.department === 'Administration' : false;
+    };
 
     return {
         chats: filteredChats,
@@ -108,6 +160,9 @@ export const useMessages = () => {
         getChatAvatar: (chat: Chat) => getChatAvatar(chat, employees, MY_ID),
         getActiveChatName: () => activeChatNameStr,
         getActiveChatAvatar: () => getActiveChatAvatar(activeChatInfo, activeChatId, urlPeerId, chats, employees, MY_ID, activeChatNameStr),
-        getActiveChatOnline
+        getActiveChatOnline,
+        getActiveChatLastSeen,
+        getActiveChatIsAdmin,
+        typingUsers
     };
 };

@@ -20,10 +20,11 @@ export interface LastMessage {
 export interface ChatMessage {
     message_id: number;
     chat_id: number;
-    message_type: string;
-    message: any;
-    timestamp: string;
     user_id: number;
+    message_type: 'text' | 'media';
+    message: string;
+    timestamp: string;
+    status?: 'sent' | 'delivered' | 'seen';
 }
 
 export interface Chat {

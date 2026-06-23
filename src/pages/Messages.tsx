@@ -23,7 +23,10 @@ const Messages: React.FC = () => {
         getChatAvatar,
         getActiveChatName,
         getActiveChatAvatar,
-        getActiveChatOnline
+        getActiveChatOnline,
+        getActiveChatLastSeen,
+        getActiveChatIsAdmin,
+        typingUsers
     } = useMessages();
 
     return (
@@ -53,6 +56,9 @@ const Messages: React.FC = () => {
                         activeChatName={getActiveChatName()}
                         activeChatAvatar={getActiveChatAvatar()}
                         isOnline={getActiveChatOnline()}
+                        lastSeen={getActiveChatLastSeen()}
+                        isAdmin={getActiveChatIsAdmin()}
+                        typingUsers={typingUsers}
                         messagesEndRef={messagesEndRef}
                         onBack={() => handleChatClick(0)} // Pass 0 or null to clear active chat
                     />
