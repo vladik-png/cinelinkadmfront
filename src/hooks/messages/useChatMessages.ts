@@ -9,7 +9,6 @@ export const useChatMessages = (activeChatId: number | null, MY_ID: number, muta
     const [sending, setSending] = useState(false);
     const [typingUsers, setTypingUsers] = useState<number[]>([]);
     const typingTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
-
     const { data: activeChatInfo } = useSWR(
         activeChatId ? `chat-details-${activeChatId}` : null,
         () => getChatDetails(activeChatId as number)

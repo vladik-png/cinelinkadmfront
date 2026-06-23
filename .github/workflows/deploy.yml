@@ -19,6 +19,8 @@ jobs:
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           script: |
             cd ~/cinelinkadmfront
+            git fetch origin dev
+            git reset --hard origin/dev
             git pull origin dev
             npm install
             npm run build:fast

@@ -93,7 +93,7 @@ export const useMessages = () => {
             return id || null;
         }
         if (activeChatInfo && 'participants_ids' in activeChatInfo) {
-            const id = (activeChatInfo as any).participants_ids?.find((id: number) => id !== MY_ID);
+            const id = (activeChatInfo.participants_ids as number[]).find((id: number) => id !== MY_ID);
             return id || null;
         }
         return null;
@@ -141,8 +141,7 @@ export const useMessages = () => {
     const getActiveChatIsAdmin = () => {
         if (!peerId) return false;
         const emp = employees.find(e => e.employee_id === peerId);
-        return emp ? (emp as any).role === 1 || emp.department === 'Administration' : false;
-    };
+        return emp ? (emp as any).role === 1 || emp.department === 'Administration' : false;    };
 
     return {
         chats: filteredChats,
