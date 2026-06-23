@@ -32,11 +32,11 @@ export const Modal: React.FC<ModalProps> = ({
 
     return (
         <div 
-            className={`fixed inset-0 z-[100] flex items-center justify-center p-4 sm:p-6 bg-[#151521]/80 backdrop-blur-sm ${className}`} 
+            className={`fixed inset-0 z-[100] flex items-center justify-center p-4 sm:p-6 bg-[#151521]/80 backdrop-blur-md animate-fade-in ${className}`} 
             onClick={onClose}
         >
             <div 
-                className={`bg-[#1e1e2d] border border-white/[0.05] w-full ${maxWidthClass} max-h-[90vh] overflow-y-auto rounded-[2rem] shadow-2xl relative`} 
+                className={`glass-panel border border-white/10 w-full ${maxWidthClass} max-h-[90vh] overflow-y-auto rounded-[2rem] shadow-2xl relative animate-slide-up`} 
                 onClick={(e) => e.stopPropagation()}
             >
                 {children}

@@ -35,7 +35,7 @@ const Sidebar: React.FC<SidebarProps> = ({ isCollapsed, toggleSidebar, isMobileM
       </button>
 
       <div className={`h-20 flex items-center ${isCollapsed ? 'justify-center px-0' : 'px-6'} gap-3 border-b border-white/[0.05]`}>
-        <div className="bg-[#3699ff] p-1.5 rounded-lg flex items-center justify-center shrink-0 cursor-pointer">
+        <div className="bg-gradient-to-br from-[#3699ff] to-[#8950fc] shadow-[0_0_15px_rgba(137,80,252,0.4)] p-1.5 rounded-lg flex items-center justify-center shrink-0 cursor-pointer animate-pulse-glow">
           <Hexagon size={24} className="text-white fill-white/20" />
         </div>
         {!isCollapsed && (
@@ -62,9 +62,9 @@ const Sidebar: React.FC<SidebarProps> = ({ isCollapsed, toggleSidebar, isMobileM
                 to={item.path}
                 onClick={() => { if (closeMobileMenu) closeMobileMenu(); }}
                 title={isCollapsed ? item.name : undefined}
-                className={`flex items-center ${isCollapsed ? 'md:justify-center px-4 md:px-0' : 'gap-3 px-4'} py-3 rounded-lg transition-all duration-200 group cursor-pointer ${isActive
-                  ? 'bg-[#3699ff]/10 text-[#3699ff]'
-                  : 'hover:bg-white/[0.03] hover:text-white text-[#a2a5b9]'
+                className={`flex items-center ${isCollapsed ? 'md:justify-center px-4 md:px-0' : 'gap-3 px-4'} py-3 rounded-lg transition-all duration-300 group cursor-pointer ${isActive
+                  ? 'bg-gradient-to-r from-[#3699ff]/20 to-transparent text-[#3699ff] border-l-2 border-[#3699ff] shadow-[inset_20px_0_20px_-20px_rgba(54,153,255,0.3)]'
+                  : 'border-l-2 border-transparent hover:bg-white/[0.03] hover:text-white text-[#a2a5b9]'
                   }`}
               >
                 <div className={`transition-colors duration-200 flex shrink-0 cursor-pointer ${isActive ? 'text-[#3699ff]' : 'text-[#a2a5b9] group-hover:text-white'}`}>

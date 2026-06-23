@@ -7,7 +7,7 @@ interface CardProps {
 
 export const Card: React.FC<CardProps> = ({ children, className = '' }) => {
     return (
-        <section className={`bg-[#1e1e2d] border border-white/[0.05] rounded-2xl shadow-lg flex-1 overflow-hidden flex flex-col ${className}`}>
+        <section className={`glass-panel rounded-2xl shadow-lg flex-1 overflow-hidden flex flex-col transition-all duration-300 hover:border-white/10 hover:shadow-[0_8px_30px_rgba(0,0,0,0.5)] animate-slide-up ${className}`}>
             {children}
         </section>
     );

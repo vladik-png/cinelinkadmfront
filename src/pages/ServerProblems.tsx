@@ -2,6 +2,7 @@ import * as React from 'react';
 import { useServerProblemsLogic } from '../hooks/infrastructure/useServerProblemsLogic';
 import { AlertsSection } from '../components/Layout/Moderation/AlertsSection';
 import { LogsTable } from '../components/Layout/Moderation/LogsTable';
+import { ServerProblemsHeader } from '../components/Layout/Moderation/ServerProblemsHeader';
 
 const ServerProblems: React.FC = () => {
   const {
@@ -16,12 +17,7 @@ const ServerProblems: React.FC = () => {
   return (
     <div className="w-full min-h-screen bg-[#151521] text-[#a2a5b9] font-sans p-6 lg:p-8">
         
-        <div className="flex justify-between items-end border-b border-white/[0.05] pb-6 mb-6">
-            <div>
-                <h1 className="text-3xl text-white tracking-wide uppercase font-bold leading-none">Server Problems</h1>
-                <p className="text-[10px] text-[#a2a5b9] tracking-widest uppercase font-semibold mt-2">Review active alerts and system logs</p>
-            </div>
-        </div>
+        <ServerProblemsHeader />
 
         <div className="mb-6">
           <AlertsSection 
