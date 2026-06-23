@@ -60,10 +60,14 @@ export const parseEmployeeResponse = (responseData: unknown): EmployeeData[] => 
         }
     }
     
-    return fetchedList.map((item, index) => ({
-        ...item,
-        _react_key: item.employee_id || (item as any).id || `fallback-${index}`
-    }));
+    return fetchedList.map((item, index) => {
+        const mappedId = item.employee_id || (item as any).id;
+        return {
+            ...item,
+            employee_id: mappedId,
+            _react_key: mappedId || `fallback-${index}`
+        };
+    });
 };
 
 export const parseUserResponse = (responseData: unknown): UserData[] => {

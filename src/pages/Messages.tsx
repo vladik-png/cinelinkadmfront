@@ -16,6 +16,7 @@ const Messages: React.FC = () => {
         messagesEndRef,
         MY_ID,
         handleChatClick,
+        handleDeleteChat,
         handleSendMessage,
         handleKeyDown,
         getChatName,
@@ -33,6 +34,7 @@ const Messages: React.FC = () => {
                     activeChatId={activeChatId}
                     loading={loading}
                     onChatClick={handleChatClick}
+                    onDeleteChat={handleDeleteChat}
                     getChatName={getChatName}
                     getChatAvatar={getChatAvatar}
                 />

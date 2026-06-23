@@ -21,7 +21,7 @@ export const EmployeesToolbar: React.FC<EmployeesToolbarProps> = ({
     return (
         <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-8">
             <div>
-                <h1 className="text-3xl font-bold text-white mb-1 uppercase tracking-tight">Personnel</h1>
+                <h1 className="text-3xl font-bold bg-gradient-to-r from-[#3699ff] to-[#8950fc] bg-clip-text text-transparent mb-1 uppercase tracking-tight">Personnel</h1>
                 <div className="flex items-center gap-3 text-[11px] font-bold tracking-widest uppercase">
                     <span className="bg-[#3699ff]/10 text-[#3699ff] px-2.5 py-1 rounded border border-[#3699ff]/20">Total: {total}</span>
                     <span className="text-[#a2a5b9]">Showing: {showing}</span>
@@ -43,7 +43,7 @@ export const EmployeesToolbar: React.FC<EmployeesToolbarProps> = ({
                 {onAddEmployee && (
                     <button
                         onClick={onAddEmployee}
-                        className="flex items-center gap-2 bg-[#3699ff] text-white text-xs font-bold uppercase tracking-wider px-4 py-2.5 rounded-xl hover:bg-[#3699ff]/90 transition-all active:scale-95 cursor-pointer"
+                        className="flex items-center gap-2 bg-gradient-to-r from-[#3699ff] to-[#8950fc] text-white text-xs font-bold uppercase tracking-wider px-4 py-2.5 rounded-xl hover:opacity-90 transition-all active:scale-95 cursor-pointer"
                     >
                         <Plus size={14} /> Add Employee
                     </button>

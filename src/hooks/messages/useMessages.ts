@@ -17,8 +17,7 @@ export const useMessages = () => {
     const { employees, fetchEmployees } = useEmployeeStore();
 
     const currentEmployeeIdStr = localStorage.getItem('employee_id');
-    const currentUserIdStr = localStorage.getItem('user_id') || currentEmployeeIdStr;
-    const MY_ID = currentUserIdStr ? parseInt(currentUserIdStr, 10) : 1; 
+    const MY_ID = currentEmployeeIdStr ? parseInt(currentEmployeeIdStr, 10) : 1; 
 
     useEffect(() => {
         fetchEmployees();
@@ -67,6 +66,20 @@ export const useMessages = () => {
         setSearchParams({ chatId: id.toString() });
     };
 
+    const handleDeleteChat = async (id: number) => {
+        try {
+            const { deleteChat } = await import('../../api/chatService');
+            await deleteChat(id);
+            if (activeChatId === id) {
+                setActiveChatId(null);
+                setSearchParams({});
+            }
+            mutateChats();
+        } catch (error) {
+            console.error("Failed to delete chat", error);
+        }
+    };
+
     const getActiveChatOnline = () => {
         if (!activeChatInfo) return false;
         if ('peer' in activeChatInfo && activeChatInfo.peer) {
@@ -88,6 +101,7 @@ export const useMessages = () => {
         messagesEndRef,
         MY_ID,
         handleChatClick,
+        handleDeleteChat,
         handleSendMessage,
         handleKeyDown,
         getChatName: (chat: Chat) => getChatName(chat, employees, MY_ID),

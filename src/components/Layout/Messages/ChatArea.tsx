@@ -60,7 +60,7 @@ export const ChatArea: React.FC<ChatAreaProps> = ({
                                 <div className={`flex flex-col ${isMe ? 'items-end' : 'items-start'}`}>
                                     <div
                                         className={`px-5 py-3 rounded-2xl max-w-md break-words ${isMe
-                                            ? 'bg-[#3699ff] text-white rounded-br-sm shadow-[0_4px_15px_rgba(54,153,255,0.2)]'
+                                            ? 'bg-gradient-to-r from-[#3699ff] to-[#8950fc] text-white rounded-br-sm shadow-[0_4px_15px_rgba(137,80,252,0.2)]'
                                             : 'bg-[#1e1e2d] text-[#a2a5b9] border border-white/[0.05] rounded-bl-sm'
                                             }`}
                                     >

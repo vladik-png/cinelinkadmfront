@@ -10,7 +10,7 @@ export const InfrastructureHeader: React.FC<Props> = ({ loading, onRefresh }) =>
     return (
         <div className="flex justify-between items-end mb-8 border-b border-white/[0.05] pb-6">
             <div>
-                <h1 className="text-3xl text-white uppercase tracking-wide font-bold leading-none">System Nodes</h1>
+                <h1 className="text-3xl bg-gradient-to-r from-[#3699ff] to-[#8950fc] bg-clip-text text-transparent uppercase tracking-wide font-bold leading-none">System Nodes</h1>
             </div>
             <button
                 onClick={onRefresh}

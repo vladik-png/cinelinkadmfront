@@ -72,7 +72,7 @@ export const Pagination: React.FC<PaginationProps> = ({
         const renderPageButton = (page: number) => {
             const isActive = currentPage === page;
             const activeClass = activeColor === 'primary' 
-                ? 'bg-[#3699ff] text-white shadow-lg shadow-[#3699ff]/20' 
+                ? 'bg-gradient-to-r from-[#3699ff] to-[#8950fc] text-white shadow-lg shadow-[#8950fc]/20' 
                 : 'bg-[#8950fc] text-white shadow-lg shadow-[#8950fc]/20';
             
             return (

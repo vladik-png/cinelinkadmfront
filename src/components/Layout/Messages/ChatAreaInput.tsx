@@ -41,7 +41,7 @@ export const ChatAreaInput: React.FC<ChatAreaInputProps> = ({
                 <button
                     onClick={onSendMessage}
                     disabled={!messageInput.trim() || sending}
-                    className={`p-3 rounded-xl flex items-center justify-center transition-all ${messageInput.trim() ? 'bg-[#3699ff] text-white shadow-lg shadow-[#3699ff]/20' : 'bg-white/[0.05] text-[#a2a5b9] cursor-not-allowed'
+                    className={`p-3 rounded-xl flex items-center justify-center transition-all ${messageInput.trim() ? 'bg-gradient-to-r from-[#3699ff] to-[#8950fc] text-white shadow-lg shadow-[#8950fc]/30 hover:opacity-90' : 'bg-white/[0.05] text-[#a2a5b9] cursor-not-allowed'}
                         }`}
                 >
                     <Send size={18} className={messageInput.trim() ? 'ml-1' : ''} />

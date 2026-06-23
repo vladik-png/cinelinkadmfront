@@ -3,7 +3,7 @@ import { Chat, DirectChat, GroupChat, ChatMember, ChatMessage } from '../types/c
 
 export const getUserChats = async (): Promise<Chat[]> => {
     try {
-        const response = await api.get('/users/chats');
+        const response = await api.get('/employee/chat');
         const data = response.data?.data || response.data;
         let chatsArray: any[] = [];
         if (Array.isArray(data)) {
@@ -20,7 +20,7 @@ export const getUserChats = async (): Promise<Chat[]> => {
         })) as Chat[];
 
     } catch (error) {
-        console.error("Помилка під час отримання чатів:", error);
+        console.error("Error fetching user chats:", error);
         return [];
     }
 };
@@ -58,6 +58,11 @@ export const getOrCreateChat = async (friendId: number | string): Promise<number
 
     return data;
 };
+
+export const deleteChat = async (chatId: number): Promise<void> => {
+    await api.delete(`/chats/${chatId}`);
+};
+
 export const removeUserChat = async (userId: number, chatId: number): Promise<void> => {
     await api.delete(`/chats/${chatId}/members/${userId}`);
 };
@@ -99,7 +104,7 @@ export const getChatMessages = async (chatId: number): Promise<ChatMessage[]> =>
             return msg;
         }) as ChatMessage[];
     } catch (error) {
-        console.error("Помилка під час отримання повідомлень:", error);
+        console.error("Error fetching chat messages:", error);
         return [];
     }
 };

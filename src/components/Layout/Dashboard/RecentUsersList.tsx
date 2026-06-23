@@ -55,7 +55,7 @@ export const RecentUsersList: React.FC<RecentUsersListProps> = ({ users, onViewA
                             <span className="hidden sm:inline-flex px-2.5 py-1 bg-[#1bc5bd]/10 text-[#1bc5bd] text-[10px] font-bold uppercase rounded">
                                 Active
                             </span>
-                            <div className="w-8 h-8 rounded-md bg-white/[0.1] group-hover:bg-[#3699ff] flex items-center justify-center text-white transition-colors">
+                            <div className="w-8 h-8 rounded-md bg-white/[0.1] group-hover:bg-gradient-to-r group-hover:from-[#3699ff] group-hover:to-[#8950fc] flex items-center justify-center text-white transition-colors">
                                 <MoreHorizontal size={16} />
                             </div>
                         </div>

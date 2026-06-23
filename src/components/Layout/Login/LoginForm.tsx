@@ -66,7 +66,7 @@ export const LoginForm: React.FC<LoginFormProps> = ({
                 <button
                     type="submit"
                     disabled={isLoading}
-                    className={`w-full mt-4 bg-[#3699ff] hover:bg-[#2884e0] text-white font-bold py-4 rounded-xl text-sm tracking-wide transition-all duration-300 shadow-[0_4px_12px_rgba(54,153,255,0.25)] hover:shadow-[0_6px_20px_rgba(54,153,255,0.4)] ${isLoading ? 'opacity-70 cursor-not-allowed' : 'hover:-translate-y-0.5'}`}
+                    className={`w-full mt-4 bg-gradient-to-r from-[#3699ff] to-[#8950fc] text-white font-bold py-4 rounded-xl text-sm tracking-wide transition-all duration-300 shadow-[0_4px_12px_rgba(137,80,252,0.25)] hover:shadow-[0_6px_20px_rgba(137,80,252,0.4)] hover:opacity-90 ${isLoading ? 'opacity-70 cursor-not-allowed' : 'hover:-translate-y-0.5'}`}
                 >
                     {isLoading ? (
                         <span className="flex items-center justify-center gap-2">

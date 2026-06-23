@@ -19,10 +19,10 @@ export const useLoginLogic = () => {
             const response = await loginEmployee(email, password);
 
             if (response.status === 200) {
-                const data = response.data.results;
-                const realToken = data.jwt;
-                const realId = data.employee_id;
-                const realUserId = data.user_id;
+                const data = response.data.results || response.data;
+                const realToken = data?.jwt || data?.token || data?.access_token;
+                const realId = data?.employee_id || data?.id || data?.user?.id;
+                const realUserId = data?.user_id || data?.user?.id;
                 if (realId && realToken) {
                     localStorage.setItem('admin_token', realToken);
                     localStorage.setItem('employee_id', realId.toString());

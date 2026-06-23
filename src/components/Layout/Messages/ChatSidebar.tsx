@@ -1,5 +1,5 @@
 import React from 'react';
-import { Search } from 'lucide-react';
+import { Search, Trash2 } from 'lucide-react';
 import { Chat } from '../../../types/chat';
 
 interface ChatSidebarProps {
@@ -9,6 +9,7 @@ interface ChatSidebarProps {
     onChatClick: (id: number) => void;
     getChatName: (chat: Chat) => string;
     getChatAvatar: (chat: Chat) => string;
+    onDeleteChat?: (id: number) => void;
 }
 
 export const ChatSidebar: React.FC<ChatSidebarProps> = ({
@@ -17,12 +18,13 @@ export const ChatSidebar: React.FC<ChatSidebarProps> = ({
     loading,
     onChatClick,
     getChatName,
-    getChatAvatar
+    getChatAvatar,
+    onDeleteChat
 }) => {
     return (
-        <div className="w-full max-w-sm border-r border-white/[0.05] flex flex-col bg-[#1e1e2d]">
+        <div className="w-full max-w-sm border-r border-white/[0.05] flex flex-col bg-[#1e1e2d] h-full">
             <div className="p-6 border-b border-white/[0.05]">
-                <h1 className="text-2xl font-bold text-white mb-4">Messages</h1>
+                <h1 className="text-2xl font-bold bg-gradient-to-r from-[#3699ff] to-[#8950fc] bg-clip-text text-transparent mb-4">Messages</h1>
                 <div className="relative">
                     <Search size={16} className="absolute left-4 top-1/2 -translate-y-1/2 text-[#a2a5b9]" />
                     <input
@@ -54,7 +56,7 @@ export const ChatSidebar: React.FC<ChatSidebarProps> = ({
                         <div
                             key={chat.chat_id}
                             onClick={() => onChatClick(chat.chat_id)}
-                            className={`flex items-center gap-4 p-3 rounded-xl cursor-pointer transition-colors ${activeChatId === chat.chat_id ? 'bg-white/[0.05] border border-white/[0.05]' : 'hover:bg-white/[0.02] border border-transparent'}`}
+                            className={`flex items-center gap-4 p-3 rounded-xl cursor-pointer transition-colors group ${activeChatId === chat.chat_id ? 'bg-white/[0.05] border border-white/[0.05]' : 'hover:bg-white/[0.02] border border-transparent'}`}
                         >
                             <div className="relative flex-shrink-0">
                                 <img src={getChatAvatar(chat)} className="w-12 h-12 rounded-full object-cover bg-[#151521]" alt="avatar" />
@@ -70,10 +72,22 @@ export const ChatSidebar: React.FC<ChatSidebarProps> = ({
                                         </span>
                                     )}
                                 </div>
-                                <div className="flex justify-between items-center">
-                                    <p className={`text-xs truncate max-w-[180px] text-[#a2a5b9]`}>
+                                <div className="flex justify-between items-center group/item">
+                                    <p className={`text-xs truncate max-w-[150px] text-[#a2a5b9]`}>
                                         {chat.last_message?.message?.toString() || 'No messages yet'}
                                     </p>
+                                    {onDeleteChat && (
+                                        <button 
+                                            onClick={(e) => {
+                                                e.stopPropagation();
+                                                onDeleteChat(chat.chat_id);
+                                            }}
+                                            className="text-[#f64e60] opacity-0 group-hover:opacity-100 hover:bg-[#f64e60]/20 p-1.5 rounded-md transition-all"
+                                            title="Delete Chat"
+                                        >
+                                            <Trash2 size={14} />
+                                        </button>
+                                    )}
                                 </div>
                             </div>
                         </div>

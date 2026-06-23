@@ -14,8 +14,7 @@ export const EmployeeProfileDetails: React.FC<EmployeeProfileDetailsProps> = ({ 
     const [loadingChat, setLoadingChat] = React.useState(false);
 
     const handleMessageClick = async () => {
-        const anyEmp = employee as any;
-        const targetId = anyEmp.user_id;
+        const targetId = employee.employee_id;
         if (!targetId) {
             console.warn('Employee has no user_id, cannot open chat. employee:', employee);
             return;
@@ -25,7 +24,7 @@ export const EmployeeProfileDetails: React.FC<EmployeeProfileDetailsProps> = ({ 
             setLoadingChat(true);
             const chatId = await getOrCreateChat(targetId as number);
             onClose();
-            navigate(`/messages?chatId=${chatId}&peerId=${targetId}`);
+            navigate(`/messages?chatId=${chatId}`);
         } catch (error) {
             console.error('Failed to create/get chat', error);
             onClose();
@@ -56,7 +55,7 @@ export const EmployeeProfileDetails: React.FC<EmployeeProfileDetailsProps> = ({ 
                 <button
                     onClick={handleMessageClick}
                     disabled={loadingChat}
-                    className="flex-1 py-4 rounded-xl text-[10px] uppercase tracking-widest font-bold transition-all active:scale-95 flex items-center justify-center gap-2 bg-[#3699ff] hover:bg-[#3699ff]/90 text-white cursor-pointer disabled:opacity-50"
+                    className="flex-1 py-4 rounded-xl text-[10px] uppercase tracking-widest font-bold transition-all active:scale-95 flex items-center justify-center gap-2 bg-gradient-to-r from-[#3699ff] to-[#8950fc] hover:opacity-90 text-white cursor-pointer disabled:opacity-50"
                 >
                     <MessageCircle size={16} />
                     {loadingChat ? 'Connecting...' : 'Send Message'}

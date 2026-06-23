@@ -21,7 +21,7 @@ const Sidebar: React.FC<SidebarProps> = ({ isCollapsed, toggleSidebar, isMobileM
     { name: 'Instances', path: '/infrastructure', icon: <Server size={20} /> },
     { name: 'Analytics', path: '/analytics', icon: <BarChart3 size={20} /> },
     { name: 'Terminal', path: '/terminal', icon: <SquareTerminal size={20} /> },
-    // { name: 'Messages', path: '/messages', icon: <MessageCircle size={20} /> },
+    { name: 'Messages', path: '/messages', icon: <MessageCircle size={20} /> },
   ];
 
   return (
@@ -29,7 +29,7 @@ const Sidebar: React.FC<SidebarProps> = ({ isCollapsed, toggleSidebar, isMobileM
 
       <button
         onClick={toggleSidebar}
-        className="hidden md:block absolute -right-3 top-6 bg-[#3699ff] text-white rounded-full p-1 z-50 shadow-lg hover:bg-blue-500 transition-colors cursor-pointer"
+        className="hidden md:block absolute -right-3 top-6 bg-gradient-to-r from-[#3699ff] to-[#8950fc] text-white rounded-full p-1 z-50 shadow-[0_0_15px_rgba(137,80,252,0.4)] hover:opacity-90 transition-colors cursor-pointer"
       >
         {isCollapsed ? <ChevronRight size={16} /> : <ChevronLeft size={16} />}
       </button>
