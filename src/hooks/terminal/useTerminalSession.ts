@@ -68,9 +68,13 @@ export const useTerminalSession = (
 
         return () => {
             resizeObserver.disconnect();
+            ws.onmessage = null;
+            ws.onclose = null;
+            ws.onopen = null;
             ws.close();
-            term.dispose();
+            try { term.dispose(); } catch (e) {}
             fitAddonRef.current = null;
+            xtermRef.current = null;
         };
     }, [node, terminalRef]);
 
