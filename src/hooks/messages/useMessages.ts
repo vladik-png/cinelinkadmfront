@@ -86,7 +86,11 @@ export const useMessages = () => {
 
     const getActivePeerId = (): number | null => {
         if (!activeChatInfo) return null;
-        if ('participants_ids' in activeChatInfo) {
+        if (activeChatInfo?.info && 'participants_ids' in activeChatInfo.info) {
+            const id = activeChatInfo.info.participants_ids?.find((id: number) => id !== MY_ID);
+            return id || null;
+        }
+        if (activeChatInfo && 'participants_ids' in activeChatInfo) {
             const id = activeChatInfo.participants_ids.find((id: number) => id !== MY_ID);
             return id || null;
         }

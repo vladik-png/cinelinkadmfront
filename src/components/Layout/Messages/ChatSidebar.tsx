@@ -22,7 +22,7 @@ export const ChatSidebar: React.FC<ChatSidebarProps> = ({
     onDeleteChat
 }) => {
     return (
-        <div className="w-full max-w-sm border-r border-white/[0.05] flex flex-col bg-[#1e1e2d] h-full">
+        <div className="w-full max-w-sm border-r border-white/[0.05] flex flex-col bg-[#1e1e2d] h-full min-h-0">
             <div className="p-6 border-b border-white/[0.05]">
                 <h1 className="text-2xl font-bold bg-gradient-to-r from-[#3699ff] to-[#8950fc] bg-clip-text text-transparent mb-4">Messages</h1>
                 <div className="relative">

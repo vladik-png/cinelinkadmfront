@@ -40,7 +40,7 @@ export const ChatArea: React.FC<ChatAreaProps> = ({
     onBack
 }) => {
     return (
-        <div className="flex-1 flex flex-col bg-[#151521] relative">
+        <div className="flex-1 flex flex-col bg-[#151521] relative min-h-0">
             <ChatAreaHeader 
                 activeChatName={activeChatName}
                 activeChatAvatar={activeChatAvatar}

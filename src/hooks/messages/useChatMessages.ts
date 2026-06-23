@@ -45,12 +45,21 @@ export const useChatMessages = (activeChatId: number | null, MY_ID: number, muta
             }
         };
 
+        const handleNewMessage = (data: any) => {
+            if (data.chat_id === activeChatId) {
+                mutateMessages();
+            }
+            mutateChats();
+        };
+
         liveWs.on('typing', handleTyping);
         liveWs.on('seen_update', handleSeenUpdate);
+        liveWs.on('new_message', handleNewMessage);
 
         return () => {
             liveWs.off('typing', handleTyping);
             liveWs.off('seen_update', handleSeenUpdate);
+            liveWs.off('new_message', handleNewMessage);
         };
     }, [activeChatId, mutateMessages, mutateChats]);
 

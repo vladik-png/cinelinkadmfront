@@ -31,7 +31,7 @@ const Messages: React.FC = () => {
 
     return (
         <div className="w-full flex bg-[#151521] text-[#a2a5b9] font-sans h-[calc(100vh-80px)] overflow-hidden">
-            <div className={`w-full md:max-w-sm border-r border-white/[0.05] bg-[#1e1e2d] ${activeChatId ? 'hidden md:flex flex-col' : 'flex flex-col'}`}>
+            <div className={`w-full md:max-w-sm border-r border-white/[0.05] bg-[#1e1e2d] min-h-0 ${activeChatId ? 'hidden md:flex flex-col' : 'flex flex-col'}`}>
                 <ChatSidebar 
                     chats={chats}
                     activeChatId={activeChatId}
@@ -44,7 +44,7 @@ const Messages: React.FC = () => {
             </div>
 
             {activeChatId ? (
-                <div className="flex-1 flex flex-col bg-[#151521] min-w-0">
+                <div className="flex-1 flex flex-col bg-[#151521] min-w-0 min-h-0">
                     <ChatArea 
                         messages={messages}
                         messageInput={messageInput}

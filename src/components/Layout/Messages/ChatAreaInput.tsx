@@ -21,13 +21,6 @@ export const ChatAreaInput: React.FC<ChatAreaInputProps> = ({
     return (
         <div className="p-6 bg-[#1e1e2d] border-t border-white/[0.05]">
             <div className="flex items-center gap-4 bg-[#151521] border border-white/[0.05] p-2 rounded-2xl focus-within:border-[#3699ff]/50 transition-colors">
-                <IconButton size="lg">
-                    <Paperclip size={20} />
-                </IconButton>
-                <IconButton size="lg" className="hidden sm:block">
-                    <ImageIcon size={20} />
-                </IconButton>
-
                 <input
                     type="text"
                     value={messageInput}
