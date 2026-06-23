@@ -1,11 +1,11 @@
 import * as React from 'react';
 import { useState } from 'react';
 import { useModerationLogic } from '../hooks/moderation/useModerationLogic';
-import { UserReportsTable } from '../components/Layout/Moderation/UserReportsTable';
-import { UserReportsToolbar } from '../components/Layout/Moderation/UserReportsToolbar';
+import { UserReportsTable } from '../components/Layout/UserReports/UserReportsTable';
+import { UserReportsToolbar } from '../components/Layout/UserReports/UserReportsToolbar';
 import { Pagination } from '../components/UI/Pagination';
 import { UserProfileModal } from '../components/Layout/Users/UserProfileModal';
-import { UserReportModal } from '../components/Layout/Moderation/UserReportModal';
+import { UserReportModal } from '../components/Layout/UserReports/UserReportModal';
 import { UserData } from '../types/user';
 import { UserReport } from '../types/moderation';
 import { getUserDetailedProfile, toggleUserAccountStatus } from '../api/userService';

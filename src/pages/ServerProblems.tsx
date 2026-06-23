@@ -1,8 +1,8 @@
 import * as React from 'react';
 import { useServerProblemsLogic } from '../hooks/infrastructure/useServerProblemsLogic';
-import { AlertsSection } from '../components/Layout/Moderation/AlertsSection';
-import { LogsTable } from '../components/Layout/Moderation/LogsTable';
-import { ServerProblemsHeader } from '../components/Layout/Moderation/ServerProblemsHeader';
+import { AlertsSection } from '../components/Layout/ServerProblems/AlertsSection';
+import { LogsTable } from '../components/Layout/ServerProblems/LogsTable';
+import { ServerProblemsHeader } from '../components/Layout/ServerProblems/ServerProblemsHeader';
 
 const ServerProblems: React.FC = () => {
   const {
