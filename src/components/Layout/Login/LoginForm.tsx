@@ -1,11 +1,11 @@
 import * as React from 'react';
-import { Hexagon, User, Lock } from 'lucide-react';
+import { Hexagon, Mail, Lock } from 'lucide-react';
 import { Input } from '../../UI/Input';
 import { Spinner } from '../../UI/Spinner';
 
 interface LoginFormProps {
-    employeeCode: string;
-    setEmployeeCode: (value: string) => void;
+    email: string;
+    setEmail: (value: string) => void;
     password: string;
     setPassword: (value: string) => void;
     error: string | null;
@@ -14,8 +14,8 @@ interface LoginFormProps {
 }
 
 export const LoginForm: React.FC<LoginFormProps> = ({
-    employeeCode,
-    setEmployeeCode,
+    email,
+    setEmail,
     password,
     setPassword,
     error,
@@ -33,14 +33,14 @@ export const LoginForm: React.FC<LoginFormProps> = ({
 
             <form onSubmit={onSubmit} className="space-y-6">
                 <Input
-                    label="Employee Code"
-                    icon={<User size={18} />}
-                    type="text"
+                    label="Email Address"
+                    icon={<Mail size={18} />}
+                    type="email"
                     required
-                    className="font-mono py-3.5 focus:border-[#3699ff] focus:ring-1 focus:ring-[#3699ff]"
-                    placeholder="e.g. 0000"
-                    value={employeeCode}
-                    onChange={(e) => setEmployeeCode(e.target.value)}
+                    className="py-3.5 focus:border-[#3699ff] focus:ring-1 focus:ring-[#3699ff]"
+                    placeholder="admin@cinelink.com"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
                 />
 
                 <Input

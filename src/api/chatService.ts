@@ -3,21 +3,22 @@ import { Chat, DirectChat, GroupChat, ChatMember, ChatMessage } from '../types/c
 
 export const getUserChats = async (): Promise<Chat[]> => {
     try {
-    const response = await api.get('/users/chats');
+        const response = await api.get('/users/chats');
         const data = response.data?.data || response.data;
-        
+        let chatsArray: any[] = [];
         if (Array.isArray(data)) {
-            return data;
-        }
-        
-        if (data && typeof data === 'object') {
+            chatsArray = data;
+        } else if (data && typeof data === 'object') {
             const possibleArray = Object.values(data).find(val => Array.isArray(val));
-            if (possibleArray) return possibleArray as Chat[];
+            if (possibleArray) chatsArray = possibleArray as any[];
         }
 
-        console.warn("getUserChats не отримав масив з бекенду. Відповідь:", data);
-        return [];
-        
+        return chatsArray.map(chat => ({
+            ...chat,
+            chat_id: chat.id || chat.chat_id,
+            img_url: chat.avatar || chat.img_url,
+        })) as Chat[];
+
     } catch (error) {
         console.error("Помилка під час отримання чатів:", error);
         return [];
@@ -27,20 +28,34 @@ export const getUserChats = async (): Promise<Chat[]> => {
 export const getChatDetails = async (chatId: number): Promise<DirectChat | GroupChat | null> => {
     const response = await api.get(`/chats/${chatId}`);
     const data = response.data?.data || response.data;
+    let result = data;
     if (data && typeof data === 'object' && 'results' in data) {
-        return data.results;
+        result = data.results;
     }
-    return data;
+
+    if (result && !result.info) {
+        const mappedChat = {
+            ...result,
+            chat_id: result.id || result.chat_id,
+            img_url: result.avatar || result.img_url
+        };
+        return {
+            info: mappedChat,
+            peer: null
+        } as any;
+    }
+
+    return result;
 };
 
 export const getOrCreateChat = async (friendId: number | string): Promise<number> => {
     const response = await api.get(`/chats/get-or-create/${friendId}`);
     const data = response.data?.data || response.data;
-    
+
     if (data && typeof data === 'object' && 'results' in data) {
         return data.results;
     }
-    
+
     return data;
 };
 export const removeUserChat = async (userId: number, chatId: number): Promise<void> => {
@@ -77,7 +92,6 @@ export const getChatMessages = async (chatId: number): Promise<ChatMessage[]> =>
             }
         }
 
-        // Map Content objects to ChatMessage interface if necessary
         return messagesArray.map((msg: any) => {
             if (msg && msg.type && msg.content) {
                 return msg.content;
@@ -91,28 +105,28 @@ export const getChatMessages = async (chatId: number): Promise<ChatMessage[]> =>
 };
 
 export const sendMessage = async (chatId: number, message: string, type: string = 'text', userId: number): Promise<ChatMessage> => {
-    const response = await api.post(`/chats/${chatId}/messages`, { 
+    const response = await api.post(`/chats/${chatId}/messages`, {
         type: "new_message",
         content: {
             chat_id: chatId,
             user_id: userId,
-            message: message, 
-            message_type: type 
+            message: message,
+            message_type: type
         }
     });
-    
+
     const data = response.data?.data || response.data;
     let result = data;
-    
+
     if (data && typeof data === 'object') {
         if (data.results) {
             result = data.results;
         }
     }
-    
+
     if (result && result.content) {
         return result.content as ChatMessage;
     }
-    
+
     return result as ChatMessage;
 };

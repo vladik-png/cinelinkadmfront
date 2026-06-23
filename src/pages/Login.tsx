@@ -5,8 +5,8 @@ import { LoginBackground } from '../components/Layout/Login/LoginBackground';
 
 const Login: React.FC = () => {
   const {
-    employeeCode,
-    setEmployeeCode,
+    email,
+    setEmail,
     password,
     setPassword,
     error,
@@ -19,8 +19,8 @@ const Login: React.FC = () => {
       <LoginBackground />
 
       <LoginForm
-        employeeCode={employeeCode}
-        setEmployeeCode={setEmployeeCode}
+        email={email}
+        setEmail={setEmail}
         password={password}
         setPassword={setPassword}
         error={error}

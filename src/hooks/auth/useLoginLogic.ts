@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { loginEmployee } from '../../api/authService';
 
 export const useLoginLogic = () => {
-    const [employeeCode, setEmployeeCode] = useState('');
+    const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [error, setError] = useState<string | null>(null);
     const [isLoading, setIsLoading] = useState(false);
@@ -16,7 +16,7 @@ export const useLoginLogic = () => {
         setIsLoading(true);
 
         try {
-            const response = await loginEmployee(employeeCode, password);
+            const response = await loginEmployee(email, password);
 
             if (response.status === 200) {
                 const data = response.data.results;
@@ -55,8 +55,8 @@ export const useLoginLogic = () => {
     };
 
     return {
-        employeeCode,
-        setEmployeeCode,
+        email,
+        setEmail,
         password,
         setPassword,
         error,
