@@ -1,3 +1,4 @@
+import axios from 'axios';
 import api from './axios';
 
 const INFRA_BASE_URL = import.meta.env.VITE_INFRA_API_URL;
@@ -7,14 +8,18 @@ const DIGITAL_OCEAN_API = import.meta.env.VITE_DIGITAL_OCEAN_API_URL;
 
 export const getInfrastructureData = async () => {
   try {
-    const [instRes, infoRes] = await Promise.all([
-      api.get(`${INFRA_BASE_URL}/`),
-      api.get(`${INFRA_BASE_URL}/info`)
-    ]);
+    const instRes = await api.get(`${INFRA_BASE_URL}/`);
+    let region = 'NOT FOUND';
+    try {
+      const infoRes = await api.get(`${INFRA_BASE_URL}/info`);
+      region = infoRes.data.region?.toUpperCase() || 'NOT FOUND';
+    } catch (e) {
+      // /info might not exist on the new backend
+    }
 
     return {
-      instances: instRes.data.flatMap((r: any) => r.Instances || []),
-      region: infoRes.data.region?.toUpperCase() || 'NOT FOUND'
+      instances: Array.isArray(instRes.data) ? instRes.data : (instRes.data.flatMap ? instRes.data.flatMap((r: any) => r.Instances || []) : []),
+      region
     };
   } catch (error) {
     console.error("Error connecting to infrastructure service:", error);
@@ -22,7 +27,17 @@ export const getInfrastructureData = async () => {
   }
 };
 
-export const performPowerAction = async (action: 'start' | 'stop', id: string) => {
+export const performPowerAction = async (action: 'start' | 'stop', id: string, type?: string) => {
+  if (type === 'DIGITAL_OCEAN') {
+    if (!DIGITAL_OCEAN_TOKEN) throw new Error("DigitalOcean token not configured");
+    const doAction = action === 'start' ? 'power_on' : 'power_off';
+    const res = await axios.post(`${DIGITAL_OCEAN_API}/droplets/${id}/actions`, 
+      { type: doAction },
+      { headers: { Authorization: `Bearer ${DIGITAL_OCEAN_TOKEN}` } }
+    );
+    return res.data;
+  }
+
   try {
     const response = await api.get(`${INFRA_BASE_URL}/${action}`, {
       params: { id: id }
@@ -42,28 +57,20 @@ export const getKamateraMetrics = async () => {
   return api.get(`${KAMATERA_API}/system-metrics`);
 };
 
+const DIGITAL_OCEAN_TOKEN = import.meta.env.VITE_DIGITAL_OCEAN_TOKEN;
+
 export const getDigitalOceanMetrics = async () => {
-  if (!DIGITAL_OCEAN_API) return { data: {} };
+  if (!DIGITAL_OCEAN_TOKEN) return { data: [] };
   
-  const urls = DIGITAL_OCEAN_API.split(',').map((url: string) => url.trim()).filter(Boolean);
-  
-  if (urls.length === 0) return { data: {} };
-  if (urls.length === 1) return api.get(`${urls[0]}/system-metrics`);
-
-  const responses = await Promise.allSettled(
-    urls.map((url: string) => api.get(`${url}/system-metrics`))
-  );
-
-  const combinedData: any = {};
-  
-  responses.forEach((res, index) => {
-    if (res.status === 'fulfilled' && res.value.data) {
-      // If it's an array or object, merge it in
-      Object.assign(combinedData, res.value.data);
-    } else {
-      console.warn(`Failed to fetch DO metrics from ${urls[index]}`, res);
-    }
-  });
-
-  return { data: combinedData };
+  try {
+    const res = await axios.get(`${DIGITAL_OCEAN_API}/droplets`, {
+      headers: {
+        Authorization: `Bearer ${DIGITAL_OCEAN_TOKEN}`
+      }
+    });
+    return { data: res.data.droplets || [] };
+  } catch (error) {
+    console.error("Failed to fetch DigitalOcean droplets", error);
+    return { data: [] };
+  }
 };

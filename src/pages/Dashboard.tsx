@@ -6,10 +6,11 @@ import { WelcomeBanner } from '../components/Layout/Dashboard/WelcomeBanner';
 import { TimeWeatherCard } from '../components/Layout/Dashboard/TimeWeatherCard';
 import { StatCard } from '../components/Layout/Dashboard/StatCard';
 import { RecentUsersList } from '../components/Layout/Dashboard/RecentUsersList';
+import { TopNodesList } from '../components/Layout/Dashboard/TopNodesList';
 
 const Dashboard: React.FC = () => {
   const navigate = useNavigate();
-  const { employee, weather, stats, lastUsers, time, systemMetrics } = useDashboardLogic();
+  const { employee, weather, stats, lastUsers, time, systemMetrics, topNodes } = useDashboardLogic();
 
   return (
     <div className="w-full min-h-screen bg-[#151521] text-[#a2a5b9] font-sans p-6 lg:p-8">
@@ -54,7 +55,11 @@ const Dashboard: React.FC = () => {
         />
       </div>
 
-      <div className="grid grid-cols-1 gap-6">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <TopNodesList 
+          nodes={topNodes} 
+          onViewAll={() => navigate('/infrastructure')} 
+        />
         <RecentUsersList
           users={lastUsers}
           onViewAll={() => navigate('/users')}

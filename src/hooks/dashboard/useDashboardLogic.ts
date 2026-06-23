@@ -3,7 +3,7 @@ import { getUsers } from '../../api/userService';
 import { getEmployee } from '../../api/employeeService';
 import { getSystemMetrics } from '../../api/metricsService';
 import { getLocalWeather } from '../../api/weatherService';
-import { DashboardStats, SystemMetricsSummary, WeatherInfo, RecentUser } from '../../types/dashboard';
+import { DashboardStats, SystemMetricsSummary, WeatherInfo, RecentUser, TopNode } from '../../types/dashboard';
 import { UserData } from '../../types/user';
 import { EmployeeData } from '../../types/employee';
 import { parseUserResponse } from '../../utils/dataAdapters';
@@ -40,6 +40,13 @@ export const useDashboardLogic = () => {
         } catch { return { cpu: 0, ram: 0, disk: 0, ping: 0 }; }
     });
 
+    const [topNodes, setTopNodes] = useState<TopNode[]>(() => {
+        try {
+            const cached = localStorage.getItem('dashboard-top-nodes');
+            return cached ? JSON.parse(cached) : [];
+        } catch { return []; }
+    });
+
     const [time, setTime] = useState(new Date().toLocaleTimeString());
 
     // Sync state changes to localStorage
@@ -48,7 +55,8 @@ export const useDashboardLogic = () => {
         localStorage.setItem('dashboard-stats', JSON.stringify(stats));
         localStorage.setItem('dashboard-last-users', JSON.stringify(lastUsers));
         localStorage.setItem('dashboard-metrics', JSON.stringify(systemMetrics));
-    }, [weather, stats, lastUsers, systemMetrics]);
+        localStorage.setItem('dashboard-top-nodes', JSON.stringify(topNodes));
+    }, [weather, stats, lastUsers, systemMetrics, topNodes]);
 
     const fetchWeather = async (location: string) => {
         if (!location) return;
@@ -89,11 +97,26 @@ export const useDashboardLogic = () => {
 
             if (nodeIds.length > 0) {
                 let totalCpu = 0, totalRam = 0, totalDisk = 0;
+                const nodesList: TopNode[] = [];
+                
                 nodeIds.forEach(id => {
-                    totalCpu += allNodesData[id].cpu || 0;
-                    totalRam += allNodesData[id].ram || 0;
+                    const cpu = allNodesData[id].cpu || 0;
+                    const ram = allNodesData[id].ram || 0;
+                    totalCpu += cpu;
+                    totalRam += ram;
                     totalDisk += parseFloat(allNodesData[id].disk) || 0;
+                    
+                    nodesList.push({
+                        id,
+                        name: allNodesData[id].device_name || id,
+                        cpu,
+                        ram
+                    });
                 });
+
+                // Sort by CPU descending and take top 5
+                nodesList.sort((a, b) => b.cpu - a.cpu);
+                setTopNodes(nodesList.slice(0, 5));
 
                 const count = nodeIds.length;
                 setStats(prev => ({ ...prev, activeNodes: count }));
@@ -127,6 +150,7 @@ export const useDashboardLogic = () => {
         stats,
         lastUsers,
         time,
-        systemMetrics
+        systemMetrics,
+        topNodes
     };
 };

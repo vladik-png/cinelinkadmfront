@@ -3,14 +3,15 @@ import { persist } from 'zustand/middleware';
 import { getInfrastructureData, performPowerAction, getWindowsMetrics, getKamateraMetrics, getDigitalOceanMetrics } from '../api/infraService';
 import { UnifiedServer } from '../types/infrastructure';
 import { AwsApiResponse, AgentApiResponse } from '../types/api';
-import { mapAwsInstancesToUnified, mapAgentDataToUnified } from '../utils/dataAdapters';
+import axios from 'axios';
+import { mapAwsInstancesToUnified, mapAgentDataToUnified, mapDigitalOceanDropletsToUnified } from '../utils/dataAdapters';
 
 interface InfraStoreState {
     servers: UnifiedServer[];
     loading: boolean;
     isInitialized: boolean;
     fetchData: (force?: boolean) => Promise<void>;
-    handlePowerAction: (action: 'start' | 'stop', id: string) => Promise<void>;
+    handlePowerAction: (action: 'start' | 'stop', id: string, type?: string) => Promise<void>;
 }
 
 export const useInfraStore = create<InfraStoreState>()(
@@ -50,10 +51,31 @@ export const useInfraStore = create<InfraStoreState>()(
 
                     let doServers: UnifiedServer[] = [];
                     try {
-                        const doRes = await getDigitalOceanMetrics() as AgentApiResponse;
-                        doServers = mapAgentDataToUnified(doRes, 'Digital Ocean Droplet', 'DIGITAL_OCEAN');
+                        const doRes = await getDigitalOceanMetrics();
+                        doServers = mapDigitalOceanDropletsToUnified(doRes.data);
+                        
+                        // Fetch real-time metrics directly from each DO droplet's IP
+                        const doPromises = doServers.map(async (server) => {
+                            if (server.ip && server.ip !== 'No IP') {
+                                try {
+                                    // Try to fetch from the agent running on the DO droplet
+                                    const metricsRes = await axios.get(`http://${server.ip}:8081/system-metrics`, { timeout: 2000 });
+                                    if (metricsRes.data) {
+                                        server.cpu = metricsRes.data.cpu_usage ?? metricsRes.data.cpu ?? 0;
+                                        server.temp = metricsRes.data.cpu_temp ?? 0;
+                                        server.ping = metricsRes.data.ping ?? 0;
+                                        server.packetLoss = typeof metricsRes.data.packet_loss === 'string' ? parseFloat(metricsRes.data.packet_loss) : (metricsRes.data.packet_loss || 0);
+                                        server.ram = metricsRes.data.ram ?? 0;
+                                    }
+                                } catch (e) {
+                                    // Agent might be offline or not installed, leave metrics at 0
+                                }
+                            }
+                        });
+                        await Promise.all(doPromises);
+
                     } catch (err) {
-                        console.error("Digital Ocean Agent API Error:", err);
+                        console.error("Digital Ocean API Error:", err);
                     }
 
                     return [...awsServers, ...winServers, ...kamServers, ...doServers];
@@ -77,9 +99,9 @@ export const useInfraStore = create<InfraStoreState>()(
                 }
             },
 
-            handlePowerAction: async (action: 'start' | 'stop', id: string) => {
+            handlePowerAction: async (action: 'start' | 'stop', id: string, type?: string) => {
                 try {
-                    await performPowerAction(action, id);
+                    await performPowerAction(action, id, type);
                     setTimeout(() => get().fetchData(true), 1000);
                 } catch (err: unknown) {
                     const msg = err instanceof Error ? err.message : String(err);

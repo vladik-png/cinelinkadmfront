@@ -22,3 +22,10 @@ export interface RecentUser {
     username: string;
     avatar_url: string;
 }
+
+export interface TopNode {
+    id: string;
+    name: string;
+    cpu: number;
+    ram: number;
+}

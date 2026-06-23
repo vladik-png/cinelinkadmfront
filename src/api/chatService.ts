@@ -1,9 +1,9 @@
-import api from './axios';
+import chatApi from './chatApi';
 import { Chat, DirectChat, GroupChat, ChatMember, ChatMessage } from '../types/chat';
 
 export const getUserChats = async (): Promise<Chat[]> => {
     try {
-        const response = await api.get('/employee/chat');
+        const response = await chatApi.get('/employee/chat');
         const data = response.data?.data || response.data;
         let chatsArray: any[] = [];
         if (Array.isArray(data)) {
@@ -26,7 +26,7 @@ export const getUserChats = async (): Promise<Chat[]> => {
 };
 
 export const getChatDetails = async (chatId: number): Promise<DirectChat | GroupChat | null> => {
-    const response = await api.get(`/chats/${chatId}`);
+    const response = await chatApi.get(`/chats/${chatId}`);
     const data = response.data?.data || response.data;
     let result = data;
     if (data && typeof data === 'object' && 'results' in data) {
@@ -49,7 +49,7 @@ export const getChatDetails = async (chatId: number): Promise<DirectChat | Group
 };
 
 export const getOrCreateChat = async (friendId: number | string): Promise<number> => {
-    const response = await api.get(`/chats/get-or-create/${friendId}`);
+    const response = await chatApi.get(`/chats/get-or-create/${friendId}`);
     const data = response.data?.data || response.data;
 
     if (data && typeof data === 'object' && 'results' in data) {
@@ -60,30 +60,30 @@ export const getOrCreateChat = async (friendId: number | string): Promise<number
 };
 
 export const deleteChat = async (chatId: number): Promise<void> => {
-    await api.delete(`/chats/${chatId}`);
+    await chatApi.delete(`/chats/${chatId}`);
 };
 
 export const getEmployeeStatus = async (employeeId: number): Promise<{ is_online: boolean; last_seen: string }> => {
-    const response = await api.get(`/employee-status/${employeeId}`);
+    const response = await chatApi.get(`/employee-status/${employeeId}`);
     return response.data?.data || response.data || { is_online: false, last_seen: '' };
 };
 
 export const removeUserChat = async (userId: number, chatId: number): Promise<void> => {
-    await api.delete(`/chats/${chatId}/members/${userId}`);
+    await chatApi.delete(`/chats/${chatId}/members/${userId}`);
 };
 
 export const getChatMembers = async (chatId: number): Promise<ChatMember[]> => {
-    const response = await api.get(`/chats/${chatId}/members`);
+    const response = await chatApi.get(`/chats/${chatId}/members`);
     return response.data?.data || response.data || [];
 };
 
 export const createChatMember = async (chatId: number, userId: number): Promise<void> => {
-    await api.post(`/chats/${chatId}/members`, { user_id: userId });
+    await chatApi.post(`/chats/${chatId}/members`, { user_id: userId });
 };
 
 export const getChatMessages = async (chatId: number): Promise<ChatMessage[]> => {
     try {
-        const response = await api.get(`/chats/${chatId}/messages?cursor=1`);
+        const response = await chatApi.get(`/chats/${chatId}/messages?cursor=1`);
         const data = response.data?.data || response.data;
 
         let messagesArray: any[] = [];
@@ -115,7 +115,7 @@ export const getChatMessages = async (chatId: number): Promise<ChatMessage[]> =>
 };
 
 export const sendMessage = async (chatId: number, message: string, type: string = 'text', userId: number): Promise<ChatMessage> => {
-    const response = await api.post(`/chats/${chatId}/messages`, {
+    const response = await chatApi.post(`/chats/${chatId}/messages`, {
         type: "new_message",
         content: {
             chat_id: chatId,

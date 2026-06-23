@@ -1,6 +1,7 @@
 import React from 'react';
 import { Search, Trash2 } from 'lucide-react';
 import { Chat } from '../../../types/chat';
+import { formatRelativeTime } from '../../../utils/timeFormat';
 
 interface ChatSidebarProps {
     chats: Chat[];
@@ -68,7 +69,7 @@ export const ChatSidebar: React.FC<ChatSidebarProps> = ({
                                     </h3>
                                     {chat.last_message?.timestamp && (
                                         <span className="text-[10px] font-medium text-[#a2a5b9]">
-                                            {new Date(chat.last_message.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                                            {formatRelativeTime(chat.last_message.timestamp)}
                                         </span>
                                     )}
                                 </div>

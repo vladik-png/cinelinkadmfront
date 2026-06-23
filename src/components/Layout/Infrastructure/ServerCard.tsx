@@ -7,7 +7,7 @@ import { ServerCardStats } from './ServerCardStats';
 interface Props {
     server: UnifiedServer;
     onClick: () => void;
-    onPowerAction: (action: 'start' | 'stop', id: string) => void;
+    onPowerAction: (action: 'start' | 'stop', id: string, type?: string) => void;
 }
 
 export const ServerCard: React.FC<Props> = ({ server, onClick, onPowerAction }) => {
@@ -18,6 +18,7 @@ export const ServerCard: React.FC<Props> = ({ server, onClick, onPowerAction }) 
     const isDigitalOcean = server.type === 'DIGITAL_OCEAN';
     const isAws = server.type === 'AWS';
     const hasMetrics = isWindows || isKamatera || isDigitalOcean;
+    const hasPowerControls = isAws || isDigitalOcean;
 
     let tempColor = 'text-white';
     if (server.temp && Number(server.temp) >= 80) tempColor = 'text-[#f64e60]';
@@ -54,17 +55,17 @@ export const ServerCard: React.FC<Props> = ({ server, onClick, onPowerAction }) 
                 </div>
             )}
 
-            {!hasMetrics && (
+            {hasPowerControls && (
                 <div className="flex gap-3 mt-auto">
                     <button
-                        onClick={(e) => { e.stopPropagation(); onPowerAction('start', server.id); }}
+                        onClick={(e) => { e.stopPropagation(); onPowerAction('start', server.id, server.type); }}
                         disabled={isRunning || isTransitioning}
                         className="flex-1 bg-[#1bc5bd]/10 text-[#1bc5bd] border border-[#1bc5bd]/20 py-3 rounded-xl text-[10px] uppercase tracking-widest hover:bg-[#1bc5bd]/20 disabled:opacity-30 transition-all font-bold"
                     >
                         Start
                     </button>
                     <button
-                        onClick={(e) => { e.stopPropagation(); onPowerAction('stop', server.id); }}
+                        onClick={(e) => { e.stopPropagation(); onPowerAction('stop', server.id, server.type); }}
                         disabled={!isRunning || isTransitioning}
                         className="flex-1 bg-[#f64e60]/10 text-[#f64e60] border border-[#f64e60]/20 py-3 rounded-xl text-[10px] uppercase tracking-widest hover:bg-[#f64e60]/20 transition-all disabled:opacity-30 font-bold"
                     >

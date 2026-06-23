@@ -6,13 +6,19 @@ import { AwsApiResponse, AgentApiResponse, PaginatedResponse } from '../types/ap
 export const mapAwsInstancesToUnified = (awsData: AwsApiResponse): UnifiedServer[] => {
     if (!awsData || !awsData.instances) return [];
     return awsData.instances.map((inst) => {
-        const nameTag = inst.Tags?.find((t) => t.Key === 'Name');
+        const nameTag = inst.Tags?.find((t: any) => t.Key === 'Name');
+        const name = inst.Name || (nameTag ? nameTag.Value : `Node ${inst.InstanceId?.substring(0,6) || ''}`);
+        
+        let type: 'AWS' | 'DIGITAL_OCEAN' | 'WINDOWS' | 'KAMATERA' = 'AWS';
+        if (inst.Provider === 'DigitalOcean') type = 'DIGITAL_OCEAN';
+        else if (inst.Provider === 'Local') type = 'WINDOWS';
+        
         return {
             id: inst.InstanceId,
-            name: nameTag ? nameTag.Value : 'Unnamed AWS Node',
-            type: 'AWS',
-            state: inst.State?.Name || 'unknown',
-            ip: inst.PublicIpAddress || 'No Public IP',
+            name: name || 'Unnamed Node',
+            type: type,
+            state: inst.State?.Name || inst.State || 'unknown',
+            ip: inst.PublicIpAddress || inst.IpAddress || 'No Public IP',
             rawAwsData: inst
         };
     });
@@ -42,6 +48,25 @@ export const mapAgentDataToUnified = (
         location: s.location,
         uptime: s.time
     }));
+};
+
+export const mapDigitalOceanDropletsToUnified = (data: any): UnifiedServer[] => {
+    if (!data) return [];
+    const droplets = Array.isArray(data) ? data : (data.droplets || []);
+    return droplets.map((d: any) => {
+        const pubNet = d.networks?.v4?.find((n: any) => n.type === 'public');
+        return {
+            id: String(d.id),
+            name: d.name || 'Unnamed Droplet',
+            type: 'DIGITAL_OCEAN',
+            state: d.status === 'active' ? 'running' : 'stopped',
+            ip: pubNet ? pubNet.ip_address : 'No IP',
+            ram: d.memory || 0,
+            disk: String(d.disk || 0),
+            location: d.region?.slug || 'unknown',
+            rawAwsData: d
+        };
+    });
 };
 
 export const parseEmployeeResponse = (responseData: unknown): EmployeeData[] => {

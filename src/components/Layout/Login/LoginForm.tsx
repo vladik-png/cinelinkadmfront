@@ -28,7 +28,7 @@ export const LoginForm: React.FC<LoginFormProps> = ({
                 <div className="w-16 h-16 bg-[#3699ff]/10 border border-[#3699ff]/20 rounded-2xl flex items-center justify-center mx-auto mb-6 shadow-[0_0_20px_rgba(54,153,255,0.15)]">
                     <Hexagon size={32} className="text-[#3699ff] fill-[#3699ff]/20" />
                 </div>
-                <h2 className="text-2xl font-bold text-white tracking-wide">test Cinelink Admin</h2>
+                <h2 className="text-2xl font-bold text-white tracking-wide">Cinelink Admin</h2>
             </div>
 
             <form onSubmit={onSubmit} className="space-y-6">

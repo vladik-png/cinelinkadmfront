@@ -1,4 +1,5 @@
 import api from './axios';
+import axios from 'axios';
 
 const WINDOWS_API = import.meta.env.VITE_WINDOWS_API_URL;
 const KAMATERA_API = import.meta.env.VITE_KAMATERA_API_URL;
@@ -6,7 +7,8 @@ const DIGITAL_OCEAN_API = import.meta.env.VITE_DIGITAL_OCEAN_API_URL;
 
 export const getSystemMetrics = async () => {
   try {
-    const response = await api.get('/system-metrics');
+    const INFRA_API = import.meta.env.VITE_INFRA_API_URL;
+    const response = await api.get(`${INFRA_API}/system-metrics`);
     return response.data;
   } catch (error) {
     console.error("Error fetching generic system metrics:", error);
@@ -33,15 +35,6 @@ export const fetchNodeMetrics = async () => {
     }
   } catch (e) {
     // console.error("Error fetching Windows metrics:", e);
-  }
-
-  try {
-    const doRes = await api.get(`${DIGITAL_OCEAN_API}/system-metrics`);
-    if (doRes.data && typeof doRes.data === 'object') {
-      combinedData = { ...combinedData, ...doRes.data };
-    }
-  } catch (e) {
-    // console.error("Error fetching DO metrics:", e);
   }
 
   return combinedData;

@@ -3,6 +3,7 @@ import { Check, CheckCheck } from 'lucide-react';
 import { ChatMessage } from '../../../types/chat';
 import { ChatAreaHeader } from './ChatAreaHeader';
 import { ChatAreaInput } from './ChatAreaInput';
+import { formatRelativeTime } from '../../../utils/timeFormat';
 
 interface ChatAreaProps {
     messages: ChatMessage[];
@@ -58,7 +59,7 @@ export const ChatArea: React.FC<ChatAreaProps> = ({
                 ) : (
                     messages.map((msg) => {
                         const isMe = msg.user_id === myId;
-                        const timeStr = msg.timestamp ? new Date(msg.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : '';
+                        const timeStr = formatRelativeTime(msg.timestamp);
                         
                         return (
                             <div key={msg.message_id} className={`flex ${isMe ? 'justify-end' : 'justify-start'}`}>

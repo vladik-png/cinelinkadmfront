@@ -17,7 +17,8 @@ class WSService {
         }
 
         const token = localStorage.getItem('admin_token');
-        const wsUrl = `ws://localhost:8081/ws/live?token=${token}`; // Assuming backend runs on 8081
+        const wsBase = import.meta.env.VITE_WS_URL || 'ws://164.92.225.126:8081';
+        const wsUrl = `${wsBase}/ws/live?token=${token}`;
         
         this.ws = new WebSocket(wsUrl);
 
