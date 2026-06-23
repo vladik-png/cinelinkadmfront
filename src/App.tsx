@@ -31,7 +31,6 @@ const App: React.FC = () => {
           <Route path="/employees" element={<Employees />} />
           <Route path="/terminal" element={<TerminalPage />} />
           <Route path="/messages" element={<Messages />} />
-
           <Route path="*" element={<Navigate to="/dashboard" replace />} />
         </Route>
       </Routes>

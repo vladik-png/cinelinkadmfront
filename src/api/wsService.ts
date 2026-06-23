@@ -8,7 +8,7 @@ type WSCallback = (data: any) => void;
 class WSService {
     private ws: WebSocket | null = null;
     private listeners: Map<string, WSCallback[]> = new Map();
-    private reconnectTimeout: NodeJS.Timeout | null = null;
+    private reconnectTimeout: ReturnType<typeof setTimeout> | null = null;
     private isConnected: boolean = false;
 
     connect() {

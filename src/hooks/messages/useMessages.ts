@@ -6,6 +6,9 @@ import { useChatList } from './useChatList';
 import { useChatMessages } from './useChatMessages';
 import { getChatName, getChatAvatar, getActiveChatName, getActiveChatAvatar } from './chatFormatting';
 import { Chat } from '../../types/chat';
+import { deleteChat, getEmployeeStatus } from '../../api/chatService';
+import { liveWs } from '../../api/wsService';
+
 
 export const useMessages = () => {
     const [searchParams, setSearchParams] = useSearchParams();
@@ -70,7 +73,6 @@ export const useMessages = () => {
 
     const handleDeleteChat = async (id: number) => {
         try {
-            const { deleteChat } = await import('../../api/chatService');
             await deleteChat(id);
             if (activeChatId === id) {
                 setActiveChatId(null);
@@ -91,7 +93,7 @@ export const useMessages = () => {
             return id || null;
         }
         if (activeChatInfo && 'participants_ids' in activeChatInfo) {
-            const id = activeChatInfo.participants_ids.find((id: number) => id !== MY_ID);
+            const id = (activeChatInfo as any).participants_ids?.find((id: number) => id !== MY_ID);
             return id || null;
         }
         return null;
@@ -111,20 +113,16 @@ export const useMessages = () => {
             }
         };
 
-        import('../../api/wsService').then(({ liveWs }) => {
-            liveWs.on('user_status', handleUserStatus);
-        });
+        liveWs.on('user_status', handleUserStatus);
 
         return () => {
-            import('../../api/wsService').then(({ liveWs }) => {
-                liveWs.off('user_status', handleUserStatus);
-            });
+            liveWs.off('user_status', handleUserStatus);
         };
     }, [peerId]);
 
     const { data: initialStatus } = useSWR(
         peerId ? `employee-status-${peerId}` : null,
-        () => import('../../api/chatService').then(m => m.getEmployeeStatus(peerId as number)),
+        () => getEmployeeStatus(peerId as number),
         { refreshInterval: 0, revalidateOnFocus: false }
     );
 
@@ -143,7 +141,7 @@ export const useMessages = () => {
     const getActiveChatIsAdmin = () => {
         if (!peerId) return false;
         const emp = employees.find(e => e.employee_id === peerId);
-        return emp ? emp.role === 1 || emp.department === 'Administration' : false;
+        return emp ? (emp as any).role === 1 || emp.department === 'Administration' : false;
     };
 
     return {
