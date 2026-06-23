@@ -1,6 +1,7 @@
 import * as React from 'react';
 import { Server, User, Key, EyeOff, Eye } from 'lucide-react';
 import { SavedNode } from '../../../types/terminal';
+import { Input } from '../../UI/Input';
 
 interface TerminalConnectionFormProps {
     credentials: SavedNode;
@@ -22,61 +23,44 @@ export const TerminalConnectionForm: React.FC<TerminalConnectionFormProps> = ({
             <h2 className="text-xl text-white font-bold mb-6 text-center uppercase tracking-wide">Connecting to server</h2>
 
             <div className="space-y-4">
-                <div>
-                    <label className="text-[10px] uppercase tracking-widest font-bold mb-2 flex items-center gap-2">
-                        <Server size={12} /> IP Address
-                    </label>
-                    <input
-                        type="text"
-                        placeholder="185.227.108.14"
-                        value={credentials.host}
-                        onChange={e => setCredentials({ ...credentials, host: e.target.value })}
-                        className="w-full bg-[#151521] border border-white/[0.1] rounded-xl px-4 py-3 text-white text-sm focus:outline-none focus:border-[#8950fc] transition-colors"
-                    />
-                </div>
-                <div>
-                    <label className="text-[10px] uppercase tracking-widest font-bold mb-2 flex items-center gap-2">
-                        <User size={12} /> User
-                    </label>
-                    <input
-                        type="text"
-                        value={credentials.user}
-                        onChange={e => setCredentials({ ...credentials, user: e.target.value })}
-                        className="w-full bg-[#151521] border border-white/[0.1] rounded-xl px-4 py-3 text-white text-sm focus:outline-none focus:border-[#8950fc] transition-colors"
-                    />
-                </div>
-                <div>
-                    <label className="text-[10px] uppercase tracking-widest font-bold mb-2 flex items-center gap-2">
-                        <Key size={12} /> Password
-                    </label>
-                    <div className="relative">
-                        <input
-                            type={showPassword ? "text" : "password"}
-                            value={credentials.pass}
-                            onChange={e => setCredentials({ ...credentials, pass: e.target.value })}
-                            className="w-full bg-[#151521] border border-white/[0.1] rounded-xl pl-4 pr-12 py-3 text-white text-sm focus:outline-none focus:border-[#8950fc] transition-colors"
-                        />
+                <Input
+                    label="IP Address"
+                    icon={<Server size={12} />}
+                    type="text"
+                    placeholder="185.227.108.14"
+                    value={credentials.host}
+                    onChange={e => setCredentials({ ...credentials, host: e.target.value })}
+                />
+                <Input
+                    label="User"
+                    icon={<User size={12} />}
+                    type="text"
+                    value={credentials.user}
+                    onChange={e => setCredentials({ ...credentials, user: e.target.value })}
+                />
+                <Input
+                    label="Password"
+                    icon={<Key size={12} />}
+                    type={showPassword ? "text" : "password"}
+                    value={credentials.pass}
+                    onChange={e => setCredentials({ ...credentials, pass: e.target.value })}
+                    rightElement={
                         <button
                             type="button"
                             onClick={() => setShowPassword(!showPassword)}
-                            className="absolute right-3 top-1/2 -translate-y-1/2 p-1.5 text-[#a2a5b9] hover:text-white !bg-transparent !border-none !shadow-none !outline-none"
-                            style={{ backgroundColor: 'transparent', borderColor: 'transparent', boxShadow: 'none' }}
+                            className="p-1.5 text-[#a2a5b9] hover:text-white transition-colors cursor-pointer"
                         >
                             {showPassword ? <EyeOff size={16} /> : <Eye size={16} />}
                         </button>
-                    </div>
-                </div>
-                <div>
-                    <label className="text-[10px] uppercase tracking-widest font-bold mb-2 flex items-center gap-2">
-                        Remote Upload Path
-                    </label>
-                    <input
-                        type="text"
-                        value={credentials.remoteDir}
-                        onChange={e => setCredentials({ ...credentials, remoteDir: e.target.value })}
-                        className="w-full bg-[#151521] border border-white/[0.1] rounded-xl px-4 py-3 text-[#a2a5b9] text-xs font-mono focus:outline-none focus:border-[#8950fc] transition-colors"
-                    />
-                </div>
+                    }
+                />
+                <Input
+                    label="Remote Upload Path"
+                    type="text"
+                    value={credentials.remoteDir}
+                    onChange={e => setCredentials({ ...credentials, remoteDir: e.target.value })}
+                    className="font-mono text-[#a2a5b9] text-xs"
+                />
 
                 <button
                     onClick={onConnect}

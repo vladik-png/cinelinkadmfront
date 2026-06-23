@@ -1,5 +1,7 @@
 import * as React from 'react';
 import { Hexagon, User, Lock } from 'lucide-react';
+import { Input } from '../../UI/Input';
+import { Spinner } from '../../UI/Spinner';
 
 interface LoginFormProps {
     employeeCode: string;
@@ -30,47 +32,31 @@ export const LoginForm: React.FC<LoginFormProps> = ({
             </div>
 
             <form onSubmit={onSubmit} className="space-y-6">
-                <div>
-                    <label className="text-xs font-semibold text-[#a2a5b9] uppercase tracking-wider mb-2 block">
-                        Employee Code
-                    </label>
-                    <div className="relative">
-                        <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
-                            <User size={18} className="text-[#a2a5b9]" />
-                        </div>
-                        <input
-                            type="text"
-                            required
-                            className="w-full pl-11 pr-4 py-3.5 bg-[#151521] border border-white/[0.05] rounded-xl text-white focus:border-[#3699ff] focus:ring-1 focus:ring-[#3699ff] outline-none transition-all placeholder:text-white/[0.2] font-mono"
-                            placeholder="e.g. 0000"
-                            value={employeeCode}
-                            onChange={(e) => setEmployeeCode(e.target.value)}
-                        />
-                    </div>
-                </div>
+                <Input
+                    label="Employee Code"
+                    icon={<User size={18} />}
+                    type="text"
+                    required
+                    className="font-mono py-3.5 focus:border-[#3699ff] focus:ring-1 focus:ring-[#3699ff]"
+                    placeholder="e.g. 0000"
+                    value={employeeCode}
+                    onChange={(e) => setEmployeeCode(e.target.value)}
+                />
 
-                <div>
-                    <label className="text-xs font-semibold text-[#a2a5b9] uppercase tracking-wider mb-2 block">
-                        Security Password
-                    </label>
-                    <div className="relative">
-                        <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
-                            <Lock size={18} className="text-[#a2a5b9]" />
-                        </div>
-                        <input
-                            type="password"
-                            required
-                            className="w-full pl-11 pr-4 py-3.5 bg-[#151521] border border-white/[0.05] rounded-xl text-white focus:border-[#3699ff] focus:ring-1 focus:ring-[#3699ff] outline-none transition-all placeholder:text-white/[0.2]"
-                            placeholder="••••••••"
-                            value={password}
-                            onChange={(e) => setPassword(e.target.value)}
-                        />
-                    </div>
-                </div>
+                <Input
+                    label="Security Password"
+                    icon={<Lock size={18} />}
+                    type="password"
+                    required
+                    className="py-3.5 focus:border-[#3699ff] focus:ring-1 focus:ring-[#3699ff]"
+                    placeholder="••••••••"
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                />
 
                 {error && (
                     <div className="bg-[#f64e60]/10 border border-[#f64e60]/20 p-4 rounded-xl flex items-center gap-3 animate-pulse">
-                        <div className="w-1.5 h-1.5 rounded-full bg-[#f64e60]"></div>
+                        <div className="w-1.5 h-1.5 rounded-full bg-[#f64e60] shrink-0"></div>
                         <p className="text-[#f64e60] text-sm font-semibold tracking-wide">
                             {error}
                         </p>
@@ -84,7 +70,7 @@ export const LoginForm: React.FC<LoginFormProps> = ({
                 >
                     {isLoading ? (
                         <span className="flex items-center justify-center gap-2">
-                            <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
+                            <Spinner size="sm" color="white" />
                             Authenticating...
                         </span>
                     ) : (
