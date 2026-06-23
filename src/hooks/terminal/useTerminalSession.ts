@@ -70,6 +70,7 @@ export const useTerminalSession = (
             resizeObserver.disconnect();
             ws.close();
             term.dispose();
+            fitAddonRef.current = null;
         };
     }, [node, terminalRef]);
 

@@ -13,7 +13,7 @@ export const AnalyticsHeader: React.FC<AnalyticsHeaderProps> = ({ selectedNode, 
             <div>
                 <h1 className="text-3xl bg-gradient-to-r from-[#3699ff] to-[#8950fc] bg-clip-text text-transparent uppercase tracking-wide font-bold leading-none">Real-time Telemetry</h1>
                 <p className="text-[#a2a5b9] mt-2 uppercase text-[10px] tracking-widest font-semibold">
-                    {selectedNode ? `Focused Node: ${selectedNode}` : (viewMode === 'combined' ? 'Combined Metrics Pipeline' : 'Individual Metrics Grid')}
+                    {selectedNode ? `Focused Node: ${selectedNode.replace(/^(win|kam|do)-/, '')}` : (viewMode === 'combined' ? 'Combined Metrics Pipeline' : 'Individual Metrics Grid')}
                 </p>
             </div>
 

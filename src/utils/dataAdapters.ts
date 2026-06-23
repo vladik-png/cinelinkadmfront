@@ -7,7 +7,7 @@ export const mapAwsInstancesToUnified = (awsData: AwsApiResponse): UnifiedServer
     if (!awsData || !awsData.instances) return [];
     return awsData.instances.map((inst) => {
         const nameTag = inst.Tags?.find((t: any) => t.Key === 'Name');
-        const name = inst.Name || (nameTag ? nameTag.Value : `Node ${inst.InstanceId?.substring(0,6) || ''}`);
+        const name = (inst.Name as string) || (nameTag ? nameTag.Value : `Node ${inst.InstanceId?.substring(0,6) || ''}`);
         
         let type: 'AWS' | 'DIGITAL_OCEAN' | 'WINDOWS' | 'KAMATERA' = 'AWS';
         if (inst.Provider === 'DigitalOcean') type = 'DIGITAL_OCEAN';
@@ -17,8 +17,8 @@ export const mapAwsInstancesToUnified = (awsData: AwsApiResponse): UnifiedServer
             id: inst.InstanceId,
             name: name || 'Unnamed Node',
             type: type,
-            state: inst.State?.Name || inst.State || 'unknown',
-            ip: inst.PublicIpAddress || inst.IpAddress || 'No Public IP',
+            state: ((inst.State as any)?.Name || inst.State || 'unknown') as string,
+            ip: (inst.PublicIpAddress || inst.IpAddress || 'No Public IP') as string,
             rawAwsData: inst
         };
     });
@@ -34,7 +34,7 @@ export const mapAgentDataToUnified = (
     const dataValues = Array.isArray(agentRes.data) ? agentRes.data : Object.values(agentRes.data);
 
     return dataValues.map((s) => ({
-        id: s.instance_id,
+        id: type === 'WINDOWS' ? `win-${s.instance_id}` : type === 'KAMATERA' ? `kam-${s.instance_id}` : `do-${s.instance_id}`,
         name: s.device_name || fallbackName,
         type,
         state: 'running',
@@ -56,7 +56,7 @@ export const mapDigitalOceanDropletsToUnified = (data: any): UnifiedServer[] => 
     return droplets.map((d: any) => {
         const pubNet = d.networks?.v4?.find((n: any) => n.type === 'public');
         return {
-            id: String(d.id),
+            id: `do-${String(d.id)}`,
             name: d.name || 'Unnamed Droplet',
             type: 'DIGITAL_OCEAN',
             state: d.status === 'active' ? 'running' : 'stopped',

@@ -15,7 +15,7 @@ export const NodeCardHeader: React.FC<NodeCardHeaderProps> = ({ nodeId, latest, 
                 <span className="text-[10px] text-[#3699ff] uppercase tracking-widest font-bold">Node Identifier</span>
                 <h3 className="text-xl text-white tracking-wide uppercase flex items-center gap-2 font-bold mt-1">
                     <Server size={18} className="text-[#a2a5b9]" />
-                    {nodeId}
+                    {nodeId.replace(/^(win|kam|do)-/, '')}
                 </h3>
             </div>
 

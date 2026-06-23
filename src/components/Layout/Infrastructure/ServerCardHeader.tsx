@@ -50,7 +50,7 @@ export const ServerCardHeader: React.FC<ServerCardHeaderProps> = ({
                     {isKamatera ? 'Kamatera Linux Server' : isDigitalOcean ? 'Digital Ocean Droplet' : server.name}
                 </h3>
                 <code className="text-[10px] text-[#a2a5b9] bg-[#151521] border border-white/[0.05] px-2 py-1 rounded tracking-widest font-semibold inline-block">
-                    {server.id}
+                    {server.id.replace(/^(win|kam|do)-/, '')}
                 </code>
             </div>
         </>

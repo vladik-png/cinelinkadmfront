@@ -2,13 +2,14 @@ import api from './axios';
 import { ServerAlert, ServerLog } from '../types/moderation';
 
 const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://127.0.0.1:8086';
+const INFRA_API_URL = import.meta.env.VITE_WINDOWS_API_URL || API_BASE_URL;
 
 export const fetchModerationData = async (token: string | null) => {
   const headers = { Authorization: `Bearer ${token}` };
   
   const [alertsRes, logsRes] = await Promise.all([
-    api.get(`${API_BASE_URL}/alerts`, { headers }),
-    api.get(`${API_BASE_URL}/logs`, { headers })
+    api.get(`${INFRA_API_URL}/alerts`, { headers }),
+    api.get(`${INFRA_API_URL}/logs`, { headers })
   ]);
 
   const rawAlerts = alertsRes.data.results || alertsRes.data || [];
@@ -38,12 +39,12 @@ export const fetchModerationData = async (token: string | null) => {
 
 export const resolveAlertRequest = async (id: number, token: string | null) => {
   const headers = { Authorization: `Bearer ${token}` };
-  return api.delete(`${API_BASE_URL}/alerts/${id}`, { headers });
+  return api.delete(`${INFRA_API_URL}/alerts/${id}`, { headers });
 };
 
 export const deleteLogRequest = async (id: number, token: string | null) => {
   const headers = { Authorization: `Bearer ${token}` };
-  return api.delete(`${API_BASE_URL}/logs/${id}`, { headers });
+  return api.delete(`${INFRA_API_URL}/logs/${id}`, { headers });
 };
 
 export const fetchUserReportsRequest = async (token: string | null, cursor: number = 0, sort: string = '') => {
